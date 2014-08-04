@@ -2,6 +2,7 @@ package evaluation.task;
 
 
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -13,6 +14,7 @@ import org.semanticweb.owl.model.OWLIndividual;
 
 import classifiers.Classifier;
 import classifiers.SupervisedLearnable;
+import evaluation.CrossValidation;
 import evaluation.Evaluation;
 import evaluation.ConceptGenerator;
 import evaluation.metrics.GlobalPerformanceMetricsComputation;
@@ -159,111 +161,102 @@ public class ClassMembershipPrediction implements Evaluation {
 	 * @see forest.Evaluation#crossValidation(int)
 	 */
 	@Override
-	public void crossValidation(int nFolds) {
-//		System.out.println(nFolds+"-fold CROSS VALIDATION Experiment on ontology:");		
-//
-//		int nExs = allExamples.length;		
-//
-//		CrossValidation cv = new CrossValidation(nFolds,nExs);
-//
-//		//	OWLDescription[] testConcepts = allConcepts;
-//		int nTestConcepts = testConcepts.length;
-//
-////		double[][] totMatchingRate 		= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
-////		double[][] totCommissionRate 	= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
-////		double[][] totOmissionRate 		= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
-////		double[][] totInducedRate 		= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
-////		double[][] totPrecision 		= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
-////		double[][] totRecall 			= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
-//		GlobalPerformanceMetricsComputation gbpmc= new GlobalPerformanceMetricsComputation(nTestConcepts,nFolds);
-//		
-//		
-//
-//		// main loop on the folds
-//		for (int f=0; f< nFolds; f++) {			
-//
-////			int[] matchingNum = new int[nTestConcepts]; 	// per OWLDescription
-////			int[] commissionNum = new int[nTestConcepts]; 	// per OWLDescription
-////			int[] omissionNum = new int[nTestConcepts]; 	// per OWLDescription
-////			int[] inducedNum = new int[nTestConcepts]; 		// per OWLDescription
-////			double[] trueNum = new double[nTestConcepts]; 	// number of true examples per OWLDescription
-////			double[] foundNum = new double[nTestConcepts]; 	// number of examples retrieved as true per OWLDescription
-////			double[] hitNum = new double[nTestConcepts]; 	// number of hits per OWLDescription
-//
-//			System.out.print("\n\nFold #"+f);
-//			System.out.println(" **************************************************************************************************");
-//
-//			int[] trainingExs = cv.getTrainingExs(f);
-//			// test phase: test all examples in the f-th partition
+	public void crossValidation(int nFolds, String className) {
+		System.out.println(nFolds+"-fold CROSS VALIDATION Experiment on ontology:");		
+		Class classifierClass = null;
+		try {
+			classifierClass = ClassLoader.getSystemClassLoader().loadClass(className);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int nExs = allExamples.length;		
+
+		CrossValidation cv = new CrossValidation(nFolds,nExs);
+
+		//	OWLDescription[] testConcepts = allConcepts;
+		int nTestConcepts = testConcepts.length;
+
+//		double[][] totMatchingRate 		= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
+//		double[][] totCommissionRate 	= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
+//		double[][] totOmissionRate 		= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
+//		double[][] totInducedRate 		= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
+//		double[][] totPrecision 		= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
+//		double[][] totRecall 			= new double[nTestConcepts][nFolds]; 	// per OWLDescription per fold
+		GlobalPerformanceMetricsComputation gbpmc= new GlobalPerformanceMetricsComputation(nTestConcepts,nFolds);
+		
+
+		// main loop on the folds
+		for (int f=0; f< nFolds; f++) {			
+
+//			int[] matchingNum = new int[nTestConcepts]; 	// per OWLDescription
+//			int[] commissionNum = new int[nTestConcepts]; 	// per OWLDescription
+//			int[] omissionNum = new int[nTestConcepts]; 	// per OWLDescription
+//			int[] inducedNum = new int[nTestConcepts]; 		// per OWLDescription
+//			double[] trueNum = new double[nTestConcepts]; 	// number of true examples per OWLDescription
+//			double[] foundNum = new double[nTestConcepts]; 	// number of examples retrieved as true per OWLDescription
+//			double[] hitNum = new double[nTestConcepts]; 	// number of hits per OWLDescription
+
+			System.out.print("\n\nFold #"+f);
+			System.out.println(" **************************************************************************************************");
+
+			Integer[] trainingExs = cv.getTrainingExs(f);
+			// test phase: test all examples in the f-th partition
 //			Classificatore cl= new Classificatore(kb);
 //			int indClassification = 1000000;
-//			Ensemble<DLTree2>[] forests = new Ensemble [nTestConcepts]; 			
-//			for (int c=0; c < nTestConcepts; c++) {
-//
-//				ArrayList<Integer> posExs = new ArrayList<Integer>();
-//				ArrayList<Integer> negExs = new ArrayList<Integer>();
-//				ArrayList<Integer> undExs = new ArrayList<Integer>();								
-//
-//				System.out.printf("--- Query Concept #%d \n",c);
-//				for (int e=0; e<trainingExs.length; e++){
-//					if (reasoner.hasType(allExamples[trainingExs[e]], testConcepts[c]))
-//						posExs.add(trainingExs[e]);
-//					else if (reasoner.hasType(allExamples[trainingExs[e]], negTestConcepts[c]))
-//						negExs.add(trainingExs[e]);
-//					else
-//						undExs.add(trainingExs[e]);
-//				}
-//				double prPos = (double)posExs.size()/(trainingExs.length);
-//				double prNeg = (double)negExs.size()/(trainingExs.length);
-//				double normSum = prPos+prNeg;
-//				if (normSum==0)	{ prPos=.5;	prNeg=.5; }
-//				else { prPos=prPos/normSum;	prNeg=prNeg/normSum; }
-//
-//				System.out.printf("New learning problem prepared.\n",c);	
-//
-//
-//				System.out.println(forests);
-//				forests[c]=cl.induceDLForest(posExs, negExs, undExs, NUMGENCONCEPTS, 20, prPos, prNeg);
-//
-//				System.out.printf("--- forest #%d was induced. \n\n",c);
-//
-//				for (int te=0; te < cv.nPerFold; te++ ) { 
-//
-//					int indTestEx = cv.getIndex(f,te);
-//					if (indTestEx != cv.UNASSIGNED) {
-//
-//						indClassification =cl.classifyEnsemble(indTestEx,forests[c]);
-//						if (indClassification == 1)
-//							++foundNum[c];
-//
-//						int rclass = 0;
-//						if (reasoner.hasType(allExamples[indTestEx],testConcepts[c])) {
-//							rclass = +1;
-//							++trueNum[c];
-//						}
-//						else {
-//							if (reasoner.hasType(allExamples[indTestEx],negTestConcepts[c])) 
-//								rclass = -1;
-//						}
-//
-//						if (indClassification == rclass) { 
-//							++matchingNum[c];
-//							if (rclass==1) 
-//								++hitNum[c];
-//						}
-//						else if (Math.abs(indClassification - rclass)>1) { 
-//							++commissionNum[c];
-//						}
-//						else if (rclass != 0) {
-//							++omissionNum[c];
-//						}	
-//						else {
-//							++inducedNum[c];
-//						}
-//					}
-//				} // if (indTestEx != cv.UNASSIGNED) {
-//			} // for t - inPartition loop
-//
+//			Ensemble<DLTree2>[] forests = new Ensemble [nTestConcepts]; 	
+			
+			
+			
+			SupervisedLearnable cl=null;
+			try {
+				cl = (SupervisedLearnable)(classifierClass.getConstructor(KnowledgeBase.class, int.class)).newInstance(kb,testConcepts.length);
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			cl.training(trainingExs, testConcepts, negTestConcepts);
+			
+				
+				
+				
+				
+				ArrayList<Integer> currentList= new ArrayList<Integer>();
+
+				// keep track of all  test examples in the current split
+				for (int te=0; te < cv.nPerFold; te++ ) { 
+
+					int indTestEx = cv.getIndex(f,te);
+					if (indTestEx != cv.UNASSIGNED) {
+						
+						currentList.add(indTestEx);
+						
+					}
+				
+				}
+				Integer[] currentFold = new Integer[currentList.size()];
+				currentFold= currentList.toArray(currentFold);
+				
+			 System.out.println("No esempi"+ currentFold.length);
+			 int[][] labels=cl.test(f, currentFold, testConcepts);
+				
+
+
 //			System.out.println("\n\n >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OUTCOMES FOLD #"+f);
 //			System.out.printf("\n%10s %10s %10s %10s %10s %10s %10s\n", "Query#",  "matching", "commission", "omission", "induction", "precision", "recall");
 //
@@ -286,11 +279,13 @@ public class ClassMembershipPrediction implements Evaluation {
 //						precision[c], recall[c] );
 //
 //			}
-//		} // for f - fold look
-//
-//
-//
-//
+			 gbpmc.computeMetricsPerFold(f, labels, classification, testConcepts.length, currentFold);
+			
+		} // for f - fold look
+
+		gbpmc.computeOverAllResults(nTestConcepts);
+
+
 //		System.out.println("\n\n\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ OVERALL OUTCOMES");
 //		System.out.printf("\n%10s %10s %10s %10s %10s %10s %10s\n", "Query#",  "matching", "commission", "omission", "induction", "precision", "recall");
 //

@@ -58,7 +58,7 @@ public class DLTreeInducer3 {
 		 kb = new KnowledgeBase(Evaluation.urlOwlFile);
 				
 		Evaluation vcm= new ClassMembershipPrediction(kb);
-        vcm.bootstrap(Evaluation.NFOLDS,"classifiers.Classifier2"); // n. of folds		
+        vcm.crossValidation(Evaluation.NFOLDS,"classifiers.Classifier2"); // n. of folds		
 		System.out.println("\n\nEnding: "+Evaluation.urlOwlFile);
 
 

@@ -56,7 +56,7 @@ public class CrossValidation {
  * @param foldNo current fold number
  * @return training examples
  */
-public int[] getTrainingExs(int foldNo) {
+public Integer[] getTrainingExs(int foldNo) {
 
 	int nTrainExs;
 	if (foldNo<nOfFolds-1) { // for all but the last folds
@@ -67,7 +67,7 @@ public int[] getTrainingExs(int foldNo) {
 		System.out.printf("No of training examples %d fold: %d\n",foldNo,nTrainExs);
 	}
 	
-	int[] trainingExs = new int[nTrainExs];
+	Integer[] trainingExs = new Integer[nTrainExs];
 	java.util.Arrays.fill(trainingExs, -1);
 	int IndTrEx = 0;
 	for (int f = 0; f<nOfFolds; f++)
