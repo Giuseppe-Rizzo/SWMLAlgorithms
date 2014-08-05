@@ -18,6 +18,7 @@ import utils.Couple;
 
 import classifiers.evidentialAlgorithms.DempsterShafer.MassFunction;
 import classifiers.evidentialAlgorithms.models.DSTDLTree;
+import classifiers.trees.models.AbstractTree;
 
 
 
@@ -417,8 +418,6 @@ bestBba.getConfusionMeasure();
 		counts[6] = posExsU.size(); 
 		counts[7] = negExsU.size();
 		counts[8] = undExsU.size();
-		for(int i=0; i<counts.length;i++)
-			System.out.println(counts[i]);
 		
 		return counts;
 		
@@ -510,11 +509,12 @@ bestBba.getConfusionMeasure();
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void prune(Integer[] pruningSet, DSTDLTree tree, DSTDLTree subtree,OWLDescription testConcept){
+	public void prune(Integer[] pruningSet, AbstractTree tree, AbstractTree subtree,OWLDescription testConcept){
+		DSTDLTree treeDST= (DSTDLTree) tree;
 		Stack<DSTDLTree> stack= new Stack<DSTDLTree>();
-		stack.add(tree);
+		stack.add(treeDST);
 		// array list come pila
-		double nodes= tree.getNodi();
+		double nodes= treeDST.getNodi();
 		if(nodes>1){
 		while(!stack.isEmpty()){
 			DSTDLTree current= stack.pop(); // leggo l'albero corrente
@@ -525,7 +525,6 @@ bestBba.getConfusionMeasure();
 			System.out.println("Current: "+pos+" ----- "+neg+"visited? "+current.isVisited());
 
 			if(current.isVisited()){
-				System.out.println("Valutazione");
 				int comissionRoot=current.getCommission();
 				int comissionPosTree= pos.getCommission();
 				int comissionNegTree= neg.getCommission();
@@ -593,106 +592,28 @@ bestBba.getConfusionMeasure();
 		}				
 		}
 
-	System.out.println("Tree: "+tree);
+	
 }
 	
 	
-	public DSTDLTree searchFather(OWLDescription d, DSTDLTree tree){
-		
-		if(tree.getRoot()==null){
-			return null;
-			
-		}
-		else {
-			
-			ArrayList<DSTDLTree> lista= new ArrayList<DSTDLTree>();
-			lista.add(tree); // inizializzazione
-			
-			while(!lista.isEmpty()){
-				DSTDLTree current= lista.get(0);
-				lista.remove(0);
-					DSTDLTree pos= current.getPosSubTree();
-					if(pos!=null){
-						if(pos.getPosSubTree()!=null)
-							if(pos.getPosSubTree().getRoot().equals(d))
-								return pos.getPosSubTree();
-							else
-								lista.add(pos.getPosSubTree());
-						if(pos.getNegSubTree()!=null)
-							if(pos.getNegSubTree().getRoot().equals(d))
-								return pos.getNegSubTree();
-							else
-								lista.add(pos.getNegSubTree());
-					}
-						
-					
-					DSTDLTree neg= current.getNegSubTree();
-					
-						if(neg!=null){
-						if(neg.getPosSubTree()!=null)
-							if(neg.getPosSubTree().getRoot().equals(d))
-								return pos.getPosSubTree();
-							else
-								lista.add(neg.getPosSubTree());
-						if(neg.getNegSubTree()!=null)
-							if(neg.getNegSubTree().getRoot().equals(d))
-								return neg.getNegSubTree();
-							else
-								lista.add(neg.getNegSubTree());
-					
-				}
-			}
-			
-			return null;
-		}
-			
-		
-		
-	}
-	
-	public void repBasedPruning(Integer[] pruningSet, DSTDLTree tree, OWLDescription testConcept){
-//		System.out.println("Pruning Set"+ pruningSet.length);
-//		
-//		System.out.println(tree);
-//		// we need to iterate the procedure of pruning until there is only the root of the tree or pruning is not applicable
-//		boolean pruningPerformed= true;
-//		DSTDLTree prunedTre=null;
-//		while (pruningPerformed){
-//			prunedTre = prune(pruningSet,tree, testConcept);
-//			System.out.println(tree);
-//			 if ((prunedTre.getPosSubTree()==null) &&(prunedTre.getNegSubTree()==null)){
-//				 // root
-//				 pruningPerformed= false;
-//			 }else if(!(prunedTre.equals(tree))){
-//				 // if the pruning has not been performed
-//					 tree=prunedTre;
-//			 }
-//			 else {
-//				 pruningPerformed=true;
-//			 }
-//			
-//			
-//		}
-	}
-	
-	public int[] evaluationForPruning(Integer[] pruningset, DSTDLTree tree, OWLDescription testconcept){
+	public int[] doREPPruning(Integer[] pruningset, DSTDLTree tree, OWLDescription testconcept){
 		// step 1: classification
+		
+		System.out.println("Number of Nodes  Before pruning"+ tree.getNodi());
 		int[] results= new int[pruningset.length];
 		List<Couple<Integer, MassFunction<Integer>>> list=null;
 		//for each element of the pruning set
 		for (int element=0; element< pruningset.length; element++){
 			//  per ogni elemento del pruning set
 			list= new ArrayList<Couple<Integer,MassFunction<Integer>>>();
-			System.out.println("Classifing: "+pruningset[element]);
 			// versione modificata per supportare il pruning
 			classifyExampleDSTforPruning(list,pruningset[element], tree,testconcept); // classificazione top down
-			System.out.println("************************************************");
-
+		
 		}
 		
 		prune(pruningset, tree, tree, testconcept);
 		
-		
+		System.out.println("Number of Nodes  After pruning"+ tree.getNodi());
 		
 
 		return results;
@@ -729,7 +650,6 @@ bestBba.getConfusionMeasure();
 			}
 			//
 			//			}
-//			System.out.printf(tree+"%d %d %d %d \n", tree.getMatch(), tree.getCommission(),tree.getOmission(),tree.getInduction());
 		}
 		
 		if (rootClass.equals(dataFactory.getOWLNothing())){
@@ -805,13 +725,6 @@ bestBba.getConfusionMeasure();
 			else{
 				//seguo entrambi i percorsi
 				System.out.println("---->");
-//					double confirmationFunctionValueUnc = pooled.calcolaConfirmationFunction(ipotesi3);
-////				double confirmationFunctionValueUnc = bba.calcolaBeliefFunction(ipotesi3);
-//			
-//				System.out.println(confirmationFunctionValuePos+ " vs. "+ confirmationFunctionValueNeg+ "vs." +confirmationFunctionValueUnc);
-//
-//				
-//				}
 				
 				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
 					tree.setOmission(0);
@@ -821,82 +734,6 @@ bestBba.getConfusionMeasure();
 					tree.setMatch(0);
 				}
 				
-				
-				
-				// per trattare il mondo aperto al nodo tramite la Dempster-Shafer 
-				// aggrego tutte le BBA delle foglie raggiunte fino a  quel momento + quella del nuovo nodo che considererò come foglia
-				// in questo modo simulo che il nodo sia una foglia
-//				MassFunction<Integer> bba=m;
-//				
-//				MassFunction<Integer>[] others= new MassFunction[list.size()];
-//				System.out.println("_____________BBA TO COMBINE______________________");
-//				System.out.println("BBA: "+bba);
-//				for(int i=0; i<list.size();i++){
-//					MassFunction next=list.get(i).getSecondElement();
-//					// applicare la regola di combinazione
-//					
-//					others[i]=next;
-//				}
-//				if(others.length>=1){
-//					bba=bba.applicaCombinazione(others);
-//					
-//				}// combino con tutte le altre BBA
-//				//concept
-//				ArrayList<Integer> ipotesi= new ArrayList<Integer>();
-//				ipotesi.add(+1);
-//				double confirmationFunctionValuePos = bba.calcolaConfirmationFunction(ipotesi);
-////				double confirmationFunctionValuePos = bba.calcolaBeliefFunction(ipotesi);
-//				// not concept
-//				ArrayList<Integer> ipotesi2= new ArrayList<Integer>();
-//				ipotesi2.add(-1);
-//				double confirmationFunctionValueNeg = bba.calcolaConfirmationFunction(ipotesi2);
-////				double confirmationFunctionValueNeg = bba.calcolaBeliefFunction(ipotesi2);
-//				ArrayList<Integer> ipotesi3= new ArrayList<Integer>();
-//				ipotesi3.add(-1);
-//				ipotesi3.add(+1);
-//				double confirmationFunctionValueUnc = bba.calcolaConfirmationFunction(ipotesi3);
-//				
-//				//************** fase di valutazione e computo delle misure***************/
-//				if((confirmationFunctionValueUnc>confirmationFunctionValuePos)&&(confirmationFunctionValueUnc>confirmationFunctionValueNeg))
-//					if (confirmationFunctionValuePos>confirmationFunctionValueNeg){
-//						
-//						if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
-//							tree.setMatch(0);
-//						else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
-//							tree.setCommission(0);
-//						else{
-//							tree.setInduction(0);
-//						}
-//					}
-//						
-//					else if (confirmationFunctionValuePos<confirmationFunctionValueNeg)
-//						if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
-//							tree.setCommission(0);
-//						else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
-//							tree.setMatch(0);
-//						else{
-//							tree.setInduction(0);
-//						}
-//						
-//					else tree.setOmission(0);
-//				else if(confirmationFunctionValuePos>=confirmationFunctionValueNeg)
-//					if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
-//						tree.setMatch(0);
-//					else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
-//						tree.setCommission(0);
-//					else{
-//						tree.setInduction(0);
-//					}
-//				else{
-//					if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
-//						tree.setCommission(0);
-//					else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
-//						tree.setMatch(0);
-//					else{
-//						tree.setInduction(0);
-//					}
-//				
-//				}
 
 				if (tree.getPosSubTree()!=null){
 					//					System.out.println("Caso 7");

@@ -5,14 +5,12 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import knowledgeBasesHandler.KnowledgeBase;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLIndividual;
 
-import classifiers.Classifier;
 import classifiers.SupervisedLearnable;
 import evaluation.CrossValidation;
 import evaluation.Evaluation;
@@ -20,6 +18,7 @@ import evaluation.ConceptGenerator;
 import evaluation.metrics.GlobalPerformanceMetricsComputation;
 
 import utils.Triple;
+import utils.Generator;
 
 
 
@@ -36,7 +35,7 @@ public class ClassMembershipPrediction implements Evaluation {
 	private OWLDescription[] negTestConcepts;
 	//	private OWLClass[] concetti;
 	private int[][] classification;
-	static Random generator = new Random(Evaluation.SEED);
+
 	//	private String urlOwlFile;
 	static final int QUERY_NB = 30;
 	
@@ -70,7 +69,7 @@ public class ClassMembershipPrediction implements Evaluation {
 	public  void bootstrap( int nFolds, String className ) throws Exception {
 		System.out.println(nFolds+"-fold BOOTSTRAP Experiment on ontology: ");	
 
-		Class classifierClass =ClassLoader.getSystemClassLoader().loadClass(className);
+		Class<?> classifierClass =ClassLoader.getSystemClassLoader().loadClass(className);
 		int nOfConcepts = testConcepts.length;
 		
 		GlobalPerformanceMetricsComputation gpmc = new GlobalPerformanceMetricsComputation(nOfConcepts,nFolds);
@@ -86,7 +85,7 @@ public class ClassMembershipPrediction implements Evaluation {
 
 			Set<Integer> testingExsSet = new HashSet<Integer>();
 			for (int r=0; r<allExamples.length; r++) 
-				trainingExsSet.add(generator.nextInt(allExamples.length));
+				trainingExsSet.add(Generator.generator.nextInt(allExamples.length));
 
 			for (int r=0; r<allExamples.length; r++) {
 				if (! trainingExsSet.contains(r)) 
@@ -163,7 +162,7 @@ public class ClassMembershipPrediction implements Evaluation {
 	@Override
 	public void crossValidation(int nFolds, String className) {
 		System.out.println(nFolds+"-fold CROSS VALIDATION Experiment on ontology:");		
-		Class classifierClass = null;
+		Class<?> classifierClass = null;
 		try {
 			classifierClass = ClassLoader.getSystemClassLoader().loadClass(className);
 		} catch (ClassNotFoundException e) {

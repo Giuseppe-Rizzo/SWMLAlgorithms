@@ -11,6 +11,7 @@ import org.semanticweb.owl.model.OWLDescription;
 
 import utils.Couple;
 import utils.Npla;
+import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
 import evaluation.Evaluation;
 import knowledgeBasesHandler.KnowledgeBase;
@@ -175,6 +176,15 @@ private ArrayList<OWLDescription> getRandomSelection(ArrayList<OWLDescription> r
 		
 		return result;
 
+	}
+
+
+
+	@Override
+	public void prune(Integer[] pruningSet, AbstractTree tree,
+			AbstractTree subtree, OWLDescription testConcept) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

@@ -15,7 +15,7 @@ import classifiers.evidentialAlgorithms.DSTTDTClassifier;
 import classifiers.evidentialAlgorithms.models.DSTDLTree;
 	import evaluation.Evaluation;
 /**
- * Wrapper for TDTClassifier
+ * Wrapper for DSTTDTClassifier
  * @author Utente
  *
  */

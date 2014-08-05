@@ -14,6 +14,11 @@ import classifiers.ensemble.terminologicalRandomForests.TRFClassifier;
 import classifiers.trees.models.DLTree;
 import evaluation.Evaluation;
 
+/**
+ * Classifier wrapper for TRFs
+ * @author Utente
+ *
+ */
 public class Classifier implements SupervisedLearnable {
 	Ensemble<DLTree>[] forests; //for each query concept induce an ensemble
 	TRFClassifier cl;

@@ -11,6 +11,7 @@ import org.semanticweb.owl.model.OWLDataFactory;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLIndividual;
 
+import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
 import evaluation.Evaluation;
 
@@ -40,8 +41,6 @@ public abstract class AbstractTDTClassifier {
 
 	}
 	
-	
-	
 	static double gini(double numPos, double numNeg, double prPos,
 			double prNeg) {
 			
@@ -52,7 +51,7 @@ public abstract class AbstractTDTClassifier {
 			
 				return (1.0-p1*p1-p2*p2);
 				//		return (1-Math.pow(p1,2)-Math.pow(p2,2))/2;
-			}
+	}
 
 	public int classifyExample(int indTestEx, DLTree tree) {
 		Stack<DLTree> stack= new Stack<DLTree>();
@@ -80,7 +79,7 @@ public abstract class AbstractTDTClassifier {
 				stack.push(currentTree.getNegSubTree());
 			else {
 				stop=true;
-				result=0; // seguo entrambi i percorsi
+				result=0; 
 	
 			}
 		};
@@ -90,6 +89,7 @@ public abstract class AbstractTDTClassifier {
 	
 	}
 
+	
 	protected OWLDescription selectBestConcept(OWLDescription[] concepts, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
 			ArrayList<Integer> undExs, double prPos, double prNeg) {
 			
@@ -141,6 +141,7 @@ public abstract class AbstractTDTClassifier {
 		return startImpurity - (sizeT/sum)*tImpurity - (sizeF/sum)*fImpurity - - (sizeU/sum)*uImpurity;
 	}
 
+	
 	public AbstractTDTClassifier() {
 		super();
 	}
@@ -209,10 +210,7 @@ public abstract class AbstractTDTClassifier {
 					else
 						undExs.add(exIndex);		
 				}	
-			
-			
-			
-			}
+	}
 
 	protected ArrayList<OWLDescription> generateNewConcepts(int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {
 	
@@ -237,7 +235,7 @@ public abstract class AbstractTDTClassifier {
 					else if (negExs.contains(index))
 						emptyIntersection = false;
 				}					
-			} while (emptyIntersection);;
+			} while (emptyIntersection);
 			rConcepts.add(newConcept);
 			System.out.printf("%d ", c);
 		}
@@ -246,4 +244,6 @@ public abstract class AbstractTDTClassifier {
 		return rConcepts;
 	}
 
+	public abstract void prune(Integer[] pruningSet, AbstractTree tree, AbstractTree subtree,OWLDescription testConcept);
 }
+	

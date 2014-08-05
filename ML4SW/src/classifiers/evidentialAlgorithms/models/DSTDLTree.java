@@ -8,43 +8,8 @@ import org.semanticweb.owl.model.OWLDescription;
 import classifiers.evidentialAlgorithms.DempsterShafer.MassFunction;
 
 
-
-public class DSTDLTree {
-	private int match, omission, commission, induction;
-	private boolean visited;
-	
-	
-	public int getMatch() {
-		return match;
-	}
-
-	public void setMatch(int match) {
-		this.match++;
-	}
-
-	public int getOmission() {
-		return omission;
-	}
-
-	public void setOmission(int omission) {
-		this.omission++;
-	}
-
-	public int getCommission() {
-		return commission;
-	}
-
-	public void setCommission(int commission) {
-		this.commission++;
-	}
-
-	public int getInduction() {
-		return induction;
-	}
-
-	public void setInduction(int induction) {
-		this.induction++;
-	}
+import classifiers.trees.models.*;
+public class DSTDLTree extends AbstractTree{
 
 	private class DLNode {
 		OWLDescription concept;	// node concept
@@ -149,7 +114,6 @@ public class DSTDLTree {
 		elem.setRoot(cloned.concept, cloned.m);
 		if (root.pos != null){ // copy the positive tree
 		
-			
 			elem.root.pos= (DSTDLTree)(root.pos).clone();
 			
 		}
@@ -162,16 +126,7 @@ public class DSTDLTree {
 	}
 	
 	
-	public void setAsVisited(){
-		
-		visited=true;
-		
-	}
 	
-	public boolean isVisited(){
-		
-		return visited;
-	}
 	
 	public double getNodi(){
 		// visita in ampiezza per effettuare il conteggio

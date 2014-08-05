@@ -1,14 +1,19 @@
 package classifiers.trees;
 
 import java.util.ArrayList;
+
 import java.util.Stack;
 
 import knowledgeBasesHandler.KnowledgeBase;
 
+import org.semanticweb.owl.model.OWLDataFactory;
 import org.semanticweb.owl.model.OWLDescription;
 
 import utils.Couple;
 import utils.Npla;
+
+
+import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
 import evaluation.Evaluation;
 
@@ -20,7 +25,6 @@ public class TDTClassifier extends AbstractTDTClassifier {
 		super(k);
 
 	}
-
 
 
 
@@ -50,11 +54,9 @@ public class TDTClassifier extends AbstractTDTClassifier {
 			if (posExs.size() == 0 && negExs.size() == 0) // no exs
 				if (prPos >= prNeg) { // prior majority of positives
 					currentTree.setRoot(kb.getDataFactory().getOWLThing()); // set positive leaf
-					System.out.println("true");
 				}
 				else { // prior majority of negatives
 					currentTree.setRoot(kb.getDataFactory().getOWLNothing()); // set negative leaf
-					System.out.println("false");
 				}
 
 			//		double numPos = posExs.size() + undExs.size()*prPos;
@@ -67,18 +69,17 @@ public class TDTClassifier extends AbstractTDTClassifier {
 
 				if (perNeg==0 && perPos > Evaluation.PURITY_THRESHOLD) { // no negative
 					currentTree.setRoot(kb.getDataFactory().getOWLThing()); // set positive leaf
-					System.out.println("true");
+					
 				}
 				else{
 					if (perPos==0 && perNeg > Evaluation.PURITY_THRESHOLD) { // no positive			
 						currentTree.setRoot(kb.getDataFactory().getOWLNothing()); // set negative leaf
-						System.out.println("false");
+						
 					}		
 					// else (a non-leaf node) ...
 					else{
 						OWLDescription[] cConcepts= new OWLDescription[0];
 						ArrayList<OWLDescription> cConceptsL = generateNewConcepts(dim, posExs, negExs);
-						System.out.println("Size: "+cConceptsL);
 						//						cConceptsL= getRandomSelection(cConceptsL); // random selection of feature set
 
 						cConcepts = cConceptsL.toArray(cConcepts);
@@ -121,4 +122,207 @@ public class TDTClassifier extends AbstractTDTClassifier {
 		return tree;
 
 	}
+
+
+	@Override
+	public void prune(Integer[] pruningSet, AbstractTree tree,
+			AbstractTree subtree, OWLDescription testConcept) {
+
+
+
+		DLTree treeDL= (DLTree) tree;
+
+		Stack<DLTree> stack= new Stack<DLTree>();
+		stack.add(treeDL);
+		// array list come pila
+		double nodes= treeDL.getNodi();
+		if(nodes>1){
+			while(!stack.isEmpty()){
+				DLTree current= stack.pop(); // leggo l'albero corrente
+
+				DLTree pos= current.getPosSubTree();
+				DLTree neg= current.getNegSubTree();
+				System.out.println("Current: "+pos+" ----- "+neg+"visited? "+current.isVisited());
+
+				if(current.isVisited()){
+					System.out.println("Valutazione");
+					int comissionRoot=current.getCommission();
+					int comissionPosTree= pos.getCommission();
+					int comissionNegTree= neg.getCommission();
+
+
+					int gainC=comissionRoot-(comissionPosTree+comissionNegTree);
+
+					if(gainC<0){
+
+						int posExs=current.getPos();
+						int negExs= current.getNeg();
+						// rimpiazzo rispetto alla classe di maggioranza
+						if(posExs<=negExs){
+
+							current.setRoot(kb.getDataFactory()	.getOWLNothing());
+						}
+						else{
+
+							current.setRoot(kb.getDataFactory()	.getOWLThing());
+						}
+
+						current.setNegTree(null);
+						current.setPosTree(null);	
+
+
+
+					}
+				}
+				else{
+					current.setAsVisited();
+					stack.push(current); // rimetto in  pila  e procedo alle chiamate ricorsive
+					if(pos!=null){
+						if((pos.getNegSubTree()!=null)||(pos.getPosSubTree()!=null))
+							stack.push(pos);
+
+					}
+					if(neg!=null){
+						if((neg.getNegSubTree()!=null)||(neg.getPosSubTree()!=null))
+							stack.push(neg);
+
+					}
+				}
+
+			}				
+		}
+
+	}
+
+	/**
+	 * Implementation of a REP-pruning algorithm for TDT
+	 * @param pruningset
+	 * @param tree
+	 * @param testconcept
+	 * @return
+	 */
+	public int[] doREPPruning(Integer[] pruningset, DLTree tree, OWLDescription testconcept){
+		// step 1: classification
+		System.out.println("Number of Nodes  Before pruning"+ tree.getNodi());
+		int[] results= new int[pruningset.length];
+		//for each element of the pruning set
+		for (int element=0; element< pruningset.length; element++){
+			//  per ogni elemento del pruning set
+			// versione modificata per supportare il pruning
+			classifyExampleforPruning(pruningset[element], tree,testconcept); // classificazione top down
+
+		}
+
+		prune(pruningset, tree, tree, testconcept);
+		System.out.println("Number of Nodes  After pruning"+ tree.getNodi());
+
+		return results;
+	}
+
+	/**
+	 * Ad-hoc implementation for evaluation step in REP-pruning. the method count positive, negative and uncertain instances 
+	 * @param indTestEx
+	 * @param tree
+	 * @param testconcept
+	 * @return
+	 */
+	public int classifyExampleforPruning(int indTestEx, DLTree tree,OWLDescription testconcept) {
+		Stack<DLTree> stack= new Stack<DLTree>();
+		OWLDataFactory dataFactory = kb.getDataFactory();
+		stack.add(tree);
+		int result=0;
+		boolean stop=false;
+		while(!stack.isEmpty() && !stop){
+			DLTree currentTree= stack.pop();
+
+			OWLDescription rootClass = currentTree.getRoot();
+			//			System.out.println("Root class: "+ rootClass);
+			if (rootClass.equals(dataFactory.getOWLThing())){
+				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
+					currentTree.setMatch(0);
+					currentTree.setPos();
+				}
+				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
+					currentTree.setCommission(0);
+					currentTree.setNeg(0);
+				}else{
+					currentTree.setInduction(0);
+					currentTree.setUnd();
+				}
+				stop=true;
+				result=+1;
+
+			}
+			else if (rootClass.equals(dataFactory.getOWLNothing())){
+
+				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
+					
+					currentTree.setPos();
+					currentTree.setCommission(0);
+				}
+				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
+					currentTree.setNeg(0);
+					currentTree.setMatch(0);
+				}
+				else{
+					currentTree.setUnd();
+					currentTree.setInduction(0);
+				}
+				stop=true;
+				result=-1;
+
+			}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass)){
+				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
+					currentTree.setMatch(0);
+					currentTree.setPos();
+				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
+					currentTree.setCommission(0);
+					currentTree.setNeg(0);
+				}else{
+					currentTree.setUnd();
+					currentTree.setInduction(0);
+				}
+				stack.push(currentTree.getPosSubTree());
+
+			}
+			else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass))){
+
+				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
+					currentTree.setPos();
+					currentTree.setCommission(0);
+				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
+					currentTree.setNeg(0);
+					currentTree.setMatch(0);
+				}else{
+					currentTree.setUnd();
+					currentTree.setInduction(0);
+				}
+				stack.push(currentTree.getNegSubTree());
+
+			}
+			else {
+				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
+					currentTree.setPos();
+					currentTree.setInduction(0);
+				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
+					currentTree.setNeg(0);
+					currentTree.setInduction(0);
+				}else{
+					currentTree.setUnd();
+					currentTree.setMatch(0);
+				}
+				stop=true;
+				result=0; 
+
+			}
+		};
+
+
+		return result;
+
+	}
+
 }
+
+
+
