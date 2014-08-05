@@ -1,7 +1,9 @@
 package classifiers.trees;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -33,8 +35,14 @@ public abstract class AbstractTDTClassifier {
 	public	void classifyExamples(int indTestEx, DLTree[] trees, int[] results, OWLDescription[] testConcepts, int...rclass) {
 
 		for (int c=0; c < testConcepts.length; c++) {
-			
-			results[c] = classifyExample(indTestEx, trees[c]);
+			if (Evaluation.missingValueTreatmentForTDT){
+				ArrayList<Integer> list= new ArrayList<Integer>();
+				results[c] = classifyExample(list,indTestEx, trees[c]);
+				
+			}
+			else
+				results[c] = classifyExample(indTestEx, trees[c]);
+				
 		} // for c
 
 
@@ -89,6 +97,54 @@ public abstract class AbstractTDTClassifier {
 	
 	}
 
+	
+	public int classifyExample(List<Integer> list, int indTestEx, DLTree tree) {
+		Stack<DLTree> stack= new Stack<DLTree>();
+		OWLDataFactory dataFactory = kb.getDataFactory();
+		stack.add(tree);
+		int result=0;
+		boolean stop=false;
+		while(!stack.isEmpty() && !stop){
+			DLTree currentTree= stack.pop();
+	
+			OWLDescription rootClass = currentTree.getRoot();
+			//			System.out.println("Root class: "+ rootClass);
+			if (rootClass.equals(dataFactory.getOWLThing())){
+//				stop=true;
+				result=+1;
+				list.add(result);
+	
+			}
+			else if (rootClass.equals(dataFactory.getOWLNothing())){
+//				stop=true;
+				result=-1;
+				list.add(result);
+	
+			}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass))
+				stack.push(currentTree.getPosSubTree());
+			else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass)))
+				stack.push(currentTree.getNegSubTree());
+			else {
+//				stop=true;
+				result=0; 
+				stack.push(currentTree.getPosSubTree());
+				stack.push(currentTree.getNegSubTree());
+	
+			}
+		};
+		
+		int posFr= Collections.frequency(list, +1);
+		int negFr= Collections.frequency(list, -1);
+	
+		if (posFr>negFr)
+			return +1;
+		else
+			return -1;
+		
+	
+	}
+
+	
 	
 	protected OWLDescription selectBestConcept(OWLDescription[] concepts, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
 			ArrayList<Integer> undExs, double prPos, double prNeg) {
