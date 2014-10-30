@@ -10,10 +10,10 @@ import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLIndividual;
 
 public class ConceptGenerator {
-	private KnowledgeBase kb;
-	private  Reasoner reasoner;
-	private  OWLDataFactory dataFactory;
-	private  OWLIndividual[] allExamples;
+	protected KnowledgeBase kb;
+	protected Reasoner reasoner;
+	protected  OWLDataFactory dataFactory;
+	protected  OWLIndividual[] allExamples;
 	
 	public ConceptGenerator(KnowledgeBase k){
 		

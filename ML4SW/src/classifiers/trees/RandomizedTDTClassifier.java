@@ -182,7 +182,7 @@ private ArrayList<OWLDescription> getRandomSelection(ArrayList<OWLDescription> r
 
 	@Override
 	public void prune(Integer[] pruningSet, AbstractTree tree,
-			AbstractTree subtree, OWLDescription testConcept) {
+			AbstractTree subtree) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -2,9 +2,11 @@ package classifiers.ensemble;
 
 import java.util.ArrayList;
 
-public class Ensemble<T>{
+import classifiers.AbstractModel;
+
+public class Ensemble<T> extends AbstractModel{
 	
-	private ArrayList<T> classifiers;
+	protected ArrayList<T> classifiers;
 	// counter for ensemble class-memebership
 	private int countPos;
 	private int countNeg;
@@ -83,6 +85,13 @@ public class Ensemble<T>{
 		
 		return "Count Vote: "+ countPos+ "-"+ countNeg+ "-"+ countUkn;
 		
+	}
+
+
+	@Override
+	public double getComplexityMeasure() {
+
+		return 0;
 	}
 	
 	

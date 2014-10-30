@@ -1,6 +1,8 @@
 package classifiers.trees;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import java.util.Stack;
 
@@ -69,12 +71,12 @@ public class TDTClassifier extends AbstractTDTClassifier {
 
 				if (perNeg==0 && perPos > Evaluation.PURITY_THRESHOLD) { // no negative
 					currentTree.setRoot(kb.getDataFactory().getOWLThing()); // set positive leaf
-					
+
 				}
 				else{
 					if (perPos==0 && perNeg > Evaluation.PURITY_THRESHOLD) { // no positive			
 						currentTree.setRoot(kb.getDataFactory().getOWLNothing()); // set negative leaf
-						
+
 					}		
 					// else (a non-leaf node) ...
 					else{
@@ -126,7 +128,7 @@ public class TDTClassifier extends AbstractTDTClassifier {
 
 	@Override
 	public void prune(Integer[] pruningSet, AbstractTree tree,
-			AbstractTree subtree, OWLDescription testConcept) {
+			AbstractTree subtree) {
 
 
 
@@ -135,7 +137,7 @@ public class TDTClassifier extends AbstractTDTClassifier {
 		Stack<DLTree> stack= new Stack<DLTree>();
 		stack.add(treeDL);
 		// array list come pila
-		double nodes= treeDL.getNodi();
+		double nodes= treeDL.getComplexityMeasure();
 		if(nodes>1){
 			while(!stack.isEmpty()){
 				DLTree current= stack.pop(); // leggo l'albero corrente
@@ -149,8 +151,7 @@ public class TDTClassifier extends AbstractTDTClassifier {
 					int comissionRoot=current.getCommission();
 					int comissionPosTree= pos.getCommission();
 					int comissionNegTree= neg.getCommission();
-
-
+					
 					int gainC=comissionRoot-(comissionPosTree+comissionNegTree);
 
 					if(gainC<0){
@@ -194,133 +195,318 @@ public class TDTClassifier extends AbstractTDTClassifier {
 
 	}
 
+	public void prunePEP(Integer[] pruningSet, AbstractTree tree,
+			AbstractTree subtree) {
+
+
+
+		DLTree treeDL= (DLTree) tree;
+
+		Stack<DLTree> stack= new Stack<DLTree>();
+		stack.add(treeDL);
+		// array list come pila
+		
+			while(!stack.isEmpty()){
+				System.out.println("Print");
+				DLTree current= stack.pop(); // leggo l'albero corrente
+
+				List<DLTree> leaves= current.getFoglie();
+				System.out.println("Print 2");
+				
+				   int commissionRoot= current.getCommission();
+				   
+				   int nExsForLeaves=0;
+				   int commissions=0;
+				
+				   
+					for (Iterator iterator = leaves.iterator(); iterator
+							.hasNext();) {
+						System.out.println("Print");
+						DLTree dlTree = (DLTree) iterator.next();
+						commissions+=dlTree.getCommission();
+						nExsForLeaves=nExsForLeaves+current.getPos()+current.getNeg();
+						
+						
+					} 
+					nExsForLeaves+=2; // laplace correction
+					commissions+=1;
+					int gainC=commissionRoot-commissions;
+
+					if(gainC<0){
+
+						int posExs=current.getPos();
+						int negExs= current.getNeg();
+						// rimpiazzo rispetto alla classe di maggioranza
+						if(posExs<=negExs){
+
+							current.setRoot(kb.getDataFactory()	.getOWLNothing());
+						}
+						else{
+
+							current.setRoot(kb.getDataFactory()	.getOWLThing());
+						}
+
+						current.setNegTree(null);
+						current.setPosTree(null);	
+
+
+
+					}
+				else{
+		
+					DLTree pos=current.getPosSubTree();
+					DLTree neg= current.getNegSubTree();
+					if(pos!=null){
+		
+							stack.push(pos);
+
+					}
+					if(neg!=null){
+						
+							stack.push(neg);
+
+					}
+				}
+
+			}				
+		
+
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * Implementation of a REP-pruning algorithm for TDT
 	 * @param pruningset
 	 * @param tree
-	 * @param testconcept
+	 * @param results2
 	 * @return
 	 */
-	public int[] doREPPruning(Integer[] pruningset, DLTree tree, OWLDescription testconcept){
+	public int[] doREPPruning(Integer[] pruningset, DLTree tree, int[] results2){
 		// step 1: classification
-		System.out.println("Number of Nodes  Before pruning"+ tree.getNodi());
+		System.out.println("Number of Nodes  Before pruning"+ tree.getComplexityMeasure());
 		int[] results= new int[pruningset.length];
 		//for each element of the pruning set
 		for (int element=0; element< pruningset.length; element++){
 			//  per ogni elemento del pruning set
 			// versione modificata per supportare il pruning
-			classifyExampleforPruning(pruningset[element], tree,testconcept); // classificazione top down
+			classifyExampleforPruning(pruningset[element], tree,results2); // classificazione top down
 
 		}
 
-		prune(pruningset, tree, tree, testconcept);
-		System.out.println("Number of Nodes  After pruning"+ tree.getNodi());
+		prune(pruningset, tree, tree);
+		System.out.println("Number of Nodes  After pruning"+ tree.getComplexityMeasure());
 
 		return results;
 	}
+	
+	
+	public int[] doPEPPruning(Integer[] pruningset, DLTree tree, int[] results2){
+		// step 1: classification
+		System.out.println("Number of Nodes  Before pruning"+ tree.getComplexityMeasure());
+		int[] results= new int[pruningset.length];
+		//for each element of the pruning set
+		for (int element=0; element< pruningset.length; element++){
+			//  per ogni elemento del pruning set
+			// versione modificata per supportare il pruning
+			classifyExampleforPruning(pruningset[element], tree,results2); // classificazione top down
+
+		}
+        System.out.println("Classification for pruning");
+		prunePEP(pruningset, tree, tree);
+		System.out.println("Number of Nodes  After pruning"+ tree.getComplexityMeasure());
+
+		return results;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
 
 	/**
 	 * Ad-hoc implementation for evaluation step in REP-pruning. the method count positive, negative and uncertain instances 
 	 * @param indTestEx
 	 * @param tree
-	 * @param testconcept
+	 * @param results2
 	 * @return
 	 */
-	public int classifyExampleforPruning(int indTestEx, DLTree tree,OWLDescription testconcept) {
+	public int classifyExampleforPruning(int indTestEx, DLTree tree,int[] results2) {
 		Stack<DLTree> stack= new Stack<DLTree>();
 		OWLDataFactory dataFactory = kb.getDataFactory();
 		stack.add(tree);
 		int result=0;
 		boolean stop=false;
-		while(!stack.isEmpty() && !stop){
-			DLTree currentTree= stack.pop();
 
-			OWLDescription rootClass = currentTree.getRoot();
-			//			System.out.println("Root class: "+ rootClass);
-			if (rootClass.equals(dataFactory.getOWLThing())){
-				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
-					currentTree.setMatch(0);
-					currentTree.setPos();
+
+		if (!Evaluation.BINARYCLASSIFICATION){
+			while(!stack.isEmpty() && !stop){
+				DLTree currentTree= stack.pop();
+
+				OWLDescription rootClass = currentTree.getRoot();
+				//			System.out.println("Root class: "+ rootClass);
+				if (rootClass.equals(dataFactory.getOWLThing())){
+					if (results2[indTestEx]==+1){
+						currentTree.setMatch(0);
+						currentTree.setPos();
+					}
+					else if (results2[indTestEx]==-1){
+						currentTree.setCommission(0);
+						currentTree.setNeg(0);
+					}else{
+						currentTree.setInduction(0);
+						currentTree.setUnd();
+					}
+					stop=true;
+					result=+1;
+
 				}
-				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
-					currentTree.setCommission(0);
-					currentTree.setNeg(0);
-				}else{
-					currentTree.setInduction(0);
-					currentTree.setUnd();
+				else if (rootClass.equals(dataFactory.getOWLNothing())){
+
+					if(results2[indTestEx]==+1){
+
+						currentTree.setPos();
+						currentTree.setCommission(0);
+					}
+					else if (results2[indTestEx]==-1){
+						currentTree.setNeg(0);
+						currentTree.setMatch(0);
+					}
+					else{
+						currentTree.setUnd();
+						currentTree.setInduction(0);
+					}
+					stop=true;
+					result=-1;
+
+				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass)){
+					if(results2[indTestEx]==+1){
+						currentTree.setMatch(0);
+						currentTree.setPos();
+					}else if (results2[indTestEx]==-1){
+						currentTree.setCommission(0);
+						currentTree.setNeg(0);
+					}else{
+						currentTree.setUnd();
+						currentTree.setInduction(0);
+					}
+					stack.push(currentTree.getPosSubTree());
+
 				}
-				stop=true;
-				result=+1;
+				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass))){
 
-			}
-			else if (rootClass.equals(dataFactory.getOWLNothing())){
+					if(results2[indTestEx]==+1){
+						currentTree.setPos();
+						currentTree.setCommission(0);
+					}else if(results2[indTestEx]==-1){
+						currentTree.setNeg(0);
+						currentTree.setMatch(0);
+					}else{
+						currentTree.setUnd();
+						currentTree.setInduction(0);
+					}
+					stack.push(currentTree.getNegSubTree());
 
-				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
+				}
+				else {
+					if(results2[indTestEx]==+1){
+						currentTree.setPos();
+						currentTree.setInduction(0);
+					}else if(results2[indTestEx]==-1){
+						currentTree.setNeg(0);
+						currentTree.setInduction(0);
+					}else{
+						currentTree.setUnd();
+						currentTree.setMatch(0);
+					}
+					stop=true;
+					result=0; 
+
+				}
+			};
+		}else{
+			
+			while(!stack.isEmpty() && !stop){
+				DLTree currentTree= stack.pop();
+
+				OWLDescription rootClass = currentTree.getRoot();
+				//			System.out.println("Root class: "+ rootClass);
+				if (rootClass.equals(dataFactory.getOWLThing())){
+					if(results2[indTestEx]==+1){
+						currentTree.setMatch(0);
+						currentTree.setPos();
+					}
+					else{
+						currentTree.setCommission(0);
+						currentTree.setNeg(0);
+					}
+					stop=true;
+					result=+1;
+
+				}
+				else if (rootClass.equals(dataFactory.getOWLNothing())){
+
+					if(results2[indTestEx]==+1){
+
+						currentTree.setPos();
+						currentTree.setCommission(0);
+					}
+					else {
+						currentTree.setNeg(0);
+						currentTree.setMatch(0);
+					}
 					
-					currentTree.setPos();
-					currentTree.setCommission(0);
-				}
-				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
-					currentTree.setNeg(0);
-					currentTree.setMatch(0);
-				}
-				else{
-					currentTree.setUnd();
-					currentTree.setInduction(0);
-				}
-				stop=true;
-				result=-1;
+					stop=true;
+					result=-1;
 
-			}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass)){
-				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
-					currentTree.setMatch(0);
-					currentTree.setPos();
-				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
-					currentTree.setCommission(0);
-					currentTree.setNeg(0);
-				}else{
-					currentTree.setUnd();
-					currentTree.setInduction(0);
+				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass)){
+					if(results2[indTestEx]==+1){
+						currentTree.setMatch(0);
+						currentTree.setPos();
+					}else{
+						currentTree.setCommission(0);
+						currentTree.setNeg(0);
+					}
+					stack.push(currentTree.getPosSubTree());
+
 				}
-				stack.push(currentTree.getPosSubTree());
+				else {
 
-			}
-			else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass))){
+					if(results2[indTestEx]==+1){
+						currentTree.setPos();
+						currentTree.setCommission(0);
+					}else{
+						currentTree.setNeg(0);
+						currentTree.setMatch(0);
+					}
+					stack.push(currentTree.getNegSubTree());
 
-				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
-					currentTree.setPos();
-					currentTree.setCommission(0);
-				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
-					currentTree.setNeg(0);
-					currentTree.setMatch(0);
-				}else{
-					currentTree.setUnd();
-					currentTree.setInduction(0);
 				}
-				stack.push(currentTree.getNegSubTree());
-
-			}
-			else {
-				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
-					currentTree.setPos();
-					currentTree.setInduction(0);
-				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
-					currentTree.setNeg(0);
-					currentTree.setInduction(0);
-				}else{
-					currentTree.setUnd();
-					currentTree.setMatch(0);
-				}
-				stop=true;
-				result=0; 
-
-			}
-		};
-
+				
+			};
+			
+			
+		}
 
 		return result;
 
 	}
+
+
+
+
+
+
 
 }
 

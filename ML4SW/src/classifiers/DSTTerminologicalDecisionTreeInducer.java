@@ -19,13 +19,13 @@ import classifiers.evidentialAlgorithms.models.DSTDLTree;
  * @author Utente
  *
  */
-	public class Classifier3 implements SupervisedLearnable {
+	public class DSTTerminologicalDecisionTreeInducer implements SupervisedLearnable {
 		DSTDLTree[] trees; //for each query concept induce an ensemble
 		DSTTDTClassifier cl;
 
 		KnowledgeBase kb;
 		int nOfConcepts;	
-		public Classifier3( KnowledgeBase k, int nOfConcepts){
+		public DSTTerminologicalDecisionTreeInducer( KnowledgeBase k, int nOfConcepts){
 			this.nOfConcepts=nOfConcepts;
 			kb=k;
 			trees = new DSTDLTree [nOfConcepts]; 
@@ -50,7 +50,6 @@ import classifiers.evidentialAlgorithms.models.DSTDLTree;
 				ArrayList<Integer> undExs = new ArrayList<Integer>();								
 
 				System.out.printf("--- Query Concept #%d \n",c);
-
 				// ha splittato in istanze negative, positive e incerte per un singolo albero
 				for (int e=0; e<trainingExs.length; e++){
 
@@ -71,24 +70,21 @@ import classifiers.evidentialAlgorithms.models.DSTDLTree;
 
 
 				System.out.println("Training set composition: "+ posExs.size()+" - "+ negExs.size()+"-"+undExs.size());
-
+//
 				double normSum = prPos+prNeg;
 				if (normSum==0)	{ prPos=.5;	prNeg=.5; }
 				else { prPos=prPos/normSum;	prNeg=prNeg/normSum; }
 
 				System.out.printf("New learning problem prepared.\n",c);
-				System.out.println("Learning a forest ");
-
+				System.out.println("Learning phase ");
 
 				trees[c] = cl.induceDSTDLTree(posExs, negExs, undExs, Evaluation.NUMGENCONCEPTS,prPos, prNeg);
 
 				//			System.out.println("forest "+c);
-				//			System.out.println(forests[c]);
+			    System.out.println(trees[c]);
 				//			System.out.printf("--- forest #%d was induced. \n\n",c);
 
 			}
-
-
 
 		}
 
@@ -106,7 +102,7 @@ import classifiers.evidentialAlgorithms.models.DSTDLTree;
 				System.out.print("\n\nFold #"+f);
 				System.out.println(" --- Classifying Example " + (te+1) +"/"+testExs.length +" [" + indTestEx + "] " + kb.getIndividuals()[indTestEx]);
 
-				int[] indClassifications = new int[testConcepts.length];
+				int[] indClassifications = new int[nOfConcepts];
 				//			cl.classifyExamplesTree(indTestEx, forests, indClassifications, testConcepts);
 				cl.classifyExamplesDST(indTestEx, trees, indClassifications, testConcepts);
 
@@ -122,6 +118,22 @@ import classifiers.evidentialAlgorithms.models.DSTDLTree;
 			}
 			return labels;
 
+		}
+
+		@Override
+		public double[] getComplexityValues() {
+			double[] complexityValue= new double[trees.length]; // a measure to express the model complexity (e.g. the number of nodes in a tree)
+			
+			
+			for(int i=0; i<trees.length; i++){
+				
+				double current=trees[i].getComplexityMeasure();
+				complexityValue[i]= current;
+				
+			}
+			
+			
+			return complexityValue;
 		}
 
 	}

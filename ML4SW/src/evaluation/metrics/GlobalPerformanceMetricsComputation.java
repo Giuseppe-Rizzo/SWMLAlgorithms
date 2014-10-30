@@ -1,9 +1,15 @@
 package evaluation.metrics;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
+import evaluation.Evaluation;
+
 import utils.MathUtils;
 
-public class GlobalPerformanceMetricsComputation {
-
+public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
+	private PrintStream stream;
 	@SuppressWarnings("unused")
 	private double[][] posInstances;
 	@SuppressWarnings("unused")
@@ -19,6 +25,8 @@ public class GlobalPerformanceMetricsComputation {
 	double[][] totInducedRate;
 
 	public GlobalPerformanceMetricsComputation(int nOfConcepts,int nFolds){
+		
+		super();
 		posInstances= new double[nOfConcepts][nFolds];
 		negInstances= new double[nOfConcepts][nFolds];
 		uncInstances= new double[nOfConcepts][nFolds];
@@ -29,23 +37,17 @@ public class GlobalPerformanceMetricsComputation {
 		totInducedRate= new double[nOfConcepts][nFolds]; // per OWLClass per fold
 		totPrecision= new double[nOfConcepts][nFolds];
 		totRecall= new double[nOfConcepts][nFolds];
+		
+		try {
+			stream= new PrintStream(new FileOutputStream("AccuracyEvaluation.txt"), true);
+		} catch (FileNotFoundException e) {
+			
+			e.printStackTrace();
+		} // append
 	}
 
 	public void computeMetricsperIndividualperClass( int label, int rclass, int[][] classification, int c, int te, int[] foundNum,int[] trueNum, int[] hitNum, int[] matchingNum, int[] commissionNum, int[] omissionNum, int[] inducedNum ){
-//		for (int c=0; c < nOfConcepts; c++) {
 
-//			int rclass = classification[c][te];
-//			Triple<Integer,Integer, Integer> compositionConceptC= testSetComposition.get(c);
-
-
-			// count the number of positive, negative and uncertain instances
-//			if(rclass==1){
-//				compositionConceptC.setFirstElem((compositionConceptC.getFirstElem())+1);
-//			}else if (rclass==-1){
-//				compositionConceptC.setSecondElem((compositionConceptC.getSecondElem())+1); //
-//			}
-//			else
-//				compositionConceptC.setThirdElem((compositionConceptC.getThirdElem())+1);
 
 			if (label == 1)
 				++foundNum[c];
@@ -105,7 +107,9 @@ public class GlobalPerformanceMetricsComputation {
 			computeMetricsperIndividual(labels[te], classification, nOfConcepts, indTestEx, foundNum, trueNum, hitNum, matchingNum, commissionNum, omissionNum, inducedNum);
 		}
 	System.out.println("\n\n >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OUTCOMES FOLD #"+fold);
+	stream.println("\n\n >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OUTCOMES FOLD #"+fold);
 		System.out.printf("\n%10s %10s %10s %10s %10s %10s %10s\n", "Query#",  "matching", "commission", "omission", "induction","precision","recall");
+		stream.printf("\n%10s %10s %10s %10s %10s %10s %10s\n", "Query#",  "matching", "commission", "omission", "induction","precision","recall");
 		
 		for (int c=0; c < nOfConcepts; c++) {
 			System.out.println(matchingNum[c]+ "-"+ commissionNum[c]+ "-"+ omissionNum[c]+""+inducedNum[c]);
@@ -119,7 +123,7 @@ public class GlobalPerformanceMetricsComputation {
 			totOmissionRate[c][fold] = omissionNum[c]/(double)testExs.length;  
 			totInducedRate[c][fold] = inducedNum[c]/(double)testExs.length;
 			System.out.printf("%10d %10.3f %10.3f %10.3f %10.3f \n", c, totMatchingRate[c][fold], totCommissionRate[c][fold], totOmissionRate[c][fold], totInducedRate[c][fold]);
-
+			stream.printf("%10d %10.3f %10.3f %10.3f %10.3f \n", c, totMatchingRate[c][fold], totCommissionRate[c][fold], totOmissionRate[c][fold], totInducedRate[c][fold]);
 		}
 
 	
@@ -142,8 +146,10 @@ public class GlobalPerformanceMetricsComputation {
 		
 		
 		System.out.println("\n\n\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ OVERALL OUTCOMES");
+		stream.println("\n\n\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ OVERALL OUTCOMES");
 		System.out.printf("\n%10s %10s %10s %10s %10s %10s %10s\n", "Query#",  "matching", "commission", "omission", "induction","precision","recall");
-
+		stream.printf("\n%10s %10s %10s %10s %10s %10s %10s\n", "Query#",  "matching", "commission", "omission", "induction","precision","recall");
+		
 		for (int c=0; c < nOfConcepts; c++) {
 
 
@@ -166,17 +172,18 @@ public class GlobalPerformanceMetricsComputation {
 
 			System.out.printf("%10d %10.2f %10.2f %10.2f %10.2f \n", c, 
 					AvgMatching*100, AvgCommission*100, avgOmission*100, avgInduction*100);
-			//			accMatchingAvgs += AvgMatching;
-			//			accCommissionAvgs += AvgCommission;
-			//			accOmissionAvgs += avgOmission;
-			//			accInductionAvgs += avgInduction;
+			stream.printf("%10d %10.2f %10.2f %10.2f %10.2f \n", c, 
+					AvgMatching*100, AvgCommission*100, avgOmission*100, avgInduction*100);
+		
 
 
 
 		}
 		System.out.println();
-
+		stream.println();
 		System.out.println("----------------------------------------------------------------------------------------------");
+		stream.println("----------------------------------------------------------------------------------------------");
+		
 		// for each statistic
 
 		double matchingAvg 		= MathUtils.avg(matchingAvgArray);
@@ -201,7 +208,11 @@ public class GlobalPerformanceMetricsComputation {
 
 		System.out.printf("%10s %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f \n", "avg Values", 
 				matchingAvg*100, commissionAvg*100, omissionAvg*100, inductionAvg*100,globalAM*100,globalCM*100);
+		stream.printf("%10s %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f \n", "avg Values", 
+				matchingAvg*100, commissionAvg*100, omissionAvg*100, inductionAvg*100,globalAM*100,globalCM*100);
 		System.out.printf("%10s %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f \n", "stdDev Values", 
+				matchingSD*100, commissionSD*100, omissionSD*100, inductionSD*100,globalAMSD*100,globalCMSD*100);
+		stream.printf("%10s %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f \n", "stdDev Values", 
 				matchingSD*100, commissionSD*100, omissionSD*100, inductionSD*100,globalAMSD*100,globalCMSD*100);
 		
 	}

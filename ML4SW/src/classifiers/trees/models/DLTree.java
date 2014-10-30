@@ -3,6 +3,7 @@ package classifiers.trees.models;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.semanticweb.owl.model.OWLDescription;
 
@@ -75,7 +76,7 @@ public class DLTree extends AbstractTree {
 	public void setInduction(int induction) {
 		this.induction++;
 	}
-
+	int nFoglie;
 	private class DLNode {
 
 		OWLDescription concept;		// node concept
@@ -155,11 +156,14 @@ public class DLTree extends AbstractTree {
 
 		return root.neg;
 	}
-	
 
-	public double getNodi(){
+
+
+
+
+	private double getNodi(){
 		// visita in ampiezza per effettuare il conteggio
-		
+
 		ArrayList<DLNode> lista = new ArrayList<DLNode>();
 		double  num=0;
 		if(root!=null){
@@ -171,21 +175,60 @@ public class DLTree extends AbstractTree {
 				DLNode sx=null;
 				if(node.pos!=null){
 					sx= node.pos.root;
-				 	if(sx!=null)
-					 lista.add(sx);
+					if(sx!=null)
+						lista.add(sx);
 				}
 				if(node.neg!=null){
-				 sx= node.neg.root;
-				 if(sx!=null)
-					 lista.add(sx);
+					sx= node.neg.root;
+					if(sx!=null)
+						lista.add(sx);
 				}
-					 
+
 			}
-			
+
 		}
-		
+
 		return num;
-		
+
+	}
+
+	@Override
+	public double getComplexityMeasure() {
+		// TODO Auto-generated method stub
+		return getNodi();
+	}
+
+
+	public List<DLTree> getFoglie(){
+		ArrayList<DLTree> leaves= new ArrayList<DLTree>();
+
+		ArrayList<DLTree> lista = new ArrayList<DLTree>();
+
+		if(root!=null){
+			lista.add(this);
+			while(!lista.isEmpty()){
+				System.out.println("lol");
+				DLTree current= lista.get(0);
+				lista.remove(0);
+				if ((current.getPosSubTree()==null)&&(current.getNegSubTree()==null))
+					leaves.add(current);
+
+				else{
+					if(current.getPosSubTree()!=null)
+						lista.add(current.getPosSubTree());
+
+					if (current.getNegSubTree()!=null)
+						lista.add(current.getNegSubTree());
+				}
+			}
+
+
+		}
+
+
+		return leaves;
+
+
 	}
 
 }

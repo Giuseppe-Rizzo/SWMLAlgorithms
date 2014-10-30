@@ -9,7 +9,7 @@ import classifiers.evidentialAlgorithms.DempsterShafer.MassFunction;
 
 
 import classifiers.trees.models.*;
-public class DSTDLTree extends AbstractTree{
+public class DSTDLTree extends AbstractTree implements EvidentialModel{
 
 	private class DLNode {
 		OWLDescription concept;	// node concept
@@ -128,7 +128,7 @@ public class DSTDLTree extends AbstractTree{
 	
 	
 	
-	public double getNodi(){
+	private double getNodi(){
 		// visita in ampiezza per effettuare il conteggio
 		
 		ArrayList<DLNode> lista = new ArrayList<DLNode>();
@@ -157,6 +157,12 @@ public class DSTDLTree extends AbstractTree{
 		
 		return num;
 		
+	}
+
+	@Override
+	public double getComplexityMeasure() {
+		
+		return getNodi();
 	}
 	
 

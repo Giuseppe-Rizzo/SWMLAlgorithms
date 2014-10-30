@@ -9,6 +9,7 @@ import org.semanticweb.owl.model.OWLDescription;
 import classifiers.ensemble.Ensemble;
 import classifiers.trees.RandomizedTDTClassifier;
 import classifiers.trees.models.DLTree;
+import evaluation.Evaluation;
 import samplers.BalancedDataset;
 import utils.Triple;
 
@@ -33,7 +34,7 @@ public class TRFClassifier {
 
 
 			BalancedDataset<Integer> bd= new BalancedDataset<Integer>(); // a balance of th)e instances
-			bd.balanceTheDataset(posExs, negExs, undExs, posExsEns, negExsEns, undExsEns, 1); //no sampling
+			bd.balanceTheDataset(posExs, negExs, undExs, posExsEns, negExsEns, undExsEns, Evaluation.samplingrate); //no sampling
 			
 			// performing undersampling on uncertainty instances
 			
@@ -74,7 +75,14 @@ public class TRFClassifier {
 		int neg=0;
 		int und=0;
 		for (int tree=0; tree<forest.getSize(); tree++){
+			if (!Evaluation.missingValueTreatmentForTDT){
 			classValue=data.classifyExample(indTestEx,forest.getClassifier(tree));
+			
+			}
+			else{
+				ArrayList<Integer> list= new ArrayList<Integer>();
+				classValue=data.classifyExample(list, indTestEx, forest.getClassifier(tree));
+			}
 			if(classValue==1)
 				pos++;
 			else if(classValue== -1)
@@ -101,7 +109,8 @@ public class TRFClassifier {
 	@SuppressWarnings("unchecked")
 	public	void classifyExamples(int indTestEx, @SuppressWarnings("rawtypes") Ensemble[] forests, int[] results, OWLDescription[] testConcepts, int...rclass) {
 
-		for (int c=0; c < testConcepts.length; c++) {
+		int length = testConcepts!=null?testConcepts.length:1;
+		for (int c=0; c < length; c++) {
 			
 			results[c] = classifyEnsemble(indTestEx, forests[c]);
 			System.out.println(forests[c].printVotes());

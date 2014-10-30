@@ -19,14 +19,14 @@ import evaluation.Evaluation;
  * @author Utente
  *
  */
-public class Classifier implements SupervisedLearnable {
+public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 	Ensemble<DLTree>[] forests; //for each query concept induce an ensemble
 	TRFClassifier cl;
 
 	KnowledgeBase kb;
 	int nOfConcepts;	
 	@SuppressWarnings("unchecked")
-	public Classifier( KnowledgeBase k, int nOfConcepts){
+	public TerminologicalRandomForestsInducer( KnowledgeBase k, int nOfConcepts){
 		this.nOfConcepts=nOfConcepts;
 		kb=k;
 		forests = new Ensemble [nOfConcepts]; 
@@ -45,7 +45,8 @@ public class Classifier implements SupervisedLearnable {
 		OWLIndividual[] allExamples= kb.getIndividuals();
 		//		ArrayList<Triple<Integer, Integer, Integer>> testSetComposition= new ArrayList<Triple<Integer, Integer, Integer>>();
 		TRFClassifier cl= new TRFClassifier(kb);
-		for (int c=0; c<testConcepts.length; c++) {
+		int length = testConcepts!=null?testConcepts.length:1;
+		for (int c=0; c<length; c++) {
 
 			ArrayList<Integer> posExs = new ArrayList<Integer>();
 			ArrayList<Integer> negExs = new ArrayList<Integer>();
@@ -53,18 +54,21 @@ public class Classifier implements SupervisedLearnable {
 
 			System.out.printf("--- Query Concept #%d \n",c);
 
+			splitting(trainingExs, kb.getClassMembershipResult(), c, posExs, negExs, undExs);
+			
 			// ha splittato in istanze negative, positive e incerte per un singolo albero
-			for (int e=0; e<trainingExs.length; e++){
-
-				if (reasoner.hasType(allExamples[trainingExs[e]], testConcepts[c]))
-					posExs.add(trainingExs[e]);
-				else if (reasoner.hasType(allExamples[trainingExs[e]], negTestConcepts[c]))
-					negExs.add(trainingExs[e]);
-				else
-					undExs.add(trainingExs[e]);
-			}
+//			for (int e=0; e<trainingExs.length; e++){
+//
+//				if (reasoner.hasType(allExamples[trainingExs[e]], testConcepts[c]))
+//					posExs.add(trainingExs[e]);
+//				else if (reasoner.hasType(allExamples[trainingExs[e]], negTestConcepts[c]))
+//					negExs.add(trainingExs[e]);
+//				else
+//					undExs.add(trainingExs[e]);
+//			}
 
 			// queste istanze devono essere suddivise in istanze negative, positive e incerte sull'ensemble
+			
 
 
 			double prPos = (double)posExs.size()/(trainingExs.length);
@@ -94,6 +98,46 @@ public class Classifier implements SupervisedLearnable {
 
 	}
 
+	public void splitting(Integer[] trainingExs, int[][] classifications,  int c, ArrayList<Integer> posExs,
+			ArrayList<Integer> negExs, ArrayList<Integer> undExs) {
+		// ha splittato in istanze negative, positive e incerte per un singolo albero
+//		for (int e=0; e<trainingExs.length; e++){
+//
+//			if (reasoner.hasType(allExamples[trainingExs[e]], testConcepts[c]))
+//				posExs.add(trainingExs[e]);
+//			else {
+//				if (!Evaluation.BINARYCLASSIFICATION){
+//
+//					if (reasoner.hasType(allExamples[trainingExs[e]], negTestConcepts[c]))
+//						negExs.add(trainingExs[e]);
+//					else
+//						undExs.add(trainingExs[e]);
+//				}
+//				else
+//					negExs.add(trainingExs[e]);
+//			}
+//		}
+		
+		for (int e=0; e<trainingExs.length; e++){
+			
+			if (classifications[c][trainingExs[e]]==+1)
+				posExs.add(trainingExs[e]);
+			else if (!Evaluation.BINARYCLASSIFICATION){
+				
+				if (classifications[c][trainingExs[e]]==-1)
+					negExs.add(trainingExs[e]);
+				else
+					undExs.add(trainingExs[e]);
+				
+			}
+			else
+				negExs.add(trainingExs[e]);
+				
+			
+		}
+	}
+
+	
 
 	/* (non-Javadoc)
 	 * @see classifiers.SupervisedLearnable#test(int, java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[])
@@ -108,7 +152,8 @@ public class Classifier implements SupervisedLearnable {
 			System.out.print("\n\nFold #"+f);
 			System.out.println(" --- Classifying Example " + (te+1) +"/"+testExs.length +" [" + indTestEx + "] " + kb.getIndividuals()[indTestEx]);
 
-			int[] indClassifications = new int[testConcepts.length];
+			int length = testConcepts!=null?testConcepts.length:1;
+			int[] indClassifications = new int[length];
 			//			cl.classifyExamplesTree(indTestEx, forests, indClassifications, testConcepts);
 			cl.classifyExamples(indTestEx, forests, indClassifications, testConcepts);
 
@@ -124,6 +169,12 @@ public class Classifier implements SupervisedLearnable {
 		}
 		return labels;
 
+	}
+
+	@Override
+	public double[] getComplexityValues() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
