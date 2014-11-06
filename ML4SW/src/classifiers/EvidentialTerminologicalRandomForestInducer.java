@@ -14,7 +14,7 @@ import classifiers.ensemble.Ensemble;
 import classifiers.evidentialAlgorithms.ETRFClassifier;
 import classifiers.evidentialAlgorithms.models.DSTDLTree;
 
-import evaluation.Evaluation;
+import evaluation.Parameters;
 
 /**
  * Classifier wrapper for TRFs Predictive model
@@ -84,7 +84,7 @@ public class EvidentialTerminologicalRandomForestInducer implements SupervisedLe
 			System.out.println("Learning a forest ");
 
 
-			forests[c] = cl.induceDLForest(posExs, negExs, undExs, Evaluation.NUMGENCONCEPTS, Evaluation.NTREES,prPos, prNeg);
+			forests[c] = cl.induceDLForest(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS, Parameters.NTREES,prPos, prNeg);
 
 			//			System.out.println("forest "+c);
 			//			System.out.println(forests[c]);

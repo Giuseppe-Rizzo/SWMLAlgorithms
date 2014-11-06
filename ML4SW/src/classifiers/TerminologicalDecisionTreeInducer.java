@@ -21,7 +21,7 @@ import knowledgeBasesHandler.KnowledgeBase;
 
 import classifiers.trees.TDTClassifier;
 import classifiers.trees.models.DLTree;
-import evaluation.Evaluation;
+import evaluation.Parameters;
 import evaluation.PruningType;
 /**
  * Wrapper for TDTClassifier
@@ -63,7 +63,7 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
 		HashSet<Integer> trainingExsSet= new HashSet<Integer>(Arrays.asList(trainingExs));
 		Integer[] pruningExs= new Integer[0];
-		if (Evaluation.pruning==PruningType.REP){
+		if (Parameters.pruning==PruningType.REP){
 			int pruningSetDimension = (int)3*(trainingExsSet.size()/10); // pruning set 30% of training set
 			System.out.println("Dimension: "+ pruningSetDimension);
 			int r=0;
@@ -111,12 +111,12 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 			System.out.println("Learning a tree ");
 
 
-			trees[c] = cl.induceDLTree(posExs, negExs, undExs, Evaluation.NUMGENCONCEPTS,prPos, prNeg);
+			trees[c] = cl.induceDLTree(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS,prPos, prNeg);
 //			stream.println(trees[c]);
 			
-			if (Evaluation.pruning==PruningType.REP)
+			if (Parameters.pruning==PruningType.REP)
 				cl.doREPPruning(pruningExs, trees[c], results[c]);
-			else if (Evaluation.pruning==PruningType.REP)
+			else if (Parameters.pruning==PruningType.REP)
 				cl.doPEPPruning(trainingExs, trees[c], results[c]);
 			
 
@@ -153,7 +153,7 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 			
 			if (classifications[c][trainingExs[e]]==+1)
 				posExs.add(trainingExs[e]);
-			else if (!Evaluation.BINARYCLASSIFICATION){
+			else if (!Parameters.BINARYCLASSIFICATION){
 				
 				if (classifications[c][trainingExs[e]]==-1)
 					negExs.add(trainingExs[e]);

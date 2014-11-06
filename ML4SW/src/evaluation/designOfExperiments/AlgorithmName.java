@@ -27,4 +27,24 @@ public enum AlgorithmName {
 		return "";
 	}
 
+	public static AlgorithmName getClassifier(String name){
+		
+		
+		
+		if (name.compareTo("classifiers.TerminologicalDecisionTreeInducer")==0)
+			return DSTTerminologicalRandomForests;
+		else if (name.compareTo("classifiers.TerminologicalRandomForestsInducer")==0)
+			return TerminologicalRandomForests;
+		else if (name.compareTo("classifiers.DSTTerminologicalDecisionTreeInducer")==0)
+			return DSTTerminologicalDecisionTree;
+		else if (name.compareTo("classifiers.TerminologicalDecisionTreeInducer")==0)
+			return TerminologicalDecisionTree;
+		
+		return null;
+		
+		
+		
+		
+	}
+	
 }

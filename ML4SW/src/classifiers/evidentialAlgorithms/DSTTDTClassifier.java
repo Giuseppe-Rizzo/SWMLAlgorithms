@@ -22,7 +22,7 @@ import classifiers.evidentialAlgorithms.models.DSTDLTree;
 import classifiers.evidentialAlgorithms.models.EvidentialModel;
 import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
-import evaluation.Evaluation;
+import evaluation.Parameters;
 
 
 
@@ -137,8 +137,8 @@ public class DSTTDTClassifier{
 				}		
 				else{
 
-					if (!Evaluation.nonspecificityControl){
-						OWLDescription[] cConcepts = generateNewConcepts(Evaluation.beam, posExs, negExs); // genera i concetti sulla base degli esempi
+					if (!Parameters.nonspecificityControl){
+						OWLDescription[] cConcepts = generateNewConcepts(Parameters.beam, posExs, negExs); // genera i concetti sulla base degli esempi
 						//	OWLDescription[] cConcepts = allConcepts;
 
 						// select node couoncept
@@ -184,7 +184,7 @@ public class DSTTDTClassifier{
 
 					}
 					else if(mass.getNonSpecificity()<0.1){
-						OWLDescription[] cConcepts = generateNewConcepts(Evaluation.beam, posExs, negExs); // genera i concetti sulla base degli esempi
+						OWLDescription[] cConcepts = generateNewConcepts(Parameters.beam, posExs, negExs); // genera i concetti sulla base degli esempi
 						//	OWLDescription[] cConcepts = allConcepts;
 
 						// select node couoncept

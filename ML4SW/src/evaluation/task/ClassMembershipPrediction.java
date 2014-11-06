@@ -15,6 +15,7 @@ import classifiers.SupervisedLearnable;
 import evaluation.CrossValidation;
 import evaluation.Evaluation;
 import evaluation.ConceptGenerator;
+import evaluation.Parameters;
 import evaluation.designOfExperiments.AlgorithmName;
 import evaluation.metrics.GlobalPerformanceMetricsComputation;
 import evaluation.metrics.ModelComplexityEvaluation;
@@ -55,7 +56,7 @@ public class ClassMembershipPrediction implements Evaluation {
 		kb=k;
 		allExamples=kb.getIndividuals();
 		ConceptGenerator qg= new ConceptGenerator(kb);
-		testConcepts=qg.generateQueryConcepts(Evaluation.NUMGENCONCEPTS);
+		testConcepts=qg.generateQueryConcepts(Parameters.NUMGENCONCEPTS);
 
 		negTestConcepts=new OWLDescription[testConcepts.length];
 		for (int c=0; c<testConcepts.length; c++) 
@@ -121,7 +122,7 @@ public class ClassMembershipPrediction implements Evaluation {
 			// store model complexity evaluation
 			double[] complexityValues= cl.getComplexityValues();
 			for (int i=0; i<testConcepts.length;i++){
-				if (Evaluation.algorithm==AlgorithmName.TerminologicalDecisionTree)
+				if (Parameters.algorithm==AlgorithmName.TerminologicalDecisionTree)
 				       mce.setValues(i, f, complexityValues[i]);
 				else
 					  mce.setValues(i, f, 0);
@@ -213,7 +214,7 @@ public class ClassMembershipPrediction implements Evaluation {
 			double[] complexityValues= cl.getComplexityValues();
 			for (int i=0; i<nTestConcepts;i++){
 				
-				if (Evaluation.algorithm==AlgorithmName.TerminologicalDecisionTree)
+				if (Parameters.algorithm==AlgorithmName.TerminologicalDecisionTree)
 				       mce.setValues(i, f, complexityValues[i]);
 				else
 					  mce.setValues(i, f, 0);

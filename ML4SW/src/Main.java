@@ -3,6 +3,7 @@
 import java.io.PrintStream;
 
 import evaluation.Evaluation;
+import evaluation.Parameters;
 import evaluation.task.AffiliationPrediction;
 import evaluation.task.MutagenicoPrediction;
 import evaluation.task.ClassMembershipPrediction;
@@ -25,12 +26,13 @@ static KnowledgeBase kb;
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
+		Parameters.loadParameters(); //loading from property file
 		
 //		Locale.setDefault(Locale.US);
-		 kb = new KnowledgeBase(Evaluation.urlOwlFile);
+		 kb = new KnowledgeBase(Parameters.urlOwlFile);
 		
 		Evaluation vcm= null; 
-		switch (Evaluation.task) {
+		switch (Parameters.task) {
 		case CLASSMEMBERSHIPREDICTION:
 			 vcm= new ClassMembershipPrediction(kb);
 		break;
@@ -49,22 +51,22 @@ static KnowledgeBase kb;
 			break;
 		}
 		
-		String className =  Evaluation.algorithm.toString(); 		// package name
+		String className =  Parameters.algorithm.toString(); 		// package name
 		
 		
-		switch (Evaluation.design) {
+		switch (Parameters.design) {
 		case BOOTSTRAP:
 		
-		vcm.bootstrap(Evaluation.NFOLDS,className); // n. of folds		
+		vcm.bootstrap(Parameters.NFOLDS,className); // n. of folds		
 		break;
 		
 		default:
-			vcm.crossValidation(Evaluation.NFOLDS,className); 
+			vcm.crossValidation(Parameters.NFOLDS,className); 
 		
 		break;	
 		}
 ////		
-	System.out.println("\n\nEnding: "+Evaluation.urlOwlFile);
+	System.out.println("\n\nEnding: "+Parameters.urlOwlFile);
 
 	} // main
 	

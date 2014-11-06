@@ -9,7 +9,7 @@ import org.semanticweb.owl.model.OWLDescription;
 import classifiers.ensemble.Ensemble;
 import classifiers.trees.RandomizedTDTClassifier;
 import classifiers.trees.models.DLTree;
-import evaluation.Evaluation;
+import evaluation.Parameters;
 import samplers.BalancedDataset;
 import utils.Triple;
 
@@ -34,7 +34,7 @@ public class TRFClassifier {
 
 
 			BalancedDataset<Integer> bd= new BalancedDataset<Integer>(); // a balance of th)e instances
-			bd.balanceTheDataset(posExs, negExs, undExs, posExsEns, negExsEns, undExsEns, Evaluation.samplingrate); //no sampling
+			bd.balanceTheDataset(posExs, negExs, undExs, posExsEns, negExsEns, undExsEns, Parameters.samplingrate); //no sampling
 			
 			// performing undersampling on uncertainty instances
 			
@@ -75,7 +75,7 @@ public class TRFClassifier {
 		int neg=0;
 		int und=0;
 		for (int tree=0; tree<forest.getSize(); tree++){
-			if (!Evaluation.missingValueTreatmentForTDT){
+			if (!Parameters.missingValueTreatmentForTDT){
 			classValue=data.classifyExample(indTestEx,forest.getClassifier(tree));
 			
 			}

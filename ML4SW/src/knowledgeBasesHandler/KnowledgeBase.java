@@ -22,7 +22,7 @@ import org.semanticweb.owl.model.OWLOntologyCreationException;
 import org.semanticweb.owl.model.OWLOntologyManager;
 import org.semanticweb.owl.util.SimpleURIMapper;
 
-import evaluation.Evaluation;
+import evaluation.Parameters;
 /**
  *  una classe per rappresentare una Knowledge base
  */
@@ -85,7 +85,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		reasoner = new Reasoner(manager);
 		((Reasoner) reasoner).loadOntology(ontology);		
 
-		reasoner.getKB().realize();
+//		reasoner.getKB().realize();
 		System.out.println("\nClasses\n-------");
 		Set<OWLClass> classList = ontology.getReferencedClasses();
 		allConcepts = new OWLClass[classList.size()];
@@ -148,7 +148,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 				}
 				else{ 
-					if (!Evaluation.BINARYCLASSIFICATION){
+					if (!Parameters.BINARYCLASSIFICATION){
 						if (reasoner.hasType(esempi[e],negTestConcepts[c])) 
 							classifications[c][e] = -1;
 					}
@@ -405,7 +405,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		// sceglie casualmente uno tra i concetti presenti 
 		OWLDescription newConcept = null;
 
-		if (!Evaluation.BINARYCLASSIFICATION){
+		if (!Parameters.BINARYCLASSIFICATION){
 			
 			// case A:  ALC and more expressive ontologies
 			do {

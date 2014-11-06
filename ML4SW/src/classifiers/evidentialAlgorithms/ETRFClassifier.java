@@ -11,7 +11,7 @@ import org.semanticweb.owl.model.OWLDescription;
 import classifiers.ensemble.Ensemble;
 import classifiers.evidentialAlgorithms.DempsterShafer.MassFunction;
 import classifiers.evidentialAlgorithms.models.DSTDLTree;
-import evaluation.Evaluation;
+import evaluation.Parameters;
 import samplers.BalancedDataset;
 import utils.Triple;
 
@@ -37,7 +37,7 @@ public class ETRFClassifier {
 
 
 			BalancedDataset<Integer> bd= new BalancedDataset<Integer>(); // a balance of th)e instances
-			bd.balanceTheDataset(posExs, negExs, undExs, posExsEns, negExsEns, undExsEns, Evaluation.samplingrate); //no sampling
+			bd.balanceTheDataset(posExs, negExs, undExs, posExsEns, negExsEns, undExsEns, Parameters.samplingrate); //no sampling
 			
 			// performing undersampling on uncertainty instances
 			

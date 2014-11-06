@@ -17,7 +17,7 @@ import utils.Npla;
 
 import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
-import evaluation.Evaluation;
+import evaluation.Parameters;
 
 public class TDTClassifier extends AbstractTDTClassifier {
 
@@ -69,12 +69,12 @@ public class TDTClassifier extends AbstractTDTClassifier {
 				double perPos = numPos/(numPos+numNeg);
 				double perNeg = numNeg/(numPos+numNeg);
 
-				if (perNeg==0 && perPos > Evaluation.PURITY_THRESHOLD) { // no negative
+				if (perNeg==0 && perPos > Parameters.PURITY_THRESHOLD) { // no negative
 					currentTree.setRoot(kb.getDataFactory().getOWLThing()); // set positive leaf
 
 				}
 				else{
-					if (perPos==0 && perNeg > Evaluation.PURITY_THRESHOLD) { // no positive			
+					if (perPos==0 && perNeg > Parameters.PURITY_THRESHOLD) { // no positive			
 						currentTree.setRoot(kb.getDataFactory().getOWLNothing()); // set negative leaf
 
 					}		
@@ -349,7 +349,7 @@ public class TDTClassifier extends AbstractTDTClassifier {
 		boolean stop=false;
 
 
-		if (!Evaluation.BINARYCLASSIFICATION){
+		if (!Parameters.BINARYCLASSIFICATION){
 			while(!stack.isEmpty() && !stop){
 				DLTree currentTree= stack.pop();
 

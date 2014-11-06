@@ -16,7 +16,7 @@ import org.semanticweb.owl.model.OWLIndividual;
 
 import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
-import evaluation.Evaluation;
+import evaluation.Parameters;
 
 public abstract class AbstractTDTClassifier {
 
@@ -37,7 +37,7 @@ public abstract class AbstractTDTClassifier {
 
 		int length = testConcepts!=null?testConcepts.length:1;
 		for (int c=0; c < length; c++) {
-			if (Evaluation.missingValueTreatmentForTDT){
+			if (Parameters.missingValueTreatmentForTDT){
 				ArrayList<Integer> list= new ArrayList<Integer>();
 				results[c] = classifyExample(list,indTestEx, trees[c]);
 
@@ -56,8 +56,8 @@ public abstract class AbstractTDTClassifier {
 
 		double sum = numPos+numNeg;
 
-		double p1 = (numPos*Evaluation.M*prPos)/(sum+Evaluation.M);
-		double p2 = (numNeg*Evaluation.M*prNeg)/(sum+Evaluation.M);
+		double p1 = (numPos*Parameters.M*prPos)/(sum+Parameters.M);
+		double p2 = (numNeg*Parameters.M*prNeg)/(sum+Parameters.M);
 
 		return (1.0-p1*p1-p2*p2);
 		//		return (1-Math.pow(p1,2)-Math.pow(p2,2))/2;
@@ -72,7 +72,7 @@ public abstract class AbstractTDTClassifier {
 		int result=0;
 		boolean stop=false;
 
-		if (!Evaluation.BINARYCLASSIFICATION){
+		if (!Parameters.BINARYCLASSIFICATION){
 			while(!stack.isEmpty() && !stop){
 				DLTree currentTree= stack.pop();
 

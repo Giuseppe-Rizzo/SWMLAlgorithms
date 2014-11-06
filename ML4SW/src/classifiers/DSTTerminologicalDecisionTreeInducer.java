@@ -13,7 +13,7 @@ import org.semanticweb.owl.model.OWLDescription;
 
 import classifiers.evidentialAlgorithms.DSTTDTClassifier;
 import classifiers.evidentialAlgorithms.models.DSTDLTree;
-	import evaluation.Evaluation;
+import evaluation.Parameters;
 /**
  * Wrapper for DSTTDTClassifier
  * @author Utente
@@ -78,7 +78,7 @@ import classifiers.evidentialAlgorithms.models.DSTDLTree;
 				System.out.printf("New learning problem prepared.\n",c);
 				System.out.println("Learning phase ");
 
-				trees[c] = cl.induceDSTDLTree(posExs, negExs, undExs, Evaluation.NUMGENCONCEPTS,prPos, prNeg);
+				trees[c] = cl.induceDSTDLTree(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS,prPos, prNeg);
 
 				//			System.out.println("forest "+c);
 			    System.out.println(trees[c]);

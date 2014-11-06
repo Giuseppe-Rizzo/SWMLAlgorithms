@@ -12,7 +12,7 @@ import knowledgeBasesHandler.KnowledgeBase;
 import classifiers.ensemble.Ensemble;
 import classifiers.ensemble.terminologicalRandomForests.TRFClassifier;
 import classifiers.trees.models.DLTree;
-import evaluation.Evaluation;
+import evaluation.Parameters;
 
 /**
  * Classifier wrapper for TRFs
@@ -86,7 +86,7 @@ public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 			System.out.println("Learning a forest ");
 
 
-			forests[c] = cl.induceDLForest(posExs, negExs, undExs, Evaluation.NUMGENCONCEPTS, Evaluation.NTREES,prPos, prNeg);
+			forests[c] = cl.induceDLForest(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS, Parameters.NTREES,prPos, prNeg);
 
 			//			System.out.println("forest "+c);
 			//			System.out.println(forests[c]);
@@ -122,7 +122,7 @@ public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 			
 			if (classifications[c][trainingExs[e]]==+1)
 				posExs.add(trainingExs[e]);
-			else if (!Evaluation.BINARYCLASSIFICATION){
+			else if (!Parameters.BINARYCLASSIFICATION){
 				
 				if (classifications[c][trainingExs[e]]==-1)
 					negExs.add(trainingExs[e]);

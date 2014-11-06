@@ -2,8 +2,8 @@ package utils;
 
 import java.util.Random;
 
-import evaluation.Evaluation;
+import evaluation.Parameters;
 
 public class Generator {
-	public static Random generator = new Random(Evaluation.SEED);
+	public static Random generator = new Random(Parameters.SEED);
 }
