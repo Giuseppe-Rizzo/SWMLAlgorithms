@@ -73,8 +73,8 @@ public class ConceptGenerator {
             	
 //            } while (!reasoner.isSatisfiable(partialConcept) || !reasoner.isSatisfiable(complPartialConcept));
 //            } while (numPosInst > .8*nExs);	
-            } while ((numPosInst*numNegInst == 0));//||((numPosInst<10)&&(numNegInst<10)));
-//            } while (numPosInst+numNegInst == 0 || numPosInst+numNegInst == nExs);
+        } while ((numPosInst*numNegInst == 0));//||((numPosInst<10)&&(numNegInst<10)));
+// } while (numPosInst+numNegInst == 0 || numPosInst+numNegInst == nExs);
             //  || numPosInst+numNegInst == nExs
             //add the newly built OWLDescription to the list of all required query concepts
             queryConcepts[i] = partialConcept;

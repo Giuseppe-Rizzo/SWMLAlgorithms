@@ -21,6 +21,7 @@ import evaluation.metrics.GlobalPerformanceMetricsComputation;
 import evaluation.metrics.ModelComplexityEvaluation;
 
 
+import utils.Couple;
 import utils.Generator;
 
 
@@ -115,9 +116,127 @@ public class ClassMembershipPrediction implements Evaluation {
 			System.out.println("Training is starting...");
 
 
+			
+			SupervisedLearnable cl=  (SupervisedLearnable)(classifierClass.getConstructor(KnowledgeBase.class, int.class)).newInstance(kb,nOfConcepts);
+			int[][] results= kb.getClassMembershipResult();
+			
+			cl.training(results, trainingExs, testConcepts, negTestConcepts);
+
+			// store model complexity evaluation
+			double[] complexityValues= cl.getComplexityValues();
+			if (testConcepts!=null){
+				for (int i=0; i<testConcepts.length;i++){
+					if (Parameters.algorithm==AlgorithmName.TerminologicalDecisionTree)
+						mce.setValues(i, f, complexityValues[i]);
+					else
+						mce.setValues(i, f, 0);
+
+				}
+			}
+
+
+			//			}
+//			System.out.println("End of Training.\n\n");
+//
+			int[][] labels=cl.test(f, testExs, testConcepts);
+
+			gpmc.computeMetricsPerFold(f, labels, classification, nOfConcepts, testExs);
+
+		} // for f - fold look
+
+
+		gpmc.computeOverAllResults(nOfConcepts);
+		mce.computeModelComplexityPerformance();
+	} // bootstrap DLDT induction	
+
+
+
+	public  void stratifiedBootstrap( int nFolds, String className ) throws Exception {
+		System.out.println(nFolds+"-fold BOOTSTRAP Experiment on ontology: ");	
+
+		Class<?> classifierClass =ClassLoader.getSystemClassLoader().loadClass(className);
+		int nOfConcepts = testConcepts!=null?testConcepts.length:1;
+
+		GlobalPerformanceMetricsComputation gpmc = new GlobalPerformanceMetricsComputation(nOfConcepts,nFolds);
+		ModelComplexityEvaluation mce = new ModelComplexityEvaluation(nOfConcepts,nFolds);
+		ArrayList<Couple<Set<Integer>,Set<Integer>>> splits= new ArrayList<Couple<Set<Integer>,Set<Integer>>>();
+		int[][] labels=kb.getClassMembershipResult();
+		for (int c=0; c<nOfConcepts;c++){
+			int[] label= labels[c]; // labels for the current concept
+			ArrayList<Integer> positive= new ArrayList<Integer>();
+			ArrayList<Integer> negative= new ArrayList<Integer>();
+			ArrayList<Integer> uncertain= new ArrayList<Integer>();
+		
+			for (int i=0; i<label.length;i++){
+				 if (label[i]==+1)
+					 positive.add(i);
+				 else if (label[i]==-1)
+					 negative.add(i);
+				 else
+					 uncertain.add(i);
+				
+				
+			}
+			
+			
+			
+			
+			for (int f=0; f< nFolds; f++) {			
+
+				System.out.print("\n\nFold #"+f);
+				System.out.println(" **************************************************************************************************");
+
+				Set<Integer> trainingExsSet = new HashSet<Integer>();
+				Set<Integer> testingExsSet = new HashSet<Integer>();
+
+				for (int r=0; r<allExamples.length; r++){ 
+					trainingExsSet.add(Generator.generator.nextInt(allExamples.length));
+				}
+
+				for (int r=0; r<allExamples.length; r++) {
+					if (! trainingExsSet.contains(r)) 
+						testingExsSet.add(r);
+				}			
+			}
+
+		}
+		
+		
+		// main loop on the folds
+		int[] ntestExs = new int[nFolds];
+		for (int f=0; f< nFolds; f++) {			
+
+			System.out.print("\n\nFold #"+f);
+			System.out.println(" **************************************************************************************************");
+
+			Set<Integer> trainingExsSet = new HashSet<Integer>();
+			Set<Integer> testingExsSet = new HashSet<Integer>();
+			
+			for (int r=0; r<allExamples.length; r++){ 
+				trainingExsSet.add(Generator.generator.nextInt(allExamples.length));
+			}
+
+			for (int r=0; r<allExamples.length; r++) {
+				if (! trainingExsSet.contains(r)) 
+					testingExsSet.add(r);
+			}			
+			// splitting in growing and pruning set (70-30 ratio)
+
+			Integer[] trainingExs = new Integer[0];
+			Integer[] testExs = new Integer[0];
+			trainingExs = trainingExsSet.toArray(trainingExs);
+			testExs = testingExsSet.toArray(testExs);
+			//			pruningSet=pruningExsSet.toArray(pruningSet);
+			ntestExs[f] = testExs.length;
+			//			System.setOut(new PrintStream("C:/Users/Utente/Documents/biopax.txt"));
+
+			// training phase: using all examples but those in the f-th partition
+			System.out.println("Training is starting...");
 
 			SupervisedLearnable cl=  (SupervisedLearnable)(classifierClass.getConstructor(KnowledgeBase.class, int.class)).newInstance(kb,nOfConcepts);
-			cl.training(trainingExs, testConcepts, negTestConcepts);
+			int[][] results= kb.getClassMembershipResult();
+			
+			cl.training(results, trainingExs, testConcepts, negTestConcepts);
 
 			// store model complexity evaluation
 			double[] complexityValues= cl.getComplexityValues();
@@ -132,11 +251,11 @@ public class ClassMembershipPrediction implements Evaluation {
 
 
 			//			}
-			System.out.println("End of Training.\n\n");
-
-			int[][] labels=cl.test(f, testExs, testConcepts);
-
-			gpmc.computeMetricsPerFold(f, labels, classification, nOfConcepts, testExs);
+//			System.out.println("End of Training.\n\n");
+//
+//			int[][] labels=cl.test(f, testExs, testConcepts);
+//
+//			gpmc.computeMetricsPerFold(f, labels, classification, nOfConcepts, testExs);
 
 		} // for f - fold look
 
@@ -144,9 +263,6 @@ public class ClassMembershipPrediction implements Evaluation {
 		gpmc.computeOverAllResults(nOfConcepts);
 		mce.computeModelComplexityPerformance();
 	} // bootstrap DLDT induction	
-
-
-
 
 
 
@@ -208,7 +324,8 @@ public class ClassMembershipPrediction implements Evaluation {
 
 				e.printStackTrace();
 			}
-			cl.training(trainingExs, testConcepts, negTestConcepts);
+			int[][] results= kb.getClassMembershipResult();
+			cl.training(results,trainingExs, testConcepts, negTestConcepts);
 
 			// store model complexity evaluation
 			double[] complexityValues= cl.getComplexityValues();

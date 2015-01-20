@@ -2,6 +2,7 @@ package classifiers.evidentialAlgorithms;
 
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +21,7 @@ import utils.Npla;
 import classifiers.evidentialAlgorithms.DempsterShafer.MassFunction;
 import classifiers.evidentialAlgorithms.models.DSTDLTree;
 import classifiers.evidentialAlgorithms.models.EvidentialModel;
+import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
 import evaluation.Parameters;
@@ -41,8 +43,34 @@ public class DSTTDTClassifier{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public DSTDLTree induceDSTDLTree
 	(ArrayList<Integer> posExs, ArrayList<Integer> negExs,	ArrayList<Integer> undExs, 
-			int dim, double prPos, double prNeg) {	
-
+			int dim, double prPos, double prNeg, RefinementOperator op) {	
+		
+		if  (op == null){
+			try {
+				op=  (RefinementOperator)(ClassLoader.getSystemClassLoader().loadClass(Parameters.refinementOperator)).getConstructor(KnowledgeBase.class).newInstance(kb);
+			} catch (InstantiationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (NoSuchMethodException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SecurityException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 
 		Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double> examples = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExs, negExs, undExs, dim, prPos, prNeg);
 		DSTDLTree tree = new DSTDLTree(); // new (sub)tree
@@ -66,13 +94,9 @@ public class DSTTDTClassifier{
 			undExs=currentExamples.getThird();
 			DSTDLTree currentTree= current.getFirstElement();
 
-			System.out.println("Pop");
-
-
 			int psize = posExs.size();
 			int nsize = negExs.size();
 			int usize = undExs.size();
-			System.out.println(psize+ nsize+usize);
 			System.out.printf("Learning problem\t p:%d\t n:%d\t u:%d\t prPos:%4f\t prNeg:%4f\n", 
 					psize, nsize, usize, prPos, prNeg);
 
@@ -138,8 +162,14 @@ public class DSTTDTClassifier{
 				else{
 
 					if (!Parameters.nonspecificityControl){
-						OWLDescription[] cConcepts = generateNewConcepts(Parameters.beam, posExs, negExs); // genera i concetti sulla base degli esempi
-						//	OWLDescription[] cConcepts = allConcepts;
+						
+								
+							ArrayList<OWLDescription> generateNewConcepts = op.generateNewConcepts(Parameters.beam, posExs, negExs); // genera i concetti sulla base degli esempi
+							OWLDescription[] cConcepts = new OWLDescription[generateNewConcepts.size()];
+							
+							cConcepts= generateNewConcepts.toArray(cConcepts);
+							
+							//	OWLDescription[] cConcepts = allConcepts;
 
 						// select node couoncept
 						Couple<OWLDescription,MassFunction> newRootConcept = selectBestConceptDST(cConcepts, posExs, negExs, undExs, prPos, prNeg);
@@ -441,6 +471,10 @@ public class DSTTDTClassifier{
 
 
 		if((confirmationFunctionValueUnc>confirmationFunctionValuePos)&&(confirmationFunctionValueUnc>confirmationFunctionValueNeg))
+			
+			// commentare e decommentare qui per la classificazione con e senza forcing			
+			//results[c]=0;
+
 			if (confirmationFunctionValuePos>confirmationFunctionValueNeg)
 				results[c]=+1;
 			else if (confirmationFunctionValuePos<confirmationFunctionValueNeg)

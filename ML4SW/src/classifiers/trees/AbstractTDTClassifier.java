@@ -14,6 +14,7 @@ import org.semanticweb.owl.model.OWLDataFactory;
 import org.semanticweb.owl.model.OWLDescription;
 import org.semanticweb.owl.model.OWLIndividual;
 
+import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
 import evaluation.Parameters;
@@ -28,7 +29,7 @@ public abstract class AbstractTDTClassifier {
 	}
 
 	public abstract DLTree induceDLTree(ArrayList<Integer> posExs, ArrayList<Integer> negExs,	ArrayList<Integer> undExs, 
-			int dim, double prPos, double prNeg);
+			int dim, double prPos, double prNeg, RefinementOperator op);
 
 
 
@@ -201,7 +202,7 @@ protected OWLDescription selectBestConcept(OWLDescription[] concepts, ArrayList<
 		double thisGain = gain(counts, prPos, prNeg);
 		System.out.printf("%+10e\n",thisGain);
 		System.out.println(concepts[c]);
-		if(thisGain > bestGain) {
+		if(thisGain < bestGain) {
 			bestConceptIndex = c;
 			bestGain = thisGain;
 		}
@@ -209,6 +210,81 @@ protected OWLDescription selectBestConcept(OWLDescription[] concepts, ArrayList<
 
 	System.out.printf("best gain: %f \t split #%d\n", bestGain, bestConceptIndex);
 	return concepts[bestConceptIndex];
+}
+
+protected OWLDescription selectBestConceptCCP(OWLDescription[] concepts, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
+		ArrayList<Integer> undExs, double prPos, double prNeg, ArrayList<Integer> truePosExs, ArrayList<Integer> trueNegExs) {
+
+	int[] counts;
+
+	int bestConceptIndex = 0;
+
+	counts = getSplitCounts(concepts[0], posExs, negExs, undExs);
+	System.out.printf("%4s\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t ", 
+			"#"+0, counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[7], counts[8]);
+
+	double minEntropy = CCP(counts, prPos, prNeg, truePosExs.size(), trueNegExs.size()); // recall improvement
+
+	System.out.printf("%+10e\n",minEntropy);
+
+	System.out.println(concepts[0]);
+
+	for (int c=1; c<concepts.length; c++) {
+
+		counts = getSplitCounts(concepts[c], posExs, negExs, undExs);
+		System.out.printf("%4s\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t ", 
+				"#"+c, counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[7], counts[8]);
+
+		double thisEntropy = CCP(counts, prPos, prNeg, truePosExs.size(), trueNegExs.size());
+		System.out.printf("%+10e\n",thisEntropy);
+		System.out.println(concepts[c]);
+		if(thisEntropy < minEntropy) {
+			bestConceptIndex = c;
+			minEntropy = thisEntropy;
+		}
+	}
+
+	System.out.printf("best gain: %f \t split #%d\n", minEntropy, bestConceptIndex);
+	return concepts[bestConceptIndex];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+private double CCP(int[] counts, double prPos, double prNeg, int sizePos,
+		int sizeNeg) {
+	// TODO Auto-generated method stub
+	
+	double cP = counts[0] + counts[1];
+	double cN = counts[3] + counts[4];
+	double cU = counts[6] + counts[7] + counts[2] + counts[5];
+	double sum= cP+cN+cU;
+	double c= sum!=0?cP+cN/sum:0;
+	
+	double sizeTP = counts[0]+1;
+	double sizeFP = counts[1]+1;
+	double sizeFN= counts[3]+1;
+	double sizeTN= counts[4]+1;
+	
+	
+	double tpr= (sizeTP+sizeFP)!=0?((sizeTP)/(sizeTP+sizeFP)):1;
+	double fpr= (sizeFP+sizeTN)!=0?((sizeFP+0.5)/(sizeFP+sizeTN)):1;
+
+	   double p1=(2-tpr-fpr)!=0?(1-tpr)/(2-tpr-fpr):1;
+	   double p2=(2-tpr-fpr)!=0?(1-fpr)/(2-tpr-fpr):1;
+	   System.out.println( "TPR:"+tpr+"--"+" FPR:"+ fpr+ " p1: "+ p1+" p2:"+p2);
+	   double entropyCCP= (-(tpr+fpr)*((tpr/(tpr+fpr))*Math.log(tpr/(tpr+fpr))-(fpr/(tpr+fpr))*Math.log(fpr/(tpr+fpr)))
+			   -(2-p1-p2)*(p1*Math.log(p1)-p2*Math.log(p2)));
+
+	return entropyCCP;
 }
 
 private double gain(int[] counts, double prPos, double prNeg) {
@@ -223,7 +299,7 @@ private double gain(int[] counts, double prPos, double prNeg) {
 	double fImpurity = gini(counts[3], counts[4], prPos, prNeg);
 	double uImpurity = gini(counts[6]+counts[2], counts[7]+counts[5] , prPos, prNeg);		
 
-	return startImpurity - (sizeT/sum)*tImpurity - (sizeF/sum)*fImpurity - - (sizeU/sum)*uImpurity;
+	return (startImpurity - (sizeT/sum)*tImpurity - (sizeF/sum)*fImpurity - -(sizeU/sum)*uImpurity);
 }
 
 
@@ -233,7 +309,7 @@ public AbstractTDTClassifier() {
 
 private int[] getSplitCounts(OWLDescription concept, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
 		ArrayList<Integer> undExs) {
-	System.out.println("positive: "+posExs);
+	
 	int[] counts = new int[9];
 	ArrayList<Integer> posExsT = new ArrayList<Integer>();
 	ArrayList<Integer> negExsT = new ArrayList<Integer>();
@@ -297,37 +373,7 @@ private void splitGroup(OWLDescription concept, ArrayList<Integer> nodeExamples,
 
 }
 
-protected ArrayList<OWLDescription> generateNewConcepts(int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {
 
-	System.out.printf("Generating node concepts ");
-	ArrayList<OWLDescription> rConcepts = new ArrayList<OWLDescription>(dim);
-	OWLDescription newConcept;
-	boolean emptyIntersection;
-	for (int c=0; c<dim; c++) {
-		do {
-			emptyIntersection = false; // true
-			newConcept = kb.getRandomConcept();
-
-			Set<OWLIndividual> individuals = (kb.getReasoner()).getIndividuals(newConcept, false);
-			Iterator<OWLIndividual> instIterator = individuals.iterator();
-			while (emptyIntersection && instIterator.hasNext()) {
-				OWLIndividual nextInd = (OWLIndividual) instIterator.next();
-				int index = -1;
-				for (int i=0; index<0 && i<kb.getIndividuals().length; ++i)
-					if (nextInd.equals(kb.getIndividuals()[i])) index = i;
-				if (posExs.contains(index))
-					emptyIntersection = false;
-				else if (negExs.contains(index))
-					emptyIntersection = false;
-			}					
-		} while (emptyIntersection);
-		rConcepts.add(newConcept);
-		System.out.printf("%d ", c);
-	}
-	System.out.println();
-
-	return rConcepts;
-}
 
 public abstract void prune(Integer[] pruningSet, AbstractTree tree, AbstractTree subtree);
 }

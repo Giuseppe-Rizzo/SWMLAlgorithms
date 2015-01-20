@@ -3,6 +3,7 @@ package classifiers.evidentialAlgorithms;
 
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import knowledgeBasesHandler.*;
 
@@ -11,6 +12,7 @@ import org.semanticweb.owl.model.OWLDescription;
 import classifiers.ensemble.Ensemble;
 import classifiers.evidentialAlgorithms.DempsterShafer.MassFunction;
 import classifiers.evidentialAlgorithms.models.DSTDLTree;
+import classifiers.refinementOperator.RefinementOperator;
 import evaluation.Parameters;
 import samplers.BalancedDataset;
 import utils.Triple;
@@ -25,7 +27,8 @@ public class ETRFClassifier {
 
 	
 	public Ensemble<DSTDLTree> induceDLForest(ArrayList<Integer> posExs, ArrayList<Integer> negExs,	ArrayList<Integer> undExs, int dim,int dimForest, double prPos, double prNeg ){
-
+		
+		
 		ArrayList<Triple<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>>> splitting= new ArrayList<Triple<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>>>();
 		// step 1: boostrap sampling with undersampling of the uncertainty instances
 		for (int i = 0; i < dimForest; i++) {
@@ -60,7 +63,7 @@ public class ETRFClassifier {
 			ArrayList<Integer> negExsEns= splitting.get(i).getSecondElem();
 			ArrayList<Integer> undExsEns= splitting.get(i).getThirdElem();
 			System.out.printf(" %d Training set composition: %d %d %d", i, posExsEns.size(),negExsEns.size(), undExsEns.size());
-			DSTDLTree tree=data.induceDSTDLTree(posExsEns, negExsEns, undExsEns, dim, prPos, prNeg);
+			DSTDLTree tree=data.induceDSTDLTree(posExsEns, negExsEns, undExsEns, dim, prPos, prNeg, null);
 			forest.addClassifier(tree);
 
 		}

@@ -40,7 +40,7 @@ public class EvidentialTerminologicalRandomForestInducer implements SupervisedLe
 	 * @see classifiers.SupervisedLearnable#training(java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[], org.semanticweb.owl.model.OWLDescription[])
 	 */
 	@Override
-	public void training(Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
+	public void training(int[][] results, Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
 
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
 		Reasoner reasoner = kb.getReasoner();

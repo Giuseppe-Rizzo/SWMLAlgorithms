@@ -27,10 +27,11 @@ import evaluation.Parameters;
  *  una classe per rappresentare una Knowledge base
  */
 public class KnowledgeBase implements IKnowledgeBase {
+	static final double d = 0.3;
 	//private String urlOwlFile = "file:///C:/Users/Giuseppe/Desktop//mod-biopax-example-ecocyc-glycolysis.owl";
 	private String urlOwlFile = "file:///C:/Users/Giusepp/Desktop/Ontologie/GeoSkills.owl";
 	private  OWLOntology ontology;
-	private  Reasoner reasoner;
+	protected  Reasoner reasoner;
 	private  OWLOntologyManager manager;
 	private  OWLClass[] allConcepts;
 	private  OWLObjectProperty[] allRoles;
@@ -141,7 +142,6 @@ public class KnowledgeBase implements IKnowledgeBase {
 			System.out.printf("[%d] ",c);
 			for (int e=0; e<esempi.length; ++e) {			
 				classifications[c][e] = 0;
-
 				if (reasoner.hasType(esempi[e],testConcepts[c])) {
 					classifications[c][e] = +1;
 					p++;
@@ -397,68 +397,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 
 
-	/**
-	 * Sceglie casualmente un concetto tra quelli generati
-	 * @return il concetto scelto
-	 */
-	public OWLDescription getRandomConcept() {
-		// sceglie casualmente uno tra i concetti presenti 
-		OWLDescription newConcept = null;
-
-		if (!Parameters.BINARYCLASSIFICATION){
-			
-			// case A:  ALC and more expressive ontologies
-			do {
-				newConcept = allConcepts[KnowledgeBase.generator.nextInt(allConcepts.length)];
-				if (KnowledgeBase.generator.nextDouble() < 0.5) {
-					OWLDescription newConceptBase = getRandomConcept();
-					if (KnowledgeBase.generator.nextDouble() < 0.5)
-						if (KnowledgeBase.generator.nextDouble() < 0.5) { // new role restriction
-							OWLObjectProperty role = allRoles[KnowledgeBase.generator.nextInt(allRoles.length)];
-							//					OWLDescription roleRange = (OWLDescription) role.getRange;
-
-							if (KnowledgeBase.generator.nextDouble() < 0.5)
-								newConcept = dataFactory.getOWLObjectAllRestriction(role, newConceptBase);
-							else
-								newConcept = dataFactory.getOWLObjectSomeRestriction(role, newConceptBase);
-						}
-						else					
-							newConcept = dataFactory.getOWLObjectComplementOf(newConceptBase);
-				} // else ext
-				//				System.out.printf("-->\t %s\n",newConcept);
-				//			} while (newConcept==null || !(reasoner.getIndividuals(newConcept,false).size() > 0));
-			} while (!reasoner.isSatisfiable(newConcept));
-		}else{
-			// for less expressive ontologies ALE and so on (complemento solo per concetti atomici)
-			do {
-				newConcept = allConcepts[KnowledgeBase.generator.nextInt(allConcepts.length)];
-				if (KnowledgeBase.generator.nextDouble() < 0.5) {
-					OWLDescription newConceptBase = getRandomConcept();
-					if (KnowledgeBase.generator.nextDouble() < 0.5)
-						if (KnowledgeBase.generator.nextDouble() < 0.5) { // new role restriction
-							OWLObjectProperty role = allRoles[KnowledgeBase.generator.nextInt(allRoles.length)];
-							//					OWLDescription roleRange = (OWLDescription) role.getRange;
-
-							if (KnowledgeBase.generator.nextDouble() < 0.5)
-								newConcept = dataFactory.getOWLObjectAllRestriction(role, newConceptBase);
-							else
-								newConcept = dataFactory.getOWLObjectSomeRestriction(role, newConceptBase);
-						}
-				} // else ext
-				else if (KnowledgeBase.generator.nextDouble() > 0.8) {					
-					newConcept = dataFactory.getOWLObjectComplementOf(newConcept);
-				}
-				//				System.out.printf("-->\t %s\n",newConcept);
-				//			} while (newConcept==null || !(reasoner.getIndividuals(newConcept,false).size() > 0));
-			} while (!reasoner.isSatisfiable(newConcept));
-			
-			
-			
-		}
-
-		return newConcept;				
-	}
-
+	
 
 
 	public OWLOntology getOntology(){
@@ -472,5 +411,71 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 
 	}
+	
+	/**
+	 * Sceglie casualmente un concetto tra quelli generati
+	 * @return il concetto scelto
+	 */
+	public OWLDescription getRandomConcept() {
+		// sceglie casualmente uno tra i concetti presenti 
+		OWLDescription newConcept = null;
+
+		
+		if (!Parameters.BINARYCLASSIFICATION){
+			
+			// case A:  ALC and more expressive ontologies
+			do {
+				newConcept = allConcepts[KnowledgeBase.generator.nextInt(allConcepts.length)];
+				if (KnowledgeBase.generator.nextDouble() < 0.7) {
+					OWLDescription newConceptBase = getRandomConcept();
+					if (KnowledgeBase.generator.nextDouble() < 0.1) {
+						
+						if (KnowledgeBase.generator.nextDouble() <0) { // new role restriction
+							OWLObjectProperty role = allRoles[KnowledgeBase.generator.nextInt(allRoles.length)];
+							//					OWLDescription roleRange = (OWLDescription) role.getRange;
+
+							if (KnowledgeBase.generator.nextDouble() < 0.5)
+								newConcept = dataFactory.getOWLObjectAllRestriction(role, newConceptBase);
+							else
+								newConcept = dataFactory.getOWLObjectSomeRestriction(role, newConceptBase);
+						}
+						else					
+							newConcept = dataFactory.getOWLObjectComplementOf(newConceptBase);
+					}
+				} // else ext
+				//				System.out.printf("-->\t %s\n",newConcept);
+				//			} while (newConcept==null || !(reasoner.getIndividuals(newConcept,false).size() > 0));
+			} while (!reasoner.isSatisfiable(newConcept));
+		}else{
+			// for less expressive ontologies ALE and so on (complemento solo per concetti atomici)
+			do {
+				newConcept = allConcepts[KnowledgeBase.generator.nextInt(allConcepts.length)];
+				if (KnowledgeBase.generator.nextDouble() < d) {
+					OWLDescription newConceptBase = getRandomConcept();
+					if (KnowledgeBase.generator.nextDouble() < d)
+						if (KnowledgeBase.generator.nextDouble() < 0.1) { // new role restriction
+							OWLObjectProperty role = allRoles[KnowledgeBase.generator.nextInt(allRoles.length)];
+							//					OWLDescription roleRange = (OWLDescription) role.getRange;
+
+							if (KnowledgeBase.generator.nextDouble() < d)
+								newConcept = dataFactory.getOWLObjectAllRestriction(role, newConceptBase);
+							else
+								newConcept = dataFactory.getOWLObjectSomeRestriction(role, newConceptBase);
+						}
+				} // else ext
+				else{ //if (KnowledgeBase.generator.nextDouble() > 0.8) {					
+					newConcept = dataFactory.getOWLObjectComplementOf(newConcept);
+				}
+				//				System.out.printf("-->\t %s\n",newConcept);
+				//			} while (newConcept==null || !(reasoner.getIndividuals(newConcept,false).size() > 0));
+			} while (!reasoner.isSatisfiable(newConcept));
+			
+			
+			
+		}
+
+		return newConcept;				
+	}
+
 
 }

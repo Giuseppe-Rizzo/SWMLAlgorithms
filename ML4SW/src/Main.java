@@ -7,10 +7,12 @@ import evaluation.Parameters;
 import evaluation.task.AffiliationPrediction;
 import evaluation.task.MutagenicoPrediction;
 import evaluation.task.ClassMembershipPrediction;
+import evaluation.task.PUClassMembershipPrediction;
 import evaluation.task.PoliticianGenerator;
 import evaluation.task.PoliticianPrediction;
 
 import knowledgeBasesHandler.KnowledgeBase;
+import knowledgeBasesHandler.KnowledgeBaseForRoughConceptLearning;
 
 
 
@@ -29,31 +31,40 @@ static KnowledgeBase kb;
 		Parameters.loadParameters(); //loading from property file
 		
 //		Locale.setDefault(Locale.US);
-		 kb = new KnowledgeBase(Parameters.urlOwlFile);
+		
 		
 		Evaluation vcm= null; 
 		switch (Parameters.task) {
 		case CLASSMEMBERSHIPREDICTION:
-			 vcm= new ClassMembershipPrediction(kb);
+			kb = new KnowledgeBase(Parameters.urlOwlFile);
+			vcm= new ClassMembershipPrediction(kb);
 		break;
 		
 		case MUTAGENICPREDICTION:
-			vcm=new MutagenicoPrediction(kb);
-			
+			kb = new KnowledgeBase(Parameters.urlOwlFile);
+			if (Parameters.mutagenicAsDataPropertyPrediction)
+				vcm=new MutagenicoPrediction(kb);
+			else
+				vcm=new MutagenicoPrediction(kb,true);
 		 break;
 
 		case POLITICIANPREDICTION: 
+			kb = new KnowledgeBase(Parameters.urlOwlFile);
 			vcm= new PoliticianPrediction(kb);
 			break;
 		 
-		default:
+		case AFFILIATIONPROBLEM:
+			 kb = new KnowledgeBase(Parameters.urlOwlFile);
 			 vcm= new AffiliationPrediction(kb);
 			break;
+		default:
+			kb =new KnowledgeBaseForRoughConceptLearning(Parameters.urlOwlFile);
+			vcm= new PUClassMembershipPrediction(kb);
 		}
-		
-		String className =  Parameters.algorithm.toString(); 		// package name
-		
-		
+//		
+	String className =  Parameters.algorithm.toString(); 		// package name
+//		
+//		
 		switch (Parameters.design) {
 		case BOOTSTRAP:
 		

@@ -19,6 +19,9 @@ import utils.Generator;
 import knowledgeBasesHandler.KnowledgeBase;
 
 
+import classifiers.refinementOperator.NonRandomRefinementOperator;
+import classifiers.refinementOperator.NonRecursiveDownwardRefinementOperator;
+import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.TDTClassifier;
 import classifiers.trees.models.DLTree;
 import evaluation.Parameters;
@@ -42,9 +45,10 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 		cl= new TDTClassifier(kb);
 		
 		try {
-			File f= new File("Models.txt");
+			String string = "Models"+ Parameters.algorithm+"-"+Parameters.pruning+".txt";
+			File f= new File(string);
 			if(!f.exists())
-			  stream= new PrintStream(new FileOutputStream("Models.txt"), true);
+			  stream= new PrintStream(new FileOutputStream(string), true);
 		} catch (FileNotFoundException e) {
 			
 			e.printStackTrace();
@@ -56,8 +60,8 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 	 * @see classifiers.SupervisedLearnable#training(java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[], org.semanticweb.owl.model.OWLDescription[])
 	 */
 	@Override
-	public void training(Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
-
+	public void training(int[][] results,Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
+        RefinementOperator op=new RefinementOperator(kb);
 		Reasoner reasoner = kb.getReasoner();
 		OWLIndividual[] allExamples= kb.getIndividuals();
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
@@ -84,7 +88,7 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 
 		//		ArrayList<Triple<Integer, Integer, Integer>> testSetComposition= new ArrayList<Triple<Integer, Integer, Integer>>();
 		int length = testConcepts!=null?testConcepts.length:1;
-		int[][] results= kb.getClassMembershipResult();
+		//int[][] results= kb.getClassMembershipResult();
 		for (int c=0; c<length; c++) {
 
 			ArrayList<Integer> posExs = new ArrayList<Integer>();
@@ -111,16 +115,14 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 			System.out.println("Learning a tree ");
 
 
-			trees[c] = cl.induceDLTree(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS,prPos, prNeg);
+			trees[c] = cl.induceDLTree(posExs, negExs, undExs, Parameters.beam,prPos, prNeg,op);
 //			stream.println(trees[c]);
 			
 			if (Parameters.pruning==PruningType.REP)
 				cl.doREPPruning(pruningExs, trees[c], results[c]);
 			else if (Parameters.pruning==PruningType.REP)
 				cl.doPEPPruning(trainingExs, trees[c], results[c]);
-			
-
-			
+						
 			System.out.printf("--- tree #%d was induced. \n\n",c);
 
 		}
@@ -131,23 +133,6 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 
 	public void splitting(Integer[] trainingExs, int[][] classifications,  int c, ArrayList<Integer> posExs,
 			ArrayList<Integer> negExs, ArrayList<Integer> undExs) {
-		// ha splittato in istanze negative, positive e incerte per un singolo albero
-//		for (int e=0; e<trainingExs.length; e++){
-//
-//			if (reasoner.hasType(allExamples[trainingExs[e]], testConcepts[c]))
-//				posExs.add(trainingExs[e]);
-//			else {
-//				if (!Evaluation.BINARYCLASSIFICATION){
-//
-//					if (reasoner.hasType(allExamples[trainingExs[e]], negTestConcepts[c]))
-//						negExs.add(trainingExs[e]);
-//					else
-//						undExs.add(trainingExs[e]);
-//				}
-//				else
-//					negExs.add(trainingExs[e]);
-//			}
-//		}
 		
 		for (int e=0; e<trainingExs.length; e++){
 			

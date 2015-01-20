@@ -7,6 +7,7 @@ import knowledgeBasesHandler.*;
 import org.semanticweb.owl.model.OWLDescription;
 
 import classifiers.ensemble.Ensemble;
+import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.RandomizedTDTClassifier;
 import classifiers.trees.models.DLTree;
 import evaluation.Parameters;
@@ -21,7 +22,7 @@ public class TRFClassifier {
 		 data = new RandomizedTDTClassifier(kb);
 	}
 
-	public Ensemble<DLTree> induceDLForest(ArrayList<Integer> posExs, ArrayList<Integer> negExs,	ArrayList<Integer> undExs, int dim,int dimForest, double prPos, double prNeg ){
+	public Ensemble<DLTree> induceDLForest(ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, int dim,int dimForest, double prPos, double prNeg, RefinementOperator op ){
 
 		ArrayList<Triple<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>>> splitting= new ArrayList<Triple<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>>>();
 		// step 1: boostrap sampling with undersampling of the uncertainty instances
@@ -57,7 +58,7 @@ public class TRFClassifier {
 			ArrayList<Integer> negExsEns= splitting.get(i).getSecondElem();
 			ArrayList<Integer> undExsEns= splitting.get(i).getThirdElem();
 			System.out.printf(" %d Training set composition: %d %d %d", i, posExsEns.size(),negExsEns.size(), undExsEns.size());
-			DLTree tree=data.induceDLTree(posExsEns, negExsEns, undExsEns, dim, prPos, prNeg);
+			DLTree tree=data.induceDLTree(posExsEns, negExsEns, undExsEns, dim, prPos, prNeg, op);
 			forest.addClassifier(tree);
 
 		}

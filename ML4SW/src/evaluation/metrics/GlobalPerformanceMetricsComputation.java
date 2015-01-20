@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 import evaluation.Evaluation;
+import evaluation.Parameters;
+import evaluation.designOfExperiments.AlgorithmName;
 
 import utils.MathUtils;
 
@@ -39,7 +41,17 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 		totRecall= new double[nOfConcepts][nFolds];
 		
 		try {
-			stream= new PrintStream(new FileOutputStream("AccuracyEvaluation.txt"), true);
+			String string= "";
+			if ((Parameters.algorithm.compareTo(AlgorithmName.TerminologicalDecisionTree)==0)||((Parameters.algorithm.compareTo(AlgorithmName.DSTTerminologicalDecisionTree)==0))){
+			 string= "AccuracyEvaluation"+Parameters.algorithm+".txt";
+			 
+			}else if((Parameters.algorithm.compareTo(AlgorithmName.DSTTerminologicalRandomForests)==0) ||(Parameters.algorithm.compareTo(AlgorithmName.TerminologicalRandomForests)==0)){
+				 string= "AccuracyEvaluation"+Parameters.algorithm+""+ Parameters.NTREES+"-"+Parameters.samplingrate+".txt";
+			}else{
+				
+				string= "AccuracyEvaluation"+Parameters.algorithm+".txt";
+			}
+			stream= new PrintStream(new FileOutputStream(string), true);
 		} catch (FileNotFoundException e) {
 			
 			e.printStackTrace();
@@ -49,12 +61,16 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 	public void computeMetricsperIndividualperClass( int label, int rclass, int[][] classification, int c, int te, int[] foundNum,int[] trueNum, int[] hitNum, int[] matchingNum, int[] commissionNum, int[] omissionNum, int[] inducedNum ){
 
 
-			if (label == 1)
-				++foundNum[c];
+			if (label == 1){
+				foundNum[c]++;
+				System.out.println("----"+foundNum[c]);
+				
+			}
 
-
-			if (rclass == +1)
-				++trueNum[c];
+			if (rclass == +1){
+				trueNum[c]++;
+				System.out.println("----"+trueNum[c]);
+			}
 
 
 			if (label == rclass) { 
@@ -122,8 +138,10 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 			System.out.println(totCommissionRate[c][fold]);
 			totOmissionRate[c][fold] = omissionNum[c]/(double)testExs.length;  
 			totInducedRate[c][fold] = inducedNum[c]/(double)testExs.length;
-			System.out.printf("%10d %10.3f %10.3f %10.3f %10.3f \n", c, totMatchingRate[c][fold], totCommissionRate[c][fold], totOmissionRate[c][fold], totInducedRate[c][fold]);
-			stream.printf("%10d %10.3f %10.3f %10.3f %10.3f \n", c, totMatchingRate[c][fold], totCommissionRate[c][fold], totOmissionRate[c][fold], totInducedRate[c][fold]);
+			totPrecision[c][fold] = ((double)hitNum[c]+1)/(((double)foundNum[c])+1);
+			totRecall[c][fold]= ((double)hitNum[c]+1)/(((double)trueNum[c])+1);
+			System.out.printf("%10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f \n", c, totMatchingRate[c][fold], totCommissionRate[c][fold], totOmissionRate[c][fold], totInducedRate[c][fold],totPrecision[c][fold], totRecall[c][fold]);
+			stream.printf("%10d %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f \n", c, totMatchingRate[c][fold], totCommissionRate[c][fold], totOmissionRate[c][fold], totInducedRate[c][fold], totPrecision[c][fold], totRecall[c][fold]);
 		}
 
 	
@@ -143,6 +161,9 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 		double[] commissionAvgArray = new double[nOfConcepts]; // per OWLClass per fold
 		double[] omissionAvgArray = new double[nOfConcepts]; // per OWLClass per fold
 		double[] inducedAvgArray = new double[nOfConcepts]; // per OWLClass per fold
+		double[] precisionAvgArray = new double[nOfConcepts]; // per OWLClass per fold
+		double[] recallAvgArray = new double[nOfConcepts]; 
+		
 		
 		
 		System.out.println("\n\n\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ OVERALL OUTCOMES");
@@ -169,11 +190,17 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 
 			double avgInduction = MathUtils.avg(totInducedRate[c]);
 			inducedAvgArray[c]=avgInduction;
+			
+			double avgPrecision = MathUtils.avg(totPrecision[c]);
+			precisionAvgArray[c]= avgPrecision;
+			
+			double avgRecall=MathUtils.avg(totRecall[c]);
+			recallAvgArray[c]= avgRecall;
 
 			System.out.printf("%10d %10.2f %10.2f %10.2f %10.2f \n", c, 
-					AvgMatching*100, AvgCommission*100, avgOmission*100, avgInduction*100);
+					AvgMatching*100, AvgCommission*100, avgOmission*100, avgInduction*100, avgPrecision*100, avgRecall*100);
 			stream.printf("%10d %10.2f %10.2f %10.2f %10.2f \n", c, 
-					AvgMatching*100, AvgCommission*100, avgOmission*100, avgInduction*100);
+					AvgMatching*100, AvgCommission*100, avgOmission*100, avgInduction*100, avgPrecision*100, avgRecall*100);
 		
 
 
@@ -200,20 +227,21 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 		double inductionAvg 	= MathUtils.avg(inducedAvgArray);
 		double inductionSD = MathUtils.stdDeviation(inducedAvgArray);
 
-		double globalAM = 0;
-		double globalAMSD = 0;
+		double precisionAvg 	= MathUtils.avg(precisionAvgArray);
+		double precisionSD = MathUtils.stdDeviation(precisionAvgArray);
 
-		double globalCM = 0;
-		double globalCMSD = 0;
+		double recallAvg 	= MathUtils.avg(recallAvgArray);
+		double recallSD = MathUtils.stdDeviation(recallAvgArray);
+
 
 		System.out.printf("%10s %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f \n", "avg Values", 
-				matchingAvg*100, commissionAvg*100, omissionAvg*100, inductionAvg*100,globalAM*100,globalCM*100);
+				matchingAvg*100, commissionAvg*100, omissionAvg*100, inductionAvg*100,precisionAvg*100,recallAvg*100);
 		stream.printf("%10s %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f \n", "avg Values", 
-				matchingAvg*100, commissionAvg*100, omissionAvg*100, inductionAvg*100,globalAM*100,globalCM*100);
+				matchingAvg*100, commissionAvg*100, omissionAvg*100, inductionAvg*100,precisionAvg*100,recallAvg*100);
 		System.out.printf("%10s %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f \n", "stdDev Values", 
-				matchingSD*100, commissionSD*100, omissionSD*100, inductionSD*100,globalAMSD*100,globalCMSD*100);
+				matchingSD*100, commissionSD*100, omissionSD*100, inductionSD*100,precisionSD*100,recallSD*100);
 		stream.printf("%10s %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f \n", "stdDev Values", 
-				matchingSD*100, commissionSD*100, omissionSD*100, inductionSD*100,globalAMSD*100,globalCMSD*100);
+				matchingSD*100, commissionSD*100, omissionSD*100, inductionSD*100, precisionSD*100,recallSD*100);
 		
 	}
 	

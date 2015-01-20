@@ -11,6 +11,7 @@ import knowledgeBasesHandler.KnowledgeBase;
 
 import classifiers.ensemble.Ensemble;
 import classifiers.ensemble.terminologicalRandomForests.TRFClassifier;
+import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.models.DLTree;
 import evaluation.Parameters;
 
@@ -38,8 +39,8 @@ public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 	 * @see classifiers.SupervisedLearnable#training(java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[], org.semanticweb.owl.model.OWLDescription[])
 	 */
 	@Override
-	public void training(Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
-
+	public void training(int results[][], Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
+        RefinementOperator op= new RefinementOperator(kb);
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
 		Reasoner reasoner = kb.getReasoner();
 		OWLIndividual[] allExamples= kb.getIndividuals();
@@ -54,7 +55,7 @@ public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 
 			System.out.printf("--- Query Concept #%d \n",c);
 
-			splitting(trainingExs, kb.getClassMembershipResult(), c, posExs, negExs, undExs);
+			splitting(trainingExs, results, c, posExs, negExs, undExs);
 			
 			// ha splittato in istanze negative, positive e incerte per un singolo albero
 //			for (int e=0; e<trainingExs.length; e++){
@@ -86,7 +87,7 @@ public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 			System.out.println("Learning a forest ");
 
 
-			forests[c] = cl.induceDLForest(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS, Parameters.NTREES,prPos, prNeg);
+			forests[c] = cl.induceDLForest(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS, Parameters.NTREES,prPos, prNeg, op);
 
 			//			System.out.println("forest "+c);
 			//			System.out.println(forests[c]);

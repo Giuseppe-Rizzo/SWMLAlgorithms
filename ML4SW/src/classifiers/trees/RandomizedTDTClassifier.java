@@ -11,6 +11,7 @@ import org.semanticweb.owl.model.OWLDescription;
 
 import utils.Couple;
 import utils.Npla;
+import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
 import evaluation.Parameters;
@@ -27,9 +28,12 @@ public class RandomizedTDTClassifier extends AbstractTDTClassifier{
 	
 	
 	public DLTree induceDLTree(ArrayList<Integer> posExs, ArrayList<Integer> negExs,	ArrayList<Integer> undExs, 
-			int dim, double prPos, double prNeg) {		
+			int dim, double prPos, double prNeg, RefinementOperator op) {		
 		System.out.printf("Learning problem\t p:%d\t n:%d\t u:%d\t prPos:%4f\t prNeg:%4f\n", 
 				posExs.size(), negExs.size(), undExs.size(), prPos, prNeg);
+		
+		ArrayList<Integer> truePos= posExs;
+		ArrayList<Integer> trueNeg= negExs;
 		
 		Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double> examples = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExs, negExs, undExs, dim, prPos, prNeg);
 		DLTree tree = new DLTree(); // new (sub)tree
@@ -78,14 +82,14 @@ public class RandomizedTDTClassifier extends AbstractTDTClassifier{
 				// else (a non-leaf node) ...
 					else{
 						OWLDescription[] cConcepts= new OWLDescription[0];
-						ArrayList<OWLDescription> cConceptsL = generateNewConcepts(dim, posExs, negExs);
+						ArrayList<OWLDescription> cConceptsL = op.generateNewConcepts(dim, posExs, negExs);
 						System.out.println("Size: "+cConceptsL);
 						cConceptsL= getRandomSelection(cConceptsL); // random selection of feature set
 					
 						cConcepts = cConceptsL.toArray(cConcepts);
 
 						// select node concept
-						OWLDescription newRootConcept = selectBestConcept(cConcepts, posExs, negExs, undExs, prPos, prNeg);
+						OWLDescription newRootConcept = Parameters.CCP?(selectBestConceptCCP(cConcepts, posExs, negExs, undExs, prPos, prNeg, truePos, trueNeg)):(selectBestConcept(cConcepts, posExs, negExs, undExs, prPos, prNeg));;
 
 						ArrayList<Integer> posExsT = new ArrayList<Integer>();
 						ArrayList<Integer> negExsT = new ArrayList<Integer>();

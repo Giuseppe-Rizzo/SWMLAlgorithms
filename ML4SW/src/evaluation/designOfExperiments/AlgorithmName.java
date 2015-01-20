@@ -5,7 +5,8 @@ public enum AlgorithmName {
 	TerminologicalDecisionTree,
 	DSTTerminologicalDecisionTree,
 	TerminologicalRandomForests,
-	DSTTerminologicalRandomForests;
+	DSTTerminologicalRandomForests,
+	RoughTerminologicalDecisionTree;
 	
 	
 	public String toString(){
@@ -21,7 +22,8 @@ public enum AlgorithmName {
 		
 		else if (this.compareTo(DSTTerminologicalRandomForests)==0)
 			return "classifiers.EvidentialTerminologicalRandomForestInducer";
-			
+		else if (this.compareTo(RoughTerminologicalDecisionTree)==0)
+			return "classifiers.RoughTerminologicalDecisionTreeInducer";
 		
 	
 		return "";
@@ -29,18 +31,20 @@ public enum AlgorithmName {
 
 	public static AlgorithmName getClassifier(String name){
 		
-		
-		
 		if (name.compareTo("classifiers.TerminologicalDecisionTreeInducer")==0)
-			return DSTTerminologicalRandomForests;
+			return TerminologicalDecisionTree;
 		else if (name.compareTo("classifiers.TerminologicalRandomForestsInducer")==0)
 			return TerminologicalRandomForests;
 		else if (name.compareTo("classifiers.DSTTerminologicalDecisionTreeInducer")==0)
 			return DSTTerminologicalDecisionTree;
-		else if (name.compareTo("classifiers.TerminologicalDecisionTreeInducer")==0)
-			return TerminologicalDecisionTree;
+//		else if (name.compareTo("classifiers.TerminologicalDecisionTreeInducer")==0)
+//			return TerminologicalDecisionTree;
+		else if (name.compareTo("classifiers.RoughTerminologicalDecisionTreeInducer")==0)
+			return RoughTerminologicalDecisionTree;
+		else 
+			return DSTTerminologicalRandomForests;
 		
-		return null;
+
 		
 		
 		

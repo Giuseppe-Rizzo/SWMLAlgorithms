@@ -35,14 +35,16 @@ public class Parameters {
 			PURITY_THRESHOLD = Double.parseDouble( props.getProperty("PURITY_THRESHOLD"));
 			pruning = PruningType.valueOf(props.getProperty("pruning")); //PruningType.NOPRUNING;
 			/* Tipo di classificazione */
-			missingValueTreatmentForTDT = Boolean.parseBoolean(props.getProperty("missinGValueTreatmentForTDT"));//true;
+			missingValueTreatmentForTDT = Boolean.parseBoolean(props.getProperty("missingValueTreatmentForTDT"));//true;
 			BINARYCLASSIFICATION = Boolean.parseBoolean(props.getProperty("BINARYCLASSIFICATION"));//false;
 			M = Double.parseDouble(props.getProperty("M"));
 		    nonspecificityControl = Boolean.parseBoolean(props.getProperty("nonspecificityControl"));//false;
 			//	final String urlOwlFile = "file:///C:/Users/Utente/Documents/Dataset/Tesi_triennale/Ontologie/Ontlogie_Non_vanno_bene/MDM0.73.owl";
 			//C:/Users/Utente/Documents/Dataset/AltreOntologie
 			urlOwlFile = props.getProperty("urlOwlFile");//"file:////home/mod-biopax-example-ecocyc-glycolysis.owl";//"file:///C:/Users/Utente/Documents/Dataset/Tesi_triennale/Ontologie/Dataset/humandisease2.owl";//"file:////home/humandisease2.owl";//"file:///C:/Users/Utente/Documents/Dataset/Tesi_triennale/Ontologie/Dataset/humandisease2.owl"; //file:///C:/Users/Utente/Documents/Dataset/Dottorato/aifbportal_V2012-02-21_v1.owl"; //carcinogenesis.owl";//predident.owl";  //;            //"AltreOntologie/NTN-all.owl";  //"file:///C:/Users/Utente/Documents/Dataset/Tesi_triennale/Ontologie/Dataset/mod-biopax-example-ecocyc-glycolysis.owl";
-
+			refinementOperator=props.getProperty("refinementoperator");
+			CCP = Boolean.parseBoolean(props.getProperty("CCP"));
+			mutagenicAsDataPropertyPrediction=Boolean.parseBoolean(props.getProperty("mutagenicAsDataPropertyPrediction"));
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -57,7 +59,7 @@ public class Parameters {
 	}
 	
 	
-	public static AlgorithmName algorithm;//AlgorithmName.DSTTerminologicalRandomForests;
+	public static  AlgorithmName algorithm;//AlgorithmName.DSTTerminologicalRandomForests;
 	
 	public static double samplingrate;//0.5; //0.3; // 0.8 0.2 1
 	public static double originalImbalance;// 1;
@@ -78,5 +80,7 @@ public class Parameters {
 	//	final String urlOwlFile = "file:///C:/Users/Utente/Documents/Dataset/Tesi_triennale/Ontologie/Ontlogie_Non_vanno_bene/MDM0.73.owl";
 	//C:/Users/Utente/Documents/Dataset/AltreOntologie
 	public static String urlOwlFile;//"file:////home/mod-biopax-example-ecocyc-glycolysis.owl";//"file:///C:/Users/Utente/Documents/Dataset/Tesi_triennale/Ontologie/Dataset/humandisease2.owl";//"file:////home/humandisease2.owl";//"file:///C:/Users/Utente/Documents/Dataset/Tesi_triennale/Ontologie/Dataset/humandisease2.owl"; //file:///C:/Users/Utente/Documents/Dataset/Dottorato/aifbportal_V2012-02-21_v1.owl"; //carcinogenesis.owl";//predident.owl";  //;            //"AltreOntologie/NTN-all.owl";  //"file:///C:/Users/Utente/Documents/Dataset/Tesi_triennale/Ontologie/Dataset/mod-biopax-example-ecocyc-glycolysis.owl";
-
+	public static String refinementOperator;
+	public static boolean CCP;
+	public static boolean mutagenicAsDataPropertyPrediction;
 }

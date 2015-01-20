@@ -3,6 +3,7 @@ package classifiers;
 import org.semanticweb.owl.model.OWLDescription;
 
 
+import java.lang.reflect.InvocationTargetException;
 	import java.util.ArrayList;
 
 	import org.mindswap.pellet.owlapi.Reasoner;
@@ -13,6 +14,7 @@ import org.semanticweb.owl.model.OWLDescription;
 
 import classifiers.evidentialAlgorithms.DSTTDTClassifier;
 import classifiers.evidentialAlgorithms.models.DSTDLTree;
+import classifiers.refinementOperator.RefinementOperator;
 import evaluation.Parameters;
 /**
  * Wrapper for DSTTDTClassifier
@@ -37,8 +39,32 @@ import evaluation.Parameters;
 		 * @see classifiers.SupervisedLearnable#training(java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[], org.semanticweb.owl.model.OWLDescription[])
 		 */
 		@Override
-		public void training(Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
-
+		public void training(int[][] results, Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
+			RefinementOperator  op = null;
+			try {
+				op=  (RefinementOperator)(ClassLoader.getSystemClassLoader().loadClass(Parameters.refinementOperator)).getConstructor(KnowledgeBase.class).newInstance(kb);
+			} catch (InstantiationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (NoSuchMethodException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SecurityException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			//		DLTree2[] forests = new DLTree2[testConcepts.length];
 			Reasoner reasoner = kb.getReasoner();
 			OWLIndividual[] allExamples= kb.getIndividuals();
@@ -78,7 +104,7 @@ import evaluation.Parameters;
 				System.out.printf("New learning problem prepared.\n",c);
 				System.out.println("Learning phase ");
 
-				trees[c] = cl.induceDSTDLTree(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS,prPos, prNeg);
+				trees[c] = cl.induceDSTDLTree(posExs, negExs, undExs, Parameters.beam,prPos, prNeg, op);
 
 				//			System.out.println("forest "+c);
 			    System.out.println(trees[c]);

@@ -14,7 +14,7 @@ public interface SupervisedLearnable {
 	 * @param testConcepts, the set of query concept
 	 * @param negTestConcepts, the complement of query concepts
 	 */
-	public abstract void training(Integer[] trainingExs,
+	public abstract void training(int[][] results,Integer[] trainingExs,
 			OWLDescription[] testConcepts, OWLDescription[] negTestConcepts);
 
 	
