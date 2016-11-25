@@ -202,7 +202,7 @@ protected OWLDescription selectBestConcept(OWLDescription[] concepts, ArrayList<
 		double thisGain = gain(counts, prPos, prNeg);
 		System.out.printf("%+10e\n",thisGain);
 		System.out.println(concepts[c]);
-		if(thisGain < bestGain) {
+		if(thisGain > bestGain) {
 			bestConceptIndex = c;
 			bestGain = thisGain;
 		}

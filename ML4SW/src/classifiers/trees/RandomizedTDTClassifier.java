@@ -18,23 +18,23 @@ import evaluation.Parameters;
 import knowledgeBasesHandler.KnowledgeBase;
 
 public class RandomizedTDTClassifier extends AbstractTDTClassifier{
-//	public KnowledgeBase kb;
+	//	public KnowledgeBase kb;
 	public RandomizedTDTClassifier(KnowledgeBase kb) {
-		
+
 		super(kb);
-		
+
 	}
-	
-	
-	
+
+
+
 	public DLTree induceDLTree(ArrayList<Integer> posExs, ArrayList<Integer> negExs,	ArrayList<Integer> undExs, 
 			int dim, double prPos, double prNeg, RefinementOperator op) {		
 		System.out.printf("Learning problem\t p:%d\t n:%d\t u:%d\t prPos:%4f\t prNeg:%4f\n", 
 				posExs.size(), negExs.size(), undExs.size(), prPos, prNeg);
-		
+
 		ArrayList<Integer> truePos= posExs;
 		ArrayList<Integer> trueNeg= negExs;
-		
+
 		Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double> examples = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExs, negExs, undExs, dim, prPos, prNeg);
 		DLTree tree = new DLTree(); // new (sub)tree
 		Stack<Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>> stack= new Stack<Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>>();
@@ -42,7 +42,7 @@ public class RandomizedTDTClassifier extends AbstractTDTClassifier{
 		toInduce.setFirstElement(tree);
 		toInduce.setSecondElement(examples);
 		stack.push(toInduce);
-		
+		boolean setSeed=false;
 		while(!stack.isEmpty()){
 			System.out.printf("Stack: %d \n",stack.size());
 			Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>> current= stack.pop(); // extract the next element
@@ -79,17 +79,27 @@ public class RandomizedTDTClassifier extends AbstractTDTClassifier{
 						currentTree.setRoot(kb.getDataFactory().getOWLNothing()); // set negative leaf
 						System.out.println("false");
 					}		
-				// else (a non-leaf node) ...
+					// else (a non-leaf node) ...
 					else{
 						OWLDescription[] cConcepts= new OWLDescription[0];
-						ArrayList<OWLDescription> cConceptsL = op.generateNewConcepts(dim, posExs, negExs);
+						ArrayList<OWLDescription> cConceptsL = op.generateNewConcepts(dim, posExs, negExs, setSeed);
+
+						setSeed=false;
 						System.out.println("Size: "+cConceptsL);
-						cConceptsL= getRandomSelection(cConceptsL); // random selection of feature set
-					
-						cConcepts = cConceptsL.toArray(cConcepts);
 
 						// select node concept
-						OWLDescription newRootConcept = Parameters.CCP?(selectBestConceptCCP(cConcepts, posExs, negExs, undExs, prPos, prNeg, truePos, trueNeg)):(selectBestConcept(cConcepts, posExs, negExs, undExs, prPos, prNeg));;
+
+
+						OWLDescription newRootConcept= null;
+						if (cConceptsL.size()>1){
+							cConceptsL= getRandomSelection(cConceptsL); // random selection of feature set
+							cConcepts = cConceptsL.toArray(cConcepts);
+							newRootConcept= Parameters.CCP?(selectBestConceptCCP(cConcepts, posExs, negExs, undExs, prPos, prNeg, truePos, trueNeg)):(selectBestConcept(cConcepts, posExs, negExs, undExs, prPos, prNeg));
+						}else	
+							newRootConcept= cConcepts[0]; // for the seed
+						
+
+//						OWLDescription newRootConcept = Parameters.CCP?(selectBestConceptCCP(cConcepts, posExs, negExs, undExs, prPos, prNeg, truePos, trueNeg)):(selectBestConcept(cConcepts, posExs, negExs, undExs, prPos, prNeg));;
 
 						ArrayList<Integer> posExsT = new ArrayList<Integer>();
 						ArrayList<Integer> negExsT = new ArrayList<Integer>();
@@ -120,7 +130,7 @@ public class RandomizedTDTClassifier extends AbstractTDTClassifier{
 						stack.push(neg);
 						stack.push(pos);
 					}
-			}
+				}
 			}
 		}
 		return tree;
@@ -128,23 +138,23 @@ public class RandomizedTDTClassifier extends AbstractTDTClassifier{
 	}
 
 
-		
 
-private ArrayList<OWLDescription> getRandomSelection(ArrayList<OWLDescription> refinement) {
-	System.out.println("RANDOM SELECTION ");
-	Random generator= new Random(1);
-	ArrayList<OWLDescription> subset=new ArrayList<OWLDescription>();
-	final int SUBSET_DIMENSION=(int) Math.sqrt(refinement.size());
-	for (int i=0;i<SUBSET_DIMENSION;i++){
-		int index=generator.nextInt(refinement.size());
-		System.out.println("Next resampled feature"+refinement.get(index));
-		subset.add((refinement.get(index)));
-	
+
+	private ArrayList<OWLDescription> getRandomSelection(ArrayList<OWLDescription> refinement) {
+		System.out.println("RANDOM SELECTION ");
+		Random generator= new Random(1);
+		ArrayList<OWLDescription> subset=new ArrayList<OWLDescription>();
+		final int SUBSET_DIMENSION=(int) Math.sqrt(refinement.size());
+		for (int i=0;i<SUBSET_DIMENSION;i++){
+			int index=generator.nextInt(refinement.size());
+			System.out.println("Next resampled feature"+refinement.get(index));
+			subset.add((refinement.get(index)));
+
+		}
+		System.out.printf("Subset Feature: %d \n", subset.size());
+		return subset;	
+
 	}
-	System.out.printf("Subset Feature: %d \n", subset.size());
-	return subset;	
-	
-}
 
 	public int classifyExample(int indTestEx, DLTree tree) {
 		Stack<DLTree> stack= new Stack<DLTree>();
@@ -154,9 +164,9 @@ private ArrayList<OWLDescription> getRandomSelection(ArrayList<OWLDescription> r
 		boolean stop=false;
 		while(!stack.isEmpty() && !stop){
 			DLTree currentTree= stack.pop();
-			
+
 			OWLDescription rootClass = currentTree.getRoot();
-//			System.out.println("Root class: "+ rootClass);
+			//			System.out.println("Root class: "+ rootClass);
 			if (rootClass.equals(dataFactory.getOWLThing())){
 				stop=true;
 				result=+1;
@@ -176,8 +186,8 @@ private ArrayList<OWLDescription> getRandomSelection(ArrayList<OWLDescription> r
 
 			}
 		};
-		 
-		
+
+
 		return result;
 
 	}
@@ -188,23 +198,23 @@ private ArrayList<OWLDescription> getRandomSelection(ArrayList<OWLDescription> r
 	public void prune(Integer[] pruningSet, AbstractTree tree,
 			AbstractTree subtree) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
 
-	
-	
-//	public	void classifyExamplesTree(int indTestEx, DLTree[] forests, int[] results, OWLDescription[] testConcepts, int...rclass) {
-//
-//		for (int c=0; c < testConcepts.length; c++) {
-//			results[c] = classifyExample(indTestEx, forests[c]);
-////			System.out.println(forests[c].printVotes());
-//		} // for c
-//
-//
-//
-//	}
+
+
+	//	public	void classifyExamplesTree(int indTestEx, DLTree[] forests, int[] results, OWLDescription[] testConcepts, int...rclass) {
+	//
+	//		for (int c=0; c < testConcepts.length; c++) {
+	//			results[c] = classifyExample(indTestEx, forests[c]);
+	////			System.out.println(forests[c].printVotes());
+	//		} // for c
+	//
+	//
+	//
+	//	}
 
 	/*public void classifyExamplesDST(int indTestEx, DSTDLTree[] trees, int[] results, OWLDescription[] testConcepts) {
 		ArrayList<Couple<Integer,MassFunction<Integer>>> list=null;
@@ -266,148 +276,148 @@ private ArrayList<OWLDescription> getRandomSelection(ArrayList<OWLDescription> r
 	}
 	 */
 
-//	private  OWLDescription selectBestConcept(OWLDescription[] concepts,
-//			ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, 
-//			double prPos, double prNeg) {
-//
-//		int[] counts;
-//
-//		int bestConceptIndex = 0;
-//
-//		counts = getSplitCounts(concepts[0], posExs, negExs, undExs);
-//		System.out.printf("%4s\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t ", 
-//				"#"+0, counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[7], counts[8]);
-//
-//		double bestGain = gain(counts, prPos, prNeg);
-//
-//		System.out.printf("%+10e\n",bestGain);
-//
-//		System.out.println(concepts[0]);
-//
-//		for (int c=1; c<concepts.length; c++) {
-//
-//			counts = getSplitCounts(concepts[c], posExs, negExs, undExs);
-//			System.out.printf("%4s\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t ", 
-//					"#"+c, counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[7], counts[8]);
-//
-//			double thisGain = gain(counts, prPos, prNeg);
-//			System.out.printf("%+10e\n",thisGain);
-//			System.out.println(concepts[c]);
-//			if(thisGain > bestGain) {
-//				bestConceptIndex = c;
-//				bestGain = thisGain;
-//			}
-//		}
-//
-//		System.out.printf("best gain: %f \t split #%d\n", bestGain, bestConceptIndex);
-//		return concepts[bestConceptIndex];
-//	}
-
-	
-
-
-//	private double gain(int[] counts, double prPos, double prNeg) {
-//
-//		double sizeT = counts[0] + counts[1];
-//		double sizeF = counts[3] + counts[4];
-//		double sizeU = counts[6] + counts[7] + counts[2] + counts[5];
-//		double sum = sizeT+sizeF+sizeU;
-//
-//		double startImpurity = gini(counts[0]+counts[3], counts[1]+counts[4], prPos, prNeg);
-//		double tImpurity = gini(counts[0], counts[1], prPos, prNeg);
-//		double fImpurity = gini(counts[3], counts[4], prPos, prNeg);
-//		double uImpurity = gini(counts[6]+counts[2], counts[7]+counts[5] , prPos, prNeg);		
-//
-//		return startImpurity - (sizeT/sum)*tImpurity - (sizeF/sum)*fImpurity - - (sizeU/sum)*uImpurity;
-//	}
-
-
-
-//	private static double gini(double numPos, double numNeg, double prPos, double prNeg) {
-//
-//		double sum = numPos+numNeg;
-//
-//		double p1 = (numPos*Evaluation.M*prPos)/(sum+Evaluation.M);
-//		double p2 = (numNeg*Evaluation.M*prNeg)/(sum+Evaluation.M);
-//
-//		return (1.0-p1*p1-p2*p2);
-//		//		return (1-Math.pow(p1,2)-Math.pow(p2,2))/2;
-//	}
+	//	private  OWLDescription selectBestConcept(OWLDescription[] concepts,
+	//			ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, 
+	//			double prPos, double prNeg) {
+	//
+	//		int[] counts;
+	//
+	//		int bestConceptIndex = 0;
+	//
+	//		counts = getSplitCounts(concepts[0], posExs, negExs, undExs);
+	//		System.out.printf("%4s\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t ", 
+	//				"#"+0, counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[7], counts[8]);
+	//
+	//		double bestGain = gain(counts, prPos, prNeg);
+	//
+	//		System.out.printf("%+10e\n",bestGain);
+	//
+	//		System.out.println(concepts[0]);
+	//
+	//		for (int c=1; c<concepts.length; c++) {
+	//
+	//			counts = getSplitCounts(concepts[c], posExs, negExs, undExs);
+	//			System.out.printf("%4s\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t ", 
+	//					"#"+c, counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[7], counts[8]);
+	//
+	//			double thisGain = gain(counts, prPos, prNeg);
+	//			System.out.printf("%+10e\n",thisGain);
+	//			System.out.println(concepts[c]);
+	//			if(thisGain > bestGain) {
+	//				bestConceptIndex = c;
+	//				bestGain = thisGain;
+	//			}
+	//		}
+	//
+	//		System.out.printf("best gain: %f \t split #%d\n", bestGain, bestConceptIndex);
+	//		return concepts[bestConceptIndex];
+	//	}
 
 
 
 
-//	private int[] getSplitCounts(OWLDescription concept, 
-//			ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs) {
-//		System.out.println("positive: "+posExs);
-//		int[] counts = new int[9];
-//		ArrayList<Integer> posExsT = new ArrayList<Integer>();
-//		ArrayList<Integer> negExsT = new ArrayList<Integer>();
-//		ArrayList<Integer> undExsT = new ArrayList<Integer>();
-//
-//		ArrayList<Integer> posExsF = new ArrayList<Integer>();
-//		ArrayList<Integer> negExsF = new ArrayList<Integer>();
-//		ArrayList<Integer> undExsF = new ArrayList<Integer>();
-//
-//		ArrayList<Integer> posExsU = new ArrayList<Integer>();
-//		ArrayList<Integer> negExsU = new ArrayList<Integer>();
-//		ArrayList<Integer> undExsU = new ArrayList<Integer>();
-//
-//		splitGroup(concept,posExs,posExsT,posExsF,posExsU);
-//		splitGroup(concept,negExs,negExsT,negExsF,negExsU);	
-//		splitGroup(concept,undExs,undExsT,undExsF,undExsU);	
-//
-//		counts[0] = posExsT.size(); 
-//		counts[1] = negExsT.size(); 
-//		counts[2] = undExsT.size(); 
-//		counts[3] = posExsF.size(); 
-//		counts[4] = negExsF.size();
-//		counts[5] = undExsF.size();
-//		counts[6] = posExsU.size(); 
-//		counts[7] = negExsU.size();
-//		counts[8] = undExsU.size();
-////		for(int i=0; i<counts.length;i++)
-////			System.out.println(counts[i]);
-//
-//		return counts;
-//
-//	}
+	//	private double gain(int[] counts, double prPos, double prNeg) {
+	//
+	//		double sizeT = counts[0] + counts[1];
+	//		double sizeF = counts[3] + counts[4];
+	//		double sizeU = counts[6] + counts[7] + counts[2] + counts[5];
+	//		double sum = sizeT+sizeF+sizeU;
+	//
+	//		double startImpurity = gini(counts[0]+counts[3], counts[1]+counts[4], prPos, prNeg);
+	//		double tImpurity = gini(counts[0], counts[1], prPos, prNeg);
+	//		double fImpurity = gini(counts[3], counts[4], prPos, prNeg);
+	//		double uImpurity = gini(counts[6]+counts[2], counts[7]+counts[5] , prPos, prNeg);		
+	//
+	//		return startImpurity - (sizeT/sum)*tImpurity - (sizeF/sum)*fImpurity - - (sizeU/sum)*uImpurity;
+	//	}
 
 
-//	private  void split(OWLDescription concept,
-//			ArrayList<Integer> posExs,  ArrayList<Integer> negExs,  ArrayList<Integer> undExs,
-//			ArrayList<Integer> posExsT, ArrayList<Integer> negExsT,	ArrayList<Integer> undExsT, 
-//			ArrayList<Integer> posExsF,	ArrayList<Integer> negExsF, ArrayList<Integer> undExsF) {
-//
-//		ArrayList<Integer> posExsU = new ArrayList<Integer>();
-//		ArrayList<Integer> negExsU = new ArrayList<Integer>();
-//		ArrayList<Integer> undExsU = new ArrayList<Integer>();
-//
-//		splitGroup(concept,posExs,posExsT,posExsF,posExsU);
-//		splitGroup(concept,negExs,negExsT,negExsF,negExsU);
-//		splitGroup(concept,undExs,undExsT,undExsF,undExsU);	
-//
-//	}
+
+	//	private static double gini(double numPos, double numNeg, double prPos, double prNeg) {
+	//
+	//		double sum = numPos+numNeg;
+	//
+	//		double p1 = (numPos*Evaluation.M*prPos)/(sum+Evaluation.M);
+	//		double p2 = (numNeg*Evaluation.M*prNeg)/(sum+Evaluation.M);
+	//
+	//		return (1.0-p1*p1-p2*p2);
+	//		//		return (1-Math.pow(p1,2)-Math.pow(p2,2))/2;
+	//	}
 
 
-//	private void splitGroup(OWLDescription concept, ArrayList<Integer> nodeExamples,
-//			ArrayList<Integer> trueExs, ArrayList<Integer> falseExs, ArrayList<Integer> undExs) {
-//		OWLDescription negConcept = kb.getDataFactory().getOWLObjectComplementOf(concept);
-//
-//		for (int e=0; e<nodeExamples.size(); e++) {
-//			int exIndex = nodeExamples.get(e);
-////			 System.out.println("-****"+ concept);
-//			if (kb.getReasoner().hasType(kb.getIndividuals()[exIndex], concept))
-//				trueExs.add(exIndex);
-//			else if (kb.getReasoner().hasType(kb.getIndividuals()[exIndex], negConcept))
-//				falseExs.add(exIndex);
-//			else
-//				undExs.add(exIndex);		
-//		}	
-	
-	
-	
-	}
+
+
+	//	private int[] getSplitCounts(OWLDescription concept, 
+	//			ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs) {
+	//		System.out.println("positive: "+posExs);
+	//		int[] counts = new int[9];
+	//		ArrayList<Integer> posExsT = new ArrayList<Integer>();
+	//		ArrayList<Integer> negExsT = new ArrayList<Integer>();
+	//		ArrayList<Integer> undExsT = new ArrayList<Integer>();
+	//
+	//		ArrayList<Integer> posExsF = new ArrayList<Integer>();
+	//		ArrayList<Integer> negExsF = new ArrayList<Integer>();
+	//		ArrayList<Integer> undExsF = new ArrayList<Integer>();
+	//
+	//		ArrayList<Integer> posExsU = new ArrayList<Integer>();
+	//		ArrayList<Integer> negExsU = new ArrayList<Integer>();
+	//		ArrayList<Integer> undExsU = new ArrayList<Integer>();
+	//
+	//		splitGroup(concept,posExs,posExsT,posExsF,posExsU);
+	//		splitGroup(concept,negExs,negExsT,negExsF,negExsU);	
+	//		splitGroup(concept,undExs,undExsT,undExsF,undExsU);	
+	//
+	//		counts[0] = posExsT.size(); 
+	//		counts[1] = negExsT.size(); 
+	//		counts[2] = undExsT.size(); 
+	//		counts[3] = posExsF.size(); 
+	//		counts[4] = negExsF.size();
+	//		counts[5] = undExsF.size();
+	//		counts[6] = posExsU.size(); 
+	//		counts[7] = negExsU.size();
+	//		counts[8] = undExsU.size();
+	////		for(int i=0; i<counts.length;i++)
+	////			System.out.println(counts[i]);
+	//
+	//		return counts;
+	//
+	//	}
+
+
+	//	private  void split(OWLDescription concept,
+	//			ArrayList<Integer> posExs,  ArrayList<Integer> negExs,  ArrayList<Integer> undExs,
+	//			ArrayList<Integer> posExsT, ArrayList<Integer> negExsT,	ArrayList<Integer> undExsT, 
+	//			ArrayList<Integer> posExsF,	ArrayList<Integer> negExsF, ArrayList<Integer> undExsF) {
+	//
+	//		ArrayList<Integer> posExsU = new ArrayList<Integer>();
+	//		ArrayList<Integer> negExsU = new ArrayList<Integer>();
+	//		ArrayList<Integer> undExsU = new ArrayList<Integer>();
+	//
+	//		splitGroup(concept,posExs,posExsT,posExsF,posExsU);
+	//		splitGroup(concept,negExs,negExsT,negExsF,negExsU);
+	//		splitGroup(concept,undExs,undExsT,undExsF,undExsU);	
+	//
+	//	}
+
+
+	//	private void splitGroup(OWLDescription concept, ArrayList<Integer> nodeExamples,
+	//			ArrayList<Integer> trueExs, ArrayList<Integer> falseExs, ArrayList<Integer> undExs) {
+	//		OWLDescription negConcept = kb.getDataFactory().getOWLObjectComplementOf(concept);
+	//
+	//		for (int e=0; e<nodeExamples.size(); e++) {
+	//			int exIndex = nodeExamples.get(e);
+	////			 System.out.println("-****"+ concept);
+	//			if (kb.getReasoner().hasType(kb.getIndividuals()[exIndex], concept))
+	//				trueExs.add(exIndex);
+	//			else if (kb.getReasoner().hasType(kb.getIndividuals()[exIndex], negConcept))
+	//				falseExs.add(exIndex);
+	//			else
+	//				undExs.add(exIndex);		
+	//		}	
+
+
+
+}
 
 
 //	private ArrayList<OWLDescription> generateNewConcepts(int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {

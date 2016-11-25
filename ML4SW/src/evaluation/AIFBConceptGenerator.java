@@ -1,5 +1,6 @@
 package evaluation;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 import java.util.Set;
@@ -29,6 +30,79 @@ public class AIFBConceptGenerator extends ConceptGenerator {
 	public  Couple<OWLDescription[],OWLDescription[]> generateQueryConcept(){
 
 
+//		OWLClass owlClass = kb.getClasses()[40]; // research group
+//		OWLClass owlClass2 = kb.getClasses()[23]; // person: 49  Emeileger:23
+//		OWLObjectProperty prop= kb.getRoles()[95];
+//		OWLObjectProperty prop2= kb.getRoles()[49]; //author
+//		// considerare la proprietà no. 95
+//		// property 76-Attribut-3AAutor da invertire
+//	;
+//
+//		System.out.println(owlClass2 +" "+reasoner.getIndividuals(owlClass2, false).size());
+//		examples= new OWLIndividual[reasoner.getIndividuals(owlClass2, false).size()];
+//		examples=reasoner.getIndividuals(owlClass2, false).toArray(examples);
+//
+//		OWLDataFactory dataFactory2 = kb.getDataFactory();
+//		OWLDescription ds=dataFactory2.getOWLObjectSomeRestriction(prop, owlClass2);
+//		OWLDescription dsneg= dataFactory2.getOWLObjectComplementOf(ds);
+//		System.out.println("---"+reasoner.getIndividuals(dsneg, false).size());
+//		
+//		// per ogni research group generare il concetto \exists R 
+//
+////		Set<OWLIndividual> researchGroup = reasoner.getIndividuals(owlClass, false); // retrieval of research group
+////		OWLDescription[] queries= new OWLDescription[researchGroup.size()];
+////		OWLDescription[] negqueries= new OWLDescription[researchGroup.size()];
+////		OWLDataFactory dataFactory2 = kb.getDataFactory();
+////		int i=0;
+////
+////		// genero  concetto \exists R.{owlIndividual}
+////		for (OWLIndividual owlIndividual : researchGroup) {
+////
+////			queries[i]=  //dataFactory2.getOWLObjectIntersectionOf(owlClass2, 					
+////					(dataFactory2.getOWLObjectSomeRestriction(prop2, dataFactory2.getOWLThing())); //dataFactory2.getOWLObjectOneOf(owlIndividual))) ;//);
+////			System.out.println("Queries: "+i+") "+queries[i] +"\t"+ reasoner.getIndividuals(queries[i], true).size());
+////			i++;
+////		}
+//	//TODO: decommentare per ritornare alla versione precedente
+//
+//		
+//		// // genero  concetto \exists R.researchGroup-{owlIndividual}
+////		OWLIndividual[] inds= new OWLIndividual[researchGroup.size()];
+////		inds= researchGroup.toArray(inds);
+////
+////		for (int j = 0; j < inds.length; j++) {
+////
+////			Set<OWLIndividual> subset= new HashSet<OWLIndividual>();
+////
+////			for (int j2 = 0; j2 < inds.length; j2++) {
+////
+////				if (j2!=j)
+////					subset.add(inds[j2]);
+////
+////
+////			}
+////
+////			negqueries[j]=dataFactory2.getOWLObjectUnionOf(dataFactory.getOWLObjectComplementOf(owlClass), dataFactory2.getOWLObjectSomeRestriction(prop, dataFactory2.getOWLObjectOneOf(subset)));
+//////			System.out.println("Neg Queries: "+j+") "+negqueries[j]+ ": "+ reasoner.isSatisfiable(negqueries[j]));
+//			
+//			
+//			
+//
+//
+////		}
+//		// verifica se sono disgiunti
+////		for(int k=0; k<queries.length;k++){
+////			
+////			System.out.println(reasoner.isDisjointWith( queries[k], negqueries[k])); // non sono disgiunti
+////			
+////		}
+//		
+////		Couple<OWLDescription[], OWLDescription[]> couple = new Couple <OWLDescription[], OWLDescription[]>();
+////		couple.setFirstElement(queries);
+////		couple.setSecondElement(negqueries);
+////		return couple;
+//		return null;
+		
 		OWLClass owlClass = kb.getClasses()[40]; // research group
 		OWLClass owlClass2 = kb.getClasses()[31]; // person
 		OWLObjectProperty prop= kb.getRoles()[95];

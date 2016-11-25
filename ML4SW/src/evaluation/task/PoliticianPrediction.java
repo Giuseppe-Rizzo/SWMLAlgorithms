@@ -23,6 +23,7 @@ public class PoliticianPrediction extends ClassMembershipPrediction{
 	
 		allExamples= gen.getExamples();
 		kb.updateExamples(allExamples);
+		System.out.println("Number of instances"+kb.getIndividuals().length);
 		classification=kb.getClassMembershipResult(testConcepts, negTestConcepts,allExamples);
 		
 		int pos=0;
@@ -30,6 +31,7 @@ public class PoliticianPrediction extends ClassMembershipPrediction{
 		int und=0;
 		
 		for (int i=0; i<classification[0].length;i++){
+			
 			if (classification[0][i]==-1)
 				neg++;
 			else if (classification[0][i]==+1){

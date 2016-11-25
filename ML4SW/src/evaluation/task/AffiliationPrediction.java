@@ -27,7 +27,7 @@ public class AffiliationPrediction extends ClassMembershipPrediction {
 	
 		allExamples= gen.getExamples();
 		kb.updateExamples(allExamples);
-		classification=kb.getClassMembershipResult(testConcepts, negTestConcepts,allExamples);
+	classification=kb.getClassMembershipResult(testConcepts, negTestConcepts,allExamples);
 		
 		
 	

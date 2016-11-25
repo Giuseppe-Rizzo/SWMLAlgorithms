@@ -14,4 +14,6 @@ public interface Evaluation {
 
 	public abstract void crossValidation(int nFolds, String Name);
 
+	public abstract void computeDirectClassSeparabilityMeasure();
+
 }

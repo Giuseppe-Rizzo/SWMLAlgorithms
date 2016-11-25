@@ -15,6 +15,7 @@ import org.semanticweb.owl.model.OWLConstant;
 import org.semanticweb.owl.model.OWLDataFactory;
 import org.semanticweb.owl.model.OWLDataProperty;
 import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owl.model.OWLImportsDeclaration;
 import org.semanticweb.owl.model.OWLIndividual;
 import org.semanticweb.owl.model.OWLObjectProperty;
 import org.semanticweb.owl.model.OWLOntology;
@@ -61,8 +62,6 @@ public class KnowledgeBase implements IKnowledgeBase {
 	@Override
 	public   OWLOntology initKB() {
 
-
-
 		manager = OWLManager.createOWLOntologyManager();        
 
 		// read the file
@@ -70,12 +69,12 @@ public class KnowledgeBase implements IKnowledgeBase {
 		dataFactory = manager.getOWLDataFactory();
 		OWLOntology ontology = null;
 		try {
-			SimpleURIMapper mapper = new SimpleURIMapper(URI.create("http://semantic-mediawiki.org/swivt/1.0"),URI.create("file:///C:/Users/Utente/Documents/Dataset/Dottorato/10.owl"));
+			SimpleURIMapper mapper = new SimpleURIMapper(URI.create("http://semantic-mediawiki.org/swivt/1.0"),URI.create("file:///C:/Users/Utente/Documents/Dottorato/Dataset/Dottorato/10.owl"));
 			//			manager.addURIMapper();
 			manager.addURIMapper(mapper);
 			ontology = manager.loadOntologyFromPhysicalURI(fileURI);
-			//			OWLImportsDeclaration importDeclaraton = dataFactory.getOWLImportsDeclarationAxiom(ontology, URI.create("file:///C:/Users/Utente/Documents/Dataset/10.owl"));
-			//		   manager.makeLoadImportRequest(importDeclaraton);
+			OWLImportsDeclaration importDeclaraton = dataFactory.getOWLImportsDeclarationAxiom(ontology, URI.create("file:///C:/Users/Utente/Documents/Dottorato/Dataset/Dottorato/10.owl"));
+			manager.makeLoadImportRequest(importDeclaraton);
 
 
 		} catch (OWLOntologyCreationException e) {
@@ -106,7 +105,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		for(OWLObjectProperty prop : propList) {
 			if (!prop.isAnonymous()) {
 				allRoles[op++] = prop;
-				System.out.println(prop);
+				System.out.println(op+"-"+prop);
 			}	        		
 		}
 		System.out.println("---------------------------- "+op);
@@ -421,16 +420,16 @@ public class KnowledgeBase implements IKnowledgeBase {
 		OWLDescription newConcept = null;
 
 		
-		if (!Parameters.BINARYCLASSIFICATION){
-			
-			// case A:  ALC and more expressive ontologies
+//		if (!Parameters.BINARYCLASSIFICATION){
+//			
+//			// case A:  ALC and more expressive ontologies
 			do {
 				newConcept = allConcepts[KnowledgeBase.generator.nextInt(allConcepts.length)];
 				if (KnowledgeBase.generator.nextDouble() < 0.7) {
 					OWLDescription newConceptBase = getRandomConcept();
-					if (KnowledgeBase.generator.nextDouble() < 0.1) {
+					if (KnowledgeBase.generator.nextDouble() < 0.5) {
 						
-						if (KnowledgeBase.generator.nextDouble() <0) { // new role restriction
+						if (KnowledgeBase.generator.nextDouble() <0.5) { // new role restriction
 							OWLObjectProperty role = allRoles[KnowledgeBase.generator.nextInt(allRoles.length)];
 							//					OWLDescription roleRange = (OWLDescription) role.getRange;
 
@@ -446,33 +445,33 @@ public class KnowledgeBase implements IKnowledgeBase {
 				//				System.out.printf("-->\t %s\n",newConcept);
 				//			} while (newConcept==null || !(reasoner.getIndividuals(newConcept,false).size() > 0));
 			} while (!reasoner.isSatisfiable(newConcept));
-		}else{
+//		}else{
 			// for less expressive ontologies ALE and so on (complemento solo per concetti atomici)
-			do {
-				newConcept = allConcepts[KnowledgeBase.generator.nextInt(allConcepts.length)];
-				if (KnowledgeBase.generator.nextDouble() < d) {
-					OWLDescription newConceptBase = getRandomConcept();
-					if (KnowledgeBase.generator.nextDouble() < d)
-						if (KnowledgeBase.generator.nextDouble() < 0.1) { // new role restriction
-							OWLObjectProperty role = allRoles[KnowledgeBase.generator.nextInt(allRoles.length)];
-							//					OWLDescription roleRange = (OWLDescription) role.getRange;
-
-							if (KnowledgeBase.generator.nextDouble() < d)
-								newConcept = dataFactory.getOWLObjectAllRestriction(role, newConceptBase);
-							else
-								newConcept = dataFactory.getOWLObjectSomeRestriction(role, newConceptBase);
-						}
-				} // else ext
-				else{ //if (KnowledgeBase.generator.nextDouble() > 0.8) {					
-					newConcept = dataFactory.getOWLObjectComplementOf(newConcept);
-				}
+//			do {
+//				newConcept = allConcepts[KnowledgeBase.generator.nextInt(allConcepts.length)];
+//				if (KnowledgeBase.generator.nextDouble() < d) {
+////					OWLDescription newConceptBase = getRandomConcept();
+////					if (KnowledgeBase.generator.nextDouble() < d)
+////						if (KnowledgeBase.generator.nextDouble() < 0.1) { // new role restriction
+////							OWLObjectProperty role = allRoles[KnowledgeBase.generator.nextInt(allRoles.length)];
+////							//					OWLDescription roleRange = (OWLDescription) role.getRange;
+////
+////							if (KnowledgeBase.generator.nextDouble() < d)
+////								newConcept = dataFactory.getOWLObjectAllRestriction(role, newConceptBase);
+////							else
+////								newConcept = dataFactory.getOWLObjectSomeRestriction(role, newConceptBase);
+////						}
+//				} // else ext
+//				else{ //if (KnowledgeBase.generator.nextDouble() > 0.8) {					
+	//				newConcept = dataFactory.getOWLObjectComplementOf(newConcept);
+//				}
 				//				System.out.printf("-->\t %s\n",newConcept);
 				//			} while (newConcept==null || !(reasoner.getIndividuals(newConcept,false).size() > 0));
-			} while (!reasoner.isSatisfiable(newConcept));
+			//} while (!reasoner.isSatisfiable(newConcept));
 			
 			
 			
-		}
+//		}
 
 		return newConcept;				
 	}

@@ -60,21 +60,23 @@ public class ConceptGenerator {
 	                    partialConcept = dataFactory.getOWLObjectUnionOf(newConcepts);
 	            } // for j
 //            	System.out.println();
-            	complPartialConcept = dataFactory.getOWLObjectComplementOf(partialConcept);
+            	complPartialConcept = (dataFactory.getOWLObjectComplementOf(partialConcept)); 
                 
                 numPosInst = reasoner.getIndividuals(partialConcept,false).size(); 
-                numNegInst = reasoner.getIndividuals(complPartialConcept,false).size();
-                
+                numNegInst = nExs- numPosInst ;//reasoner.getIndividuals(complPartialConcept,false).size();
                 System.out.printf("%s\n",partialConcept);
-                System.out.printf("pos:%d (%3.1f)\t\t neg:%d (%3.1f)\t\t und:%d (%3.1f)\n",
-                		numPosInst,numPosInst*100.0/nExs,
-                		numNegInst,numNegInst*100.0/nExs,
-                		(nExs-numNegInst-numPosInst), (nExs-numNegInst-numPosInst)*100.0/nExs);
-            	
+                
 //            } while (!reasoner.isSatisfiable(partialConcept) || !reasoner.isSatisfiable(complPartialConcept));
-//            } while (numPosInst > .8*nExs);	
-        } while ((numPosInst*numNegInst == 0));//||((numPosInst<10)&&(numNegInst<10)));
-// } while (numPosInst+numNegInst == 0 || numPosInst+numNegInst == nExs);
+       //  } while (numPosInst > .8*nExs);	
+ } while ((numPosInst*numNegInst == 0)); //
+ //          } while (numPosInst+numNegInst == 0 || numPosInst+numNegInst == nExs);
+            System.out.printf("%s\n",partialConcept);
+            System.out.printf("pos:%d (%3.1f)\t\t neg:%d (%3.1f)\t\t und:%d (%3.1f)\n",
+            		numPosInst,numPosInst*100.0/nExs,
+            		numNegInst,numNegInst*100.0/nExs,
+            		(nExs-numNegInst-numPosInst), (nExs-numNegInst-numPosInst)*100.0/nExs);
+   
+//} while (numPosInst+numNegInst == 0 || numPosInst+numNegInst == nExs);
             //  || numPosInst+numNegInst == nExs
             //add the newly built OWLDescription to the list of all required query concepts
             queryConcepts[i] = partialConcept;

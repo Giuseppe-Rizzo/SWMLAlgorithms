@@ -10,7 +10,7 @@ import knowledgeBasesHandler.KnowledgeBase;
 
 
 import classifiers.ensemble.Ensemble;
-import classifiers.ensemble.terminologicalRandomForests.TRFClassifier;
+import classifiers.ensemble.trfs.TRFClassifier;
 import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.models.DLTree;
 import evaluation.Parameters;

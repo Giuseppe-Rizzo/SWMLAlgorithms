@@ -378,8 +378,6 @@ public class MutagenicoPrediction extends ClassMembershipPrediction {
 				"d335"
 				};
   
-  
-	
 		allExamples= kb.getIndividuals();
 		
 		OWLIndividual[] newAllExamples = new OWLIndividual[337];

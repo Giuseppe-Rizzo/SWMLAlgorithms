@@ -11,8 +11,8 @@ import knowledgeBasesHandler.KnowledgeBase;
 
 import classifiers.ensemble.Ensemble;
 
-import classifiers.evidentialAlgorithms.ETRFClassifier;
-import classifiers.evidentialAlgorithms.models.DSTDLTree;
+import classifiers.evidentialmodels.ETRFClassifier;
+import classifiers.evidentialmodels.models.DSTDLTree;
 
 import evaluation.Parameters;
 
@@ -47,7 +47,8 @@ public class EvidentialTerminologicalRandomForestInducer implements SupervisedLe
 		OWLIndividual[] allExamples= kb.getIndividuals();
 		//		ArrayList<Triple<Integer, Integer, Integer>> testSetComposition= new ArrayList<Triple<Integer, Integer, Integer>>();
 		ETRFClassifier cl= new ETRFClassifier(kb);
-		for (int c=0; c<testConcepts.length; c++) {
+		final int length = testConcepts==null?1:testConcepts.length;
+		for (int c=0; c<length; c++) {
 
 			ArrayList<Integer> posExs = new ArrayList<Integer>();
 			ArrayList<Integer> negExs = new ArrayList<Integer>();
@@ -57,7 +58,7 @@ public class EvidentialTerminologicalRandomForestInducer implements SupervisedLe
 
 			// ha splittato in istanze negative, positive e incerte per un singolo albero
 			for (int e=0; e<trainingExs.length; e++){
-
+				
 				if (reasoner.hasType(allExamples[trainingExs[e]], testConcepts[c]))
 					posExs.add(trainingExs[e]);
 				else if (reasoner.hasType(allExamples[trainingExs[e]], negTestConcepts[c]))

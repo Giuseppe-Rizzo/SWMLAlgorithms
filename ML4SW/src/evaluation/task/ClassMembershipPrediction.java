@@ -1,11 +1,14 @@
 package evaluation.task;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
 
 import knowledgeBasesHandler.KnowledgeBase;
 import org.semanticweb.owl.model.OWLDescription;
@@ -19,8 +22,27 @@ import evaluation.Parameters;
 import evaluation.designOfExperiments.AlgorithmName;
 import evaluation.metrics.GlobalPerformanceMetricsComputation;
 import evaluation.metrics.ModelComplexityEvaluation;
+import evaluation.metrics.TernaryConfusionMatrix;
+import evaluation.metrics.separability.SeparabilityMeasure;
+import org.dllearner.algorithms.celoe.*;
+import org.dllearner.core.KnowledgeSource;
+import org.dllearner.core.owl.*;
+
+import org.dllearner.reasoning.OWLAPIReasoner;
+//import org.dllearner.reasoning.OWLAPIReasoner;
+import org.dllearner.kb.OWLAPIOntology;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyManagerFactory;
+
+import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
+//import org.dllearner.reasoning.OWLAPIReasoner;
 
 
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import utils.Couple;
 import utils.Generator;
 
@@ -52,12 +74,15 @@ public class ClassMembershipPrediction implements Evaluation {
 
 
 	}
-	public ClassMembershipPrediction(KnowledgeBase k){
+	public ClassMembershipPrediction(KnowledgeBase k) throws FileNotFoundException{
 
 		kb=k;
 		allExamples=kb.getIndividuals();
-		ConceptGenerator qg= new ConceptGenerator(kb);
+	ConceptGenerator qg= new ConceptGenerator(kb);
 		testConcepts=qg.generateQueryConcepts(Parameters.NUMGENCONCEPTS);
+		//testConcepts[0].toString();
+		console = new  PrintStream("folds.txt");
+		
 
 		negTestConcepts=new OWLDescription[testConcepts.length];
 		for (int c=0; c<testConcepts.length; c++) 
@@ -91,6 +116,7 @@ public class ClassMembershipPrediction implements Evaluation {
 
 			System.out.print("\n\nFold #"+f);
 			System.out.println(" **************************************************************************************************");
+			
 
 			Set<Integer> trainingExsSet = new HashSet<Integer>();
 
@@ -114,7 +140,55 @@ public class ClassMembershipPrediction implements Evaluation {
 
 			// training phase: using all examples but those in the f-th partition
 			System.out.println("Training is starting...");
-
+			//CELOE
+			
+			
+//			OWLOntologyManager manager = OWLManager.createOWLOntologyManager();        
+//	 OWLDataFactoryImpl owlDataFactoryImpl = new OWLDataFactoryImpl();
+// 	OWLOntologyManager manager = OWLManager.createOWLOntologyManager(owlDataFactoryImpl);
+//	        OWLOntology ontology= null;
+//			try {
+//				//SimpleIRIMapper mapper = new SimpleIRIMapper(IRI.create("http://semantic-mediawiki.org/swivt/1.0"),IRI.create("file:///C:/Users/Utente/Documents/Dottorato/Dataset/Dottorato/10.owl"));
+//				//			manager.addURIMapper();
+//				//manager.addIRIMapper(mapper);
+//
+//				//ontology = manager.loadOntologyFromPhysicalURI(fileURI);
+//				//org.semanticweb.owlapi.model.OWLImportsDeclaration importDeclaraton = owlDataFactoryImpl.getOWLImportsDeclaration(IRI.create("file:///C:/Users/Utente/Documents/Dottorato/Dataset/Dottorato/10.owl"));
+//				//manager.makeLoadImportRequest(importDeclaraton);
+//				ontology = manager.loadOntologyFromOntologyDocument(new FileInputStream("C:/Users/Utente/Documents/Dottorato/Dataset/Tesi_triennale/Ontologie/Dataset/fsm.owl"));
+//			} catch (OWLOntologyCreationException | FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//	        IRI ontologyIRI = manager.getOntologyDocumentIRI(ontology);
+//	        OWLAPIOntology wrapper= new OWLAPIOntology(ontology);
+//	       
+//	       // wrapper.createOWLOntology(manager);
+//	       
+//	     
+//	      OWLAPIReasoner  c= new OWLAPIReasoner(wrapper);
+//	       c.init();
+	       
+	       //final SortedSet<Individual> individuals = c.getIndividuals();
+	       //System.out.println("Size:"+individuals.size());
+	       // preparing learning problem 
+//	        for (OWLIndividual integer : allExamples) {
+//	        	
+//	        	System.out.println(integer.getURI());
+//				
+//			}
+	        
+	     //  CELOE cl = new CELOE();
+			//cl.setReasoner(c);
+			
+			//cl.init();
+	        
+System.out.println("-------------------->");	       
+	        
+		//OWLAPIReasoner a = new OWLAPIReasoner(wrapper);
+			
+			
+			
 
 			
 			SupervisedLearnable cl=  (SupervisedLearnable)(classifierClass.getConstructor(KnowledgeBase.class, int.class)).newInstance(kb,nOfConcepts);
@@ -138,15 +212,18 @@ public class ClassMembershipPrediction implements Evaluation {
 			//			}
 //			System.out.println("End of Training.\n\n");
 //
-			int[][] labels=cl.test(f, testExs, testConcepts);
+		//	int[][] labels=cl.test(f, testExs, testConcepts);
 
-			gpmc.computeMetricsPerFold(f, labels, classification, nOfConcepts, testExs);
+		//	gpmc.computeMetricsPerFold(f, labels, classification, nOfConcepts, testExs);
+			
+		  // TernaryConfusionMatrix matrix= new  TernaryConfusionMatrix();
+		//	matrix.computeConfusionMatrix(labels, rclasses);
 
 		} // for f - fold look
 
 
-		gpmc.computeOverAllResults(nOfConcepts);
-		mce.computeModelComplexityPerformance();
+		//gpmc.computeOverAllResults(nOfConcepts);
+		//mce.computeModelComplexityPerformance();
 	} // bootstrap DLDT induction	
 
 
@@ -254,14 +331,15 @@ public class ClassMembershipPrediction implements Evaluation {
 //			System.out.println("End of Training.\n\n");
 //
 //			int[][] labels=cl.test(f, testExs, testConcepts);
+			
 //
 //			gpmc.computeMetricsPerFold(f, labels, classification, nOfConcepts, testExs);
 
 		} // for f - fold look
 
 
-		gpmc.computeOverAllResults(nOfConcepts);
-		mce.computeModelComplexityPerformance();
+		//gpmc.computeOverAllResults(nOfConcepts);
+		//mce.computeModelComplexityPerformance();
 	} // bootstrap DLDT induction	
 
 
@@ -273,6 +351,7 @@ public class ClassMembershipPrediction implements Evaluation {
 	@Override
 	public void crossValidation(int nFolds, String className) {
 		System.out.println(nFolds+"-fold CROSS VALIDATION Experiment on ontology:");		
+		console.println(nFolds+"-fold CROSS VALIDATION Experiment on ontology:");
 		Class<?> classifierClass = null;
 		try {
 			classifierClass = ClassLoader.getSystemClassLoader().loadClass(className);
@@ -287,20 +366,30 @@ public class ClassMembershipPrediction implements Evaluation {
 		//	OWLDescription[] testConcepts = allConcepts;
 		int nTestConcepts = testConcepts!=null?testConcepts.length:1;
 
-		GlobalPerformanceMetricsComputation gbpmc= new GlobalPerformanceMetricsComputation(nTestConcepts,nFolds);
-		ModelComplexityEvaluation mce = new ModelComplexityEvaluation(nTestConcepts,nFolds);
+	GlobalPerformanceMetricsComputation gbpmc= new GlobalPerformanceMetricsComputation(nTestConcepts,nFolds);
+	ModelComplexityEvaluation mce = new ModelComplexityEvaluation(nTestConcepts,nFolds);
 
 		// main loop on the folds
-		for (int f=0; f< nFolds; f++) {			
+		for (int f=0; f< 10; f++) {			
 
 
 			System.out.print("\n\nFold #"+f);
 			System.out.println(" **************************************************************************************************");
 
+			console.print("\n\nFold #"+f);
+			console.println(" **************************************************************************************************");
 			Integer[] trainingExs = cv.getTrainingExs(f);
+			
+			for (int i = 0; i < trainingExs.length; i++) {
+				if (allExamples[trainingExs[i]]!=null){
+					System.out.println(trainingExs[i]);
+				     //System.out.println(allExamples[trainingExs[i]]==null);
+				    console.println(allExamples[trainingExs[i]].toString());
+				}
+				
+			}
 
-
-
+		
 
 			SupervisedLearnable cl=null;
 			try {
@@ -356,37 +445,52 @@ public class ClassMembershipPrediction implements Evaluation {
 			currentFold= currentList.toArray(currentFold);
 //
 			
-//			for(int c=0; c<testConcepts.length;c++){
-//				Set<Integer> posExs= new HashSet<Integer>();
-//				Set<Integer> negExs=new HashSet<Integer>();
-//				Set<Integer> undExs= new HashSet<Integer>();
-//				for (int e=0; e<currentFold.length; e++){
-//
-//					
-//					if (kb.getReasoner().hasType(allExamples[trainingExs[e]], testConcepts[c]))
-//						posExs.add(trainingExs[e]);
-//					else if (kb.getReasoner().hasType(allExamples[trainingExs[e]], negTestConcepts[c]))
-//						negExs.add(trainingExs[e]);
-//					else
-//						undExs.add(trainingExs[e]);
-//				}
-//				System.out.println("Test set composition: "+ posExs.size()+" - "+ negExs.size()+"-"+undExs.size());
-//			}
-//
+			for(int c=0; c<testConcepts.length;c++){
+				Set<Integer> posExs= new HashSet<Integer>();
+				Set<Integer> negExs=new HashSet<Integer>();
+				Set<Integer> undExs= new HashSet<Integer>();
+				for (int e=0; e<currentFold.length; e++){
+
+					
+					if (kb.getReasoner().hasType(allExamples[trainingExs[e]], testConcepts[c]))
+						posExs.add(trainingExs[e]);
+					else if (kb.getReasoner().hasType(allExamples[trainingExs[e]], negTestConcepts[c]))
+						negExs.add(trainingExs[e]);
+					else
+						undExs.add(trainingExs[e]);
+				}
+				System.out.println("Test set composition: "+ posExs.size()+" - "+ negExs.size()+"-"+undExs.size());
+			}
+
 			int[][] labels=cl.test(f, currentFold, testConcepts);
 
 
 
 
-			gbpmc.computeMetricsPerFold(f, labels, classification, nTestConcepts, currentFold);
+			//gbpmc.computeMetricsPerFold(f, labels, classification, nTestConcepts, currentFold);
 
 		} // for f - fold look
 
-		gbpmc.computeOverAllResults(nTestConcepts);
-		mce.computeModelComplexityPerformance();
+		console.flush();
+		console.checkError();
+	//	gbpmc.computeOverAllResults(nTestConcepts);
+		//mce.computeModelComplexityPerformance();
 
 
 
 	} 
+	
+	public void computeDirectClassSeparabilityMeasure(){
+		SeparabilityMeasure sm=  new SeparabilityMeasure(kb);
+		
+		int nOfConcepts= testConcepts==null?1:testConcepts.length;
+		for  (int i=0;i<nOfConcepts;i++){
+			System.out.println("Query no. "+ (i+1));
+		double computeDirectClassSeparabilityMeasure = sm.computeDirectClassSeparabilityMeasure(i);
+		
+		System.out.println("Overlapping measurement (DCS): "+computeDirectClassSeparabilityMeasure);
+		}
+		
+	}
 
 }

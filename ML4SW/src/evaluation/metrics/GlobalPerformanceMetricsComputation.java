@@ -172,8 +172,6 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 		stream.printf("\n%10s %10s %10s %10s %10s %10s %10s\n", "Query#",  "matching", "commission", "omission", "induction","precision","recall");
 		
 		for (int c=0; c < nOfConcepts; c++) {
-
-
 			// for each statistic
 			double AvgMatching = MathUtils.avg(totMatchingRate[c]);
 			matchingAvgArray[c]=AvgMatching;
@@ -244,5 +242,7 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 				matchingSD*100, commissionSD*100, omissionSD*100, inductionSD*100, precisionSD*100,recallSD*100);
 		
 	}
+	
+	
 	
 }

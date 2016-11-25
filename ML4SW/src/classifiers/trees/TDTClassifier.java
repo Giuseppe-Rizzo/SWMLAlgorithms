@@ -31,14 +31,15 @@ public class TDTClassifier extends AbstractTDTClassifier {
 
 
 
-	public DLTree induceDLTree(ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, 
+	public DLTree induceDLTree( ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, 
 			int dim, double prPos, double prNeg, RefinementOperator op) {		
 		System.out.printf("Learning problem\t p:%d\t n:%d\t u:%d\t prPos:%4f\t prNeg:%4f\n", 
 				posExs.size(), negExs.size(), undExs.size(), prPos, prNeg);
 		ArrayList<Integer> truePos= posExs;
 		ArrayList<Integer> trueNeg= negExs;
+		Stack<OWLDescription> fatherConcepts= new Stack<OWLDescription>();
 		
-
+		
 		Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double> examples = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExs, negExs, undExs, dim, prPos, prNeg);
 		DLTree tree = new DLTree(); // new (sub)tree
 		Stack<Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>> stack= new Stack<Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>>();
@@ -46,9 +47,15 @@ public class TDTClassifier extends AbstractTDTClassifier {
 		toInduce.setFirstElement(tree);
 		toInduce.setSecondElement(examples);
 		stack.push(toInduce);
-
+		
+		boolean setSeed=false; // set initial seed for concept refinement
+		final OWLDataFactory dataFactory = super.kb.getDataFactory();
 		while(!stack.isEmpty()){
 			System.out.printf("Stack: %d \n",stack.size());
+			 OWLDescription fatherConceptPop = fatherConcepts.isEmpty()?dataFactory.getOWLThing(): (fatherConcepts.pop())  ;
+					 
+					 //fatherConcepts.pop();  //
+			
 			Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>> current= stack.pop(); // extract the next element
 			DLTree currentTree= current.getFirstElement();
 			Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double> currentExamples= current.getSecondElement();
@@ -86,14 +93,20 @@ public class TDTClassifier extends AbstractTDTClassifier {
 					// else (a non-leaf node) ...
 					else{
 						OWLDescription[] cConcepts= new OWLDescription[0];
-						ArrayList<OWLDescription> cConceptsL = op.generateNewConcepts(dim, posExs, negExs);
+						ArrayList<OWLDescription> cConceptsL = op.generateNewConcepts(fatherConceptPop,dim, posExs, negExs, setSeed);
 						//						cConceptsL= getRandomSelection(cConceptsL); // random selection of feature set
-
+						setSeed=false;
+						
 						cConcepts = cConceptsL.toArray(cConcepts);
-
 						// select node concept
-						OWLDescription newRootConcept = Parameters.CCP?(selectBestConceptCCP(cConcepts, posExs, negExs, undExs, prPos, prNeg, truePos, trueNeg)):(selectBestConcept(cConcepts, posExs, negExs, undExs, prPos, prNeg));
-
+						OWLDescription newRootConcept= null;
+						if (cConceptsL.size()>1)
+						 newRootConcept= Parameters.CCP?(selectBestConceptCCP(cConcepts, posExs, negExs, undExs, prPos, prNeg, truePos, trueNeg)):(selectBestConcept(cConcepts, posExs, negExs, undExs, prPos, prNeg));
+						 else{
+							newRootConcept= cConcepts[0]; // for the seed
+						 }
+						
+						
 						ArrayList<Integer> posExsT = new ArrayList<Integer>();
 						ArrayList<Integer> negExsT = new ArrayList<Integer>();
 						ArrayList<Integer> undExsT = new ArrayList<Integer>();
@@ -103,7 +116,13 @@ public class TDTClassifier extends AbstractTDTClassifier {
 
 						split(newRootConcept, posExs, negExs, undExs, posExsT, negExsT, undExsT, posExsF, negExsF, undExsF);
 						// select node concept
+						;
+						if (fatherConceptPop!=null);{
+								newRootConcept= dataFactory.getOWLObjectIntersectionOf(fatherConceptPop,newRootConcept);
+						}
 						currentTree.setRoot(newRootConcept);		
+						
+						
 						// build subtrees
 
 						//		undExsT = union(undExsT,);
@@ -121,12 +140,16 @@ public class TDTClassifier extends AbstractTDTClassifier {
 						Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>> neg= new Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>();
 						neg.setFirstElement(negTree);
 						neg.setSecondElement(npla2);
+						// push
 						stack.push(neg);
 						stack.push(pos);
+						fatherConcepts.push(dataFactory.getOWLObjectComplementOf(newRootConcept));
+						fatherConcepts.push(newRootConcept);
 					}
 				}
 			}
 		}
+		System.out.println("Induced tree: "+tree);
 		return tree;
 
 	}
@@ -475,28 +498,36 @@ public class TDTClassifier extends AbstractTDTClassifier {
 					stop=true;
 					result=-1;
 
-				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass)){
-					if(results2[indTestEx]==+1){
-						currentTree.setMatch(0);
-						currentTree.setPos();
-					}else{
-						currentTree.setCommission(0);
-						currentTree.setNeg(0);
+				} else {
+					boolean hasType;
+					try{
+					hasType= kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass);
+					}catch(Exception e){
+						hasType=false;
 					}
-					stack.push(currentTree.getPosSubTree());
+					if (hasType){
+						if(results2[indTestEx]==+1){
+							currentTree.setMatch(0);
+							currentTree.setPos();
+						}else{
+							currentTree.setCommission(0);
+							currentTree.setNeg(0);
+						}
+						stack.push(currentTree.getPosSubTree());
 
-				}
-				else {
-
-					if(results2[indTestEx]==+1){
-						currentTree.setPos();
-						currentTree.setCommission(0);
-					}else{
-						currentTree.setNeg(0);
-						currentTree.setMatch(0);
 					}
-					stack.push(currentTree.getNegSubTree());
+					else {
 
+						if(results2[indTestEx]==+1){
+							currentTree.setPos();
+							currentTree.setCommission(0);
+						}else{
+							currentTree.setNeg(0);
+							currentTree.setMatch(0);
+						}
+						stack.push(currentTree.getNegSubTree());
+
+					}
 				}
 				
 			};

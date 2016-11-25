@@ -139,7 +139,6 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 			if (classifications[c][trainingExs[e]]==+1)
 				posExs.add(trainingExs[e]);
 			else if (!Parameters.BINARYCLASSIFICATION){
-				
 				if (classifications[c][trainingExs[e]]==-1)
 					negExs.add(trainingExs[e]);
 				else

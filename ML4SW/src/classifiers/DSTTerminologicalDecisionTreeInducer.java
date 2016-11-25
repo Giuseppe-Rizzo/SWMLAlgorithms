@@ -12,8 +12,8 @@ import java.lang.reflect.InvocationTargetException;
 	import knowledgeBasesHandler.KnowledgeBase;
 
 
-import classifiers.evidentialAlgorithms.DSTTDTClassifier;
-import classifiers.evidentialAlgorithms.models.DSTDLTree;
+import classifiers.evidentialmodels.DSTTDTClassifier;
+import classifiers.evidentialmodels.models.DSTDLTree;
 import classifiers.refinementOperator.RefinementOperator;
 import evaluation.Parameters;
 /**
