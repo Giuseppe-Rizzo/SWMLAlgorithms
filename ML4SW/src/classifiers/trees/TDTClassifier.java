@@ -9,6 +9,7 @@ import java.util.Stack;
 
 import org.semanticweb.owlapi.io.OWLObjectRenderer;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
 
 //import org.coode.owlapi.functionalrenderer.OWLObjectRenderer;
 
@@ -354,7 +355,50 @@ public class TDTClassifier  {
 		return rConcepts;
 	}
 
+	/**
+	 * recursive down through the tree model
+	 * @param ind
+	 * @param tree
+	 * @return
+	 */
+	private int classify(OWLIndividual ind, DLTree tree) {
+		
+		OWLClassExpression rootClass = tree.getRoot();
+		
+		if (rootClass.equals(k.getDataFactory().getOWLThing()))
+			return +1;
+		if (rootClass.equals(k.getDataFactory().getOWLNothing()))
+			return -1;
+		
+		int r1=0, r2=0;
+		
+		if (k.getReasoner().isEntailed(k.getDataFactory().getOWLClassAssertionAxiom(rootClass, ind)))
+			r1 = classify(ind, tree.getPosSubTree());
+		else if (k.getReasoner().isEntailed(k.getDataFactory().getOWLClassAssertionAxiom(k.getDataFactory().getOWLObjectComplementOf(rootClass), ind)));
+			r2 = classify(ind, tree.getNegSubTree());
+ int cP=0, cn=0; //
+		if (r1+r2==0) 
+			if (Parameters.missingValueTreatmentForTDT){
+			          cP+=classify(ind, tree.getPosSubTree());
+			          cn-=classify(ind, tree.getNegSubTree());
+			          if (cP>(-1*cn)) return +1; else if (cP<(-1*cn)) return -1; else return 0; // case of tie             
+		     }
+			else
+			    return 0;
+		else if (r1*r2==1) 
+			return r1;
+		else 
+			return (r1!=0)? r1 : r2;
 	}
+ 
+
+
+
+}
+
+
+
+
 
 
 

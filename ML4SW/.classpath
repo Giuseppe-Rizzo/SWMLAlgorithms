@@ -1,120 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="knowledgeBasesHandler/KnowledgeBaseForRoughConceptLearning.java|classifiers/RoughTerminologicalDecisionTreeInducer.java|classifiers/PUlearning/|Tests.java|lib/" kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/aterm-java-1.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-cli.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-datatypes.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-dig.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-el.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-explanation.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-jena.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-modularity.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-owlapi.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-pellint.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-query.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-rules.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-test.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/servlet.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/aopalliance-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/cal10n-api-0.7.2.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/collections-0.7.2.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/collections-generic-4.01.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-beanutils-1.7.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-codec-1.5.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-collections-2.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-compress-1.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-digester-1.6.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-io-2.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-lang-2.3.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-lang3-3.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-math3-3.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-pool-1.6.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-validator-1.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/components-core-1.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/dig-xmlbeans-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-owlapi-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-owl-implementation-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-owl-model-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-reasoner-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-collections-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-common-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-concurrent-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-hashing-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-io-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-logging-0.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/factpp-owlapi-1.5.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/fuzzydl-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/fuzzyowl-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/guava-14.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/gurobi-5.0.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/h2-1.2.143.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/hermit-1.3.8.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/httpclient-4.2.3.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/httpcore-4.2.2.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/httpmime-4.2.3.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/ini4j-0.5.2.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/interfaces-1.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jakarta-regexp-1.4.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jamon-2.7.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jcl-over-slf4j-1.6.4.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-arq-2.11.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-core-2.11.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-iri-1.0.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-sparql-api-core-2.10.0-8.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-sparql-api-utils-2.10.0-8.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jopt-simple-3.3.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jsexp-0.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/json-20090211.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/json-simple-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/jwnl-1.4.1.RC2.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/kxml2-min-2.3.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-analyzers-common-4.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-core-4.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-queries-4.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-queryparser-4.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-sandbox-4.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/model-0.7.2.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/morphadorner-2009-04-30.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/mysql-connector-java-5.1.24.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/noggit-0.5.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/org.osgi.core-1.0.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-api-3.4.5.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-apibinding-3.4.5.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-distribution-3.4.5.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-impl-3.4.5.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-parsers-3.4.5.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-tools-3.4.5.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/owllink-1.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/pellet-2.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/reasoner-0.5.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/simmetrics-1.6.2.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/slf4j-api-1.6.4.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/slf4j-ext-1.6.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/slf4j-log4j12-1.6.4.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/solr-solrj-4.4.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/sparql-0.7.2.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-aop-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-asm-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-beans-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-context-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-core-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-expression-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-xmlbeans-3.0-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/trowl-core-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/util-0.7.2.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/wstx-asl-3.2.7.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/xercesImpl-2.8.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/xml-apis-1.3.03.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/xmlbeans-2.4.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/xmlpull-1.1.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/xpp3_min-1.1.4c.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/xstream-1.4.3.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/xz-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/zookeeper-3.4.5.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/aopalliance-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/cal10n-api-0.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/collections-0.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/collections-generic-4.01.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-beanutils-1.7.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-codec-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-collections-2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-compress-1.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-digester-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-io-2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-lang-2.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-lang3-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-logging-1.0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-math3-3.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-pool-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/commons-validator-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/components-core-1.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/dig-xmlbeans-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-owlapi-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-owl-implementation-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-owl-model-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-reasoner-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-collections-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-common-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-concurrent-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-hashing-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-io-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/elk-util-logging-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/factpp-owlapi-1.5.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/fuzzydl-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/fuzzyowl-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/guava-14.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/gurobi-5.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/h2-1.2.143.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/hermit-1.3.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/httpclient-4.2.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/httpcore-4.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/httpmime-4.2.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/ini4j-0.5.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/interfaces-1.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jakarta-regexp-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jamon-2.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jcl-over-slf4j-1.6.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-arq-2.11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-core-2.11.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-iri-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-sparql-api-core-2.10.0-8.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jena-sparql-api-utils-2.10.0-8.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jopt-simple-3.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jsexp-0.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/json-20090211.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/json-simple-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/jwnl-1.4.1.RC2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/kxml2-min-2.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/log4j-1.2.16.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-analyzers-common-4.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-core-4.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-queries-4.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-queryparser-4.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/lucene-sandbox-4.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/model-0.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/morphadorner-2009-04-30.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/mysql-connector-java-5.1.24.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/noggit-0.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/org.osgi.core-1.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-api-3.4.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-apibinding-3.4.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-distribution-3.4.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-impl-3.4.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-parsers-3.4.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/owlapi-tools-3.4.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/owllink-1.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/pellet-2.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/reasoner-0.5.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/simmetrics-1.6.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/slf4j-api-1.6.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/slf4j-ext-1.6.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/slf4j-log4j12-1.6.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/solr-solrj-4.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/sparql-0.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-aop-3.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-asm-3.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-beans-3.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-context-3.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-core-3.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-expression-3.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/spring-xmlbeans-3.0-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/stax-api-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/trowl-core-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/util-0.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/wstx-asl-3.2.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/xercesImpl-2.8.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/xml-apis-1.3.03.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/xmlbeans-2.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/xmlpull-1.1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/xpp3_min-1.1.4c.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/xstream-1.4.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/xz-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/dllearner-1.0-beta-3/lib/zookeeper-3.4.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
