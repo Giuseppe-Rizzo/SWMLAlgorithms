@@ -2,17 +2,18 @@ package classifiers;
 
 import java.util.ArrayList;
 
-import org.mindswap.pellet.owlapi.Reasoner;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
-
 import knowledgeBasesHandler.KnowledgeBase;
 
+import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
 
 import classifiers.ensemble.Ensemble;
 import classifiers.ensemble.trfs.TRFClassifier;
-import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.models.DLTree;
+
+import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
+
 import evaluation.Parameters;
 
 /**
@@ -36,11 +37,11 @@ public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 	}
 
 	/* (non-Javadoc)
-	 * @see classifiers.SupervisedLearnable#training(java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[], org.semanticweb.owl.model.OWLDescription[])
+	 * @see classifiers.SupervisedLearnable#training(java.lang.Integer[], org.semanticweb.owl.model.OWLClassExpression[], org.semanticweb.owl.model.OWLClassExpression[])
 	 */
 	@Override
-	public void training(int results[][], Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
-        RefinementOperator op= new RefinementOperator(kb);
+	public void training(int results[][], Integer[] trainingExs, OWLClassExpression[] testConcepts, OWLClassExpression[] negTestConcepts){
+      //  RefinementOperator op= new RefinementOperator(kb);
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
 		Reasoner reasoner = kb.getReasoner();
 		OWLIndividual[] allExamples= kb.getIndividuals();
@@ -87,7 +88,7 @@ public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 			System.out.println("Learning a forest ");
 
 
-			forests[c] = cl.induceDLForest(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS, Parameters.NTREES,prPos, prNeg, op);
+			forests[c] = cl.induceDLForest(posExs, negExs, undExs, Parameters.NUMGENCONCEPTS, Parameters.NTREES,prPos, prNeg);
 
 			//			System.out.println("forest "+c);
 			//			System.out.println(forests[c]);
@@ -141,10 +142,10 @@ public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 	
 
 	/* (non-Javadoc)
-	 * @see classifiers.SupervisedLearnable#test(int, java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[])
+	 * @see classifiers.SupervisedLearnable#test(int, java.lang.Integer[], org.semanticweb.owl.model.OWLClassExpression[])
 	 */
 	@Override
-	public int[][] test(int f,Integer[] testExs,OWLDescription[] testConcepts) {
+	public int[][] test(int f,Integer[] testExs,OWLClassExpression[] testConcepts) {
 		int[][] labels= new int[testExs.length][nOfConcepts]; // classifier answers for each example and for each concept
 		for (int te=0; te < testExs.length; te++ ) { 
 

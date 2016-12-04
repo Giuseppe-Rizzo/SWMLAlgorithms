@@ -18,11 +18,13 @@ public class TRFClassifier {
 	
 
 	private RandomizedTDTClassifier data;
+	private KnowledgeBase kb;
 	public TRFClassifier(KnowledgeBase kb) {
+		this.kb=kb;
 		 data = new RandomizedTDTClassifier(kb);
 	}
 
-	public Ensemble<DLTree> induceDLForest(ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, int dim,int dimForest, double prPos, double prNeg, RefinementOperator op ){
+	public Ensemble<DLTree> induceDLForest(ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, int dim,int dimForest, double prPos, double prNeg ){
 
 		ArrayList<Triple<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>>> splitting= new ArrayList<Triple<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>>>();
 		// step 1: boostrap sampling with undersampling of the uncertainty instances
@@ -58,7 +60,7 @@ public class TRFClassifier {
 			ArrayList<Integer> negExsEns= splitting.get(i).getSecondElem();
 			ArrayList<Integer> undExsEns= splitting.get(i).getThirdElem();
 			System.out.printf(" %d Training set composition: %d %d %d", i, posExsEns.size(),negExsEns.size(), undExsEns.size());
-			DLTree tree=data.induceDLTree(posExsEns, negExsEns, undExsEns, dim, prPos, prNeg, op);
+			DLTree tree=data.induceDLTree(kb.getDataFactory().getOWLThing(),posExsEns, negExsEns, undExsEns, dim, prPos, prNeg);
 			forest.addClassifier(tree);
 
 		}
@@ -77,7 +79,7 @@ public class TRFClassifier {
 		int und=0;
 		for (int tree=0; tree<forest.getSize(); tree++){
 			if (!Parameters.missingValueTreatmentForTDT){
-			classValue=data.classifyExample(indTestEx,forest.getClassifier(tree));
+			classValue=data.classifyExample(kb.getIndividuals()[indTestEx],forest.getClassifier(tree));
 			
 			}
 			else{
