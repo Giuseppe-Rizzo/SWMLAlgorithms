@@ -1,21 +1,16 @@
 package evaluation;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLConstant;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDataProperty;
-import org.semanticweb.owl.model.OWLDataSomeRestriction;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
-import org.semanticweb.owl.model.OWLObjectProperty;
+import knowledgeBasesHandler.KnowledgeBase;
 
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 
 import utils.Couple;
-import knowledgeBasesHandler.KnowledgeBase;
 
 public class CarcinogesesisGenerator extends ConceptGenerator {
 	private OWLIndividual[] examples;
@@ -29,7 +24,7 @@ public class CarcinogesesisGenerator extends ConceptGenerator {
 	}
 
 	
-	public  Couple<OWLDescription[],OWLDescription[]> generateQueryConcept(){
+	public  Couple<OWLClassExpression[],OWLClassExpression[]> generateQueryConcept(){
 		
 		kb.loadFunctionalDataProperties();
 		
@@ -39,35 +34,35 @@ public class CarcinogesesisGenerator extends ConceptGenerator {
 //		}
 		
 	   OWLDataProperty query= dataProperties[14]; // ismutagenic
-	   Set<OWLDescription> classesInSignature = query.getDomains(kb.getOntology());
+	   Set<OWLClassExpression> classesInSignature = query.getDomains(kb.getOntology());
 	   HashSet<OWLIndividual> examples= new HashSet<OWLIndividual>();
 	   System.out.println("classes in signature"+ classesInSignature);
-	   for (OWLDescription c : classesInSignature) {
-			examples.addAll((reasoner.getIndividuals(c, true)));
+	   for (OWLClassExpression c : classesInSignature) {
+			examples.addAll((reasoner.getInstances(c, true).getFlattened()));
 	}
 	   System.out.println(examples.size());
 	   this.examples= examples.toArray(new OWLIndividual[examples.size()]);
 	   
-	   OWLConstant[][] propertyValue= kb.getDataPropertiesValue();
+	   OWLLiteral[][] propertyValue= kb.getDataPropertiesValue();
 	   
-	   HashSet<OWLConstant> label= new HashSet<OWLConstant>();
+	   HashSet<OWLLiteral> label= new HashSet<OWLLiteral>();
 	   for (int i = 0; i < propertyValue[14].length; i++) {
 		   label.add(propertyValue[14][i]);
 	   }
 	  
 	   System.out.println(label);
-		OWLConstant[] lblarray= label.toArray(new OWLConstant[2]);	
+		OWLLiteral[] lblarray= label.toArray(new OWLLiteral[2]);	
 		
 		for (int i = 0; i < lblarray.length; i++) {
 			System.out.println(lblarray[i]);
 		}
 		
-		OWLDescription owlDataSomeRestriction = kb.getDataFactory().getOWLDataSomeRestriction(query, kb.getDataFactory().getOWLDataOneOf(lblarray[1]));		
-		OWLDescription negOwlDataSomeRestriction = kb.getDataFactory().getOWLDataSomeRestriction(query, kb.getDataFactory().getOWLDataOneOf(lblarray[0]));
-		Couple<OWLDescription[], OWLDescription[]> couple = new Couple <OWLDescription[], OWLDescription[]>();
-		OWLDescription[] queries={owlDataSomeRestriction};
+		OWLClassExpression owlDataSomeRestriction = kb.getDataFactory().getOWLDataSomeValuesFrom(query, kb.getDataFactory().getOWLDataOneOf(lblarray[1]));		
+		OWLClassExpression negOwlDataSomeRestriction = kb.getDataFactory().getOWLDataSomeValuesFrom(query, kb.getDataFactory().getOWLDataOneOf(lblarray[0]));
+		Couple<OWLClassExpression[], OWLClassExpression[]> couple = new Couple <OWLClassExpression[], OWLClassExpression[]>();
+		OWLClassExpression[] queries={owlDataSomeRestriction};
 		couple.setFirstElement(queries);
-		OWLDescription[] negqueries={negOwlDataSomeRestriction};
+		OWLClassExpression[] negqueries={negOwlDataSomeRestriction};
 		couple.setSecondElement(negqueries);
 		return couple;
 		

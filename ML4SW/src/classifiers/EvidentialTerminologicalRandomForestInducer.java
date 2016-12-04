@@ -3,6 +3,7 @@ package classifiers;
 import java.util.ArrayList;
 
 
+import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 
@@ -40,7 +41,7 @@ public class EvidentialTerminologicalRandomForestInducer implements SupervisedLe
 	 * @see classifiers.SupervisedLearnable#training(java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[], org.semanticweb.owl.model.OWLDescription[])
 	 */
 	@Override
-	public void training(int[][] results, Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
+	public void training(int[][] results, Integer[] trainingExs, OWLClassExpression[] testConcepts, OWLClassExpression[] negTestConcepts){
 
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
 		Reasoner reasoner = kb.getReasoner();
@@ -59,12 +60,12 @@ public class EvidentialTerminologicalRandomForestInducer implements SupervisedLe
 			// ha splittato in istanze negative, positive e incerte per un singolo albero
 			for (int e=0; e<trainingExs.length; e++){
 				
-				if (reasoner.hasType(allExamples[trainingExs[e]], testConcepts[c]))
+				if (this.kb.getReasoner().isEntailed(this.kb.getDataFactory().getOWLClassAssertionAxiom(testConcepts[c], kb.getIndividuals()[trainingExs[e]])))
 					posExs.add(trainingExs[e]);
-				else if (reasoner.hasType(allExamples[trainingExs[e]], negTestConcepts[c]))
+				else if ((kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(testConcepts[c], kb.getIndividuals()[trainingExs[e]]))))
 					negExs.add(trainingExs[e]);
 				else
-					undExs.add(trainingExs[e]);
+					undExs.add(trainingExs[e]);		
 			}
 
 			// queste istanze devono essere suddivise in istanze negative, positive e incerte sull'ensemble
@@ -102,7 +103,7 @@ public class EvidentialTerminologicalRandomForestInducer implements SupervisedLe
 	 * @see classifiers.SupervisedLearnable#test(int, java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[])
 	 */
 	@Override
-	public int[][] test(int f,Integer[] testExs,OWLDescription[] testConcepts) {
+	public int[][] test(int f,Integer[] testExs,OWLClassExpression[] testConcepts) {
 		int[][] labels= new int[testExs.length][nOfConcepts]; // classifier answers for each example and for each concept
 		for (int te=0; te < testExs.length; te++ ) { 
 

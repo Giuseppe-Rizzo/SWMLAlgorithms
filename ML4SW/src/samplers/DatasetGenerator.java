@@ -8,7 +8,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
-import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLIndividual;
 
 import evaluation.Parameters;
 
