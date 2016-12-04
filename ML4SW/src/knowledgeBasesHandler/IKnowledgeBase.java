@@ -1,12 +1,12 @@
 package knowledgeBasesHandler;
 
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLConstant;
-import org.semanticweb.owl.model.OWLDataProperty;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
-import org.semanticweb.owl.model.OWLObjectProperty;
-import org.semanticweb.owl.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 public interface IKnowledgeBase {
 
@@ -51,13 +51,13 @@ public interface IKnowledgeBase {
 
 	public abstract OWLIndividual[][] getDomains();
 
-	public abstract OWLConstant[][] getDataPropertiesValue();
+	public abstract OWLLiteral[][] getDataPropertiesValue();
 
 	public abstract String getURL();
 
 	/**
 	 * Scelta casuale di un certo numero di data properties funzionali
-	 * @param numQueryProperty, un certo numero di proprietà
+	 * @param numQueryProperty, un certo numero di proprietï¿½
 	 * @return
 	 */
 	public abstract int[] getRandomProperty(int numQueryProperty);
@@ -66,7 +66,7 @@ public interface IKnowledgeBase {
 
 
 
-	int[][] getClassMembershipResult(OWLDescription[] testConcepts,
-			OWLDescription[] negTestConcepts, OWLIndividual[] esempi);
+	int[][] getClassMembershipResult(OWLClassExpression[] testConcepts,
+			OWLClassExpression[] negTestConcepts, OWLIndividual[] esempi);
 
 }
