@@ -79,12 +79,12 @@ public class TRFClassifier {
 		int und=0;
 		for (int tree=0; tree<forest.getSize(); tree++){
 			if (!Parameters.missingValueTreatmentForTDT){
-			classValue=data.classifyExample(kb.getIndividuals()[indTestEx],forest.getClassifier(tree));
+			classValue=data.classify(kb.getIndividuals()[indTestEx],forest.getClassifier(tree));
 			
 			}
 			else{
 				ArrayList<Integer> list= new ArrayList<Integer>();
-				classValue=data.classifyExample(list, indTestEx, forest.getClassifier(tree));
+				classValue=data.classify(kb.getIndividuals()[indTestEx],  forest.getClassifier(tree));
 			}
 			if(classValue==1)
 				pos++;
@@ -95,6 +95,8 @@ public class TRFClassifier {
 		}
 		
 		System.out.println("Voting: "+ pos+"--"+neg+"--"+und);
+		if (Math.abs((pos-neg))<5)
+			return 0; //rejection threshold
 		if (pos>neg)
 			if(pos>und)
 					return +1;

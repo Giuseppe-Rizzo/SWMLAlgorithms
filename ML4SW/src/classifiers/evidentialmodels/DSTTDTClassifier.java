@@ -11,9 +11,10 @@ import java.util.Stack;
 
 import knowledgeBasesHandler.KnowledgeBase;
 
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import utils.Couple;
 import utils.Npla;
@@ -162,18 +163,17 @@ boolean setSeed=true;
 
 					if (!Parameters.nonspecificityControl){
 						
-								
-							ArrayList<OWLDescription> generateNewConcepts = op.generateNewConcepts(Parameters.beam, posExs, negExs,setSeed); // genera i concetti sulla base degli esempi
+							ArrayList<OWLClassExpression> generateNewConcepts = op.generateNewConcepts(Parameters.beam, posExs, negExs,setSeed); // genera i concetti sulla base degli esempi
 							setSeed=false;
 							
-							OWLDescription[] cConcepts = new OWLDescription[generateNewConcepts.size()];
+							OWLClassExpression[] cConcepts = new OWLClassExpression[generateNewConcepts.size()];
 							
 							cConcepts= generateNewConcepts.toArray(cConcepts);
 							
-							//	OWLDescription[] cConcepts = allConcepts;
+							//	OWLClassExpression[] cConcepts = allConcepts;
 
 						// select node couoncept
-						Couple<OWLDescription,MassFunction> newRootConcept = selectBestConceptDST(cConcepts, posExs, negExs, undExs, prPos, prNeg);
+						Couple<OWLClassExpression,MassFunction> newRootConcept = selectBestConceptDST(cConcepts, posExs, negExs, undExs, prPos, prNeg);
 						MassFunction refinementMass = newRootConcept.getSecondElement();
 
 						System.out.println(newRootConcept.getFirstElement()+"----"+refinementMass);	
@@ -215,11 +215,11 @@ boolean setSeed=true;
 
 					}
 					else if(mass.getNonSpecificity()<0.1){
-						OWLDescription[] cConcepts = generateNewConcepts(Parameters.beam, posExs, negExs); // genera i concetti sulla base degli esempi
-						//	OWLDescription[] cConcepts = allConcepts;
+						OWLClassExpression[] cConcepts = generateNewConcepts(Parameters.beam, posExs, negExs); // genera i concetti sulla base degli esempi
+						//	OWLClassExpression[] cConcepts = allConcepts;
 
 						// select node couoncept
-						Couple<OWLDescription,MassFunction> newRootConcept = selectBestConceptDST(cConcepts, posExs, negExs, undExs, prPos, prNeg);
+						Couple<OWLClassExpression,MassFunction> newRootConcept = selectBestConceptDST(cConcepts, posExs, negExs, undExs, prPos, prNeg);
 						MassFunction refinementMass = newRootConcept.getSecondElement();
 
 						System.out.println(newRootConcept.getFirstElement()+"----"+refinementMass);	
@@ -287,7 +287,7 @@ boolean setSeed=true;
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void classifyExampleDST(List<Couple<Integer,MassFunction<Integer>>> list,int indTestEx, DSTDLTree tree, OWLDescription...testConcepts ) {
+	private void classifyExampleDST(List<Couple<Integer,MassFunction<Integer>>> list,int indTestEx, DSTDLTree tree, OWLClassExpression...testConcepts ) {
 
 		
 		//	System.out.println("BBA "+m);
@@ -299,7 +299,7 @@ boolean setSeed=true;
 		while (!stack.isEmpty()){
 			
 			DSTDLTree currenttree=stack.pop();
-			OWLDescription rootClass = currenttree.getRoot(); 
+			OWLClassExpression rootClass = currenttree.getRoot(); 
 			MassFunction m= currenttree.getRootBBA();
 		if (rootClass.equals(dataFactory.getOWLThing())){
 			//		System.out.println("Caso 1");
@@ -326,10 +326,9 @@ boolean setSeed=true;
 			list.add(result);
 
 		}		
-		else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass)){
+		else if ((kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(rootClass, kb.getIndividuals()[indTestEx])))){
 			//System.out.println(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass));
 			if (currenttree.getPosSubTree()!=null){
-
 //				classifyExampleDST( list, indTestEx, tree.getPosSubTree());	
 				stack.push(currenttree.getPosSubTree());
 				//			System.out.println("------");
@@ -343,7 +342,7 @@ boolean setSeed=true;
 				//			System.out.println("ADdded");
 			}
 		}
-		else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass))){
+		else if ((kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(dataFactory.getOWLObjectComplementOf(rootClass),kb.getIndividuals()[indTestEx])))){
 				//			System.out.println(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass)));
 				if (currenttree.getNegSubTree()!=null){
 //					classifyExampleDST(list,indTestEx, tree.getNegSubTree());
@@ -376,7 +375,6 @@ boolean setSeed=true;
 					list.add(result);	
 					//				System.out.println("ADdded");
 				}
-				System.out.println("---->");
 				if (currenttree.getNegSubTree()!=null){
 					//				System.out.println("Caso 9");
 //					classifyExampleDST(list,indTestEx, tree.getNegSubTree());
@@ -403,7 +401,7 @@ boolean setSeed=true;
 
 
 	@SuppressWarnings({ })
-	public void classifyExamplesDST(int indTestEx, DSTDLTree[] trees, int[] results, OWLDescription[] testConcepts) {
+	public void classifyExamplesDST(int indTestEx, DSTDLTree[] trees, int[] results, OWLClassExpression[] testConcepts) {
 		int length = testConcepts!=null?testConcepts.length:1;
 		for (int c=0; c < length; c++) {
 			MassFunction<Integer> bba = getBBA(indTestEx, trees[c]);// combino con tutte le altre BBA
@@ -491,7 +489,7 @@ boolean setSeed=true;
 
 
 	@SuppressWarnings("rawtypes")
-	private  Couple<OWLDescription, MassFunction> selectBestConceptDST(OWLDescription[] concepts,
+	private  Couple<OWLClassExpression, MassFunction> selectBestConceptDST(OWLClassExpression[] concepts,
 			ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, 
 			double prPos, double prNeg) {
 
@@ -537,14 +535,14 @@ boolean setSeed=true;
 		}
 
 		System.out.printf("best gain: %f \t split #%d\n", bestNonSpecificity, bestConceptIndex);
-		Couple<OWLDescription,MassFunction> name = new Couple<OWLDescription,MassFunction>();
+		Couple<OWLClassExpression,MassFunction> name = new Couple<OWLClassExpression,MassFunction>();
 		name.setFirstElement(concepts[bestConceptIndex]);
 		name.setSecondElement(bestBba);
 		return name;
 	}
 
 
-	private int[] getSplitCounts(OWLDescription concept, 
+	private int[] getSplitCounts(OWLClassExpression concept, 
 			ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs) {
 
 		int[] counts = new int[9];
@@ -580,7 +578,7 @@ boolean setSeed=true;
 	}
 
 
-	private  void split(OWLDescription concept,
+	private  void split(OWLClassExpression concept,
 			ArrayList<Integer> posExs,  ArrayList<Integer> negExs,  ArrayList<Integer> undExs,
 			ArrayList<Integer> posExsT, ArrayList<Integer> negExsT,	ArrayList<Integer> undExsT, 
 			ArrayList<Integer> posExsF,	ArrayList<Integer> negExsF, ArrayList<Integer> undExsF) {
@@ -596,15 +594,15 @@ boolean setSeed=true;
 	}
 
 
-	private void splitGroup(OWLDescription concept, ArrayList<Integer> nodeExamples,
+	private void splitGroup(OWLClassExpression concept, ArrayList<Integer> nodeExamples,
 			ArrayList<Integer> trueExs, ArrayList<Integer> falseExs, ArrayList<Integer> undExs) {
-		OWLDescription negConcept = kb.getDataFactory().getOWLObjectComplementOf(concept);
+		OWLClassExpression negConcept = kb.getDataFactory().getOWLObjectComplementOf(concept);
 
 		for (int e=0; e<nodeExamples.size(); e++) {
 			int exIndex = nodeExamples.get(e);
-			if (kb.getReasoner().hasType(kb.getIndividuals()[exIndex], concept))
+			if (kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(concept, kb.getIndividuals()[exIndex])))
 				trueExs.add(exIndex);
-			else if (kb.getReasoner().hasType(kb.getIndividuals()[exIndex], negConcept))
+			else if (kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(concept, kb.getIndividuals()[exIndex])))
 				falseExs.add(exIndex);
 			else
 				undExs.add(exIndex);		
@@ -612,21 +610,21 @@ boolean setSeed=true;
 	}
 
 
-	private OWLDescription[] generateNewConcepts(int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {
+	private OWLClassExpression[] generateNewConcepts(int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {
 
 		System.out.printf("Generating node concepts ");
-		OWLDescription[] rConcepts = new OWLDescription[dim];
-		OWLDescription newConcept;
+		OWLClassExpression[] rConcepts = new OWLClassExpression[dim];
+		OWLClassExpression newConcept;
 		boolean emptyIntersection;
 		for (int c=0; c<dim; c++) {
 			do {
 				emptyIntersection = false; // true
 				newConcept = kb.getRandomConcept();
 
-				Set<OWLIndividual> individuals = (kb.getReasoner()).getIndividuals(newConcept, false);
-				Iterator<OWLIndividual> instIterator = individuals.iterator();
+				Set<OWLNamedIndividual> individuals = (kb.getReasoner()).getInstances(newConcept, false).getFlattened();
+				Iterator<OWLNamedIndividual> instIterator = individuals.iterator();
 				while (emptyIntersection && instIterator.hasNext()) {
-					OWLIndividual nextInd = (OWLIndividual) instIterator.next();
+					OWLNamedIndividual nextInd = (OWLNamedIndividual) instIterator.next();
 					int index = -1;
 					for (int i=0; index<0 && i<kb.getIndividuals().length; ++i)
 						if (nextInd.equals(kb.getIndividuals()[i])) index = i;
@@ -665,7 +663,7 @@ boolean setSeed=true;
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void prune(Integer[] pruningSet, AbstractTree tree, AbstractTree subtree,OWLDescription testConcept){
+	public void prune(Integer[] pruningSet, AbstractTree tree, AbstractTree subtree,OWLClassExpression testConcept){
 		DSTDLTree treeDST= (DSTDLTree) tree;
 		Stack<DSTDLTree> stack= new Stack<DSTDLTree>();
 		stack.add(treeDST);
@@ -752,7 +750,7 @@ boolean setSeed=true;
 	}
 
 
-	public int[] doREPPruning(Integer[] pruningset, DSTDLTree tree, OWLDescription testconcept){
+	public int[] doREPPruning(Integer[] pruningset, DSTDLTree tree, OWLClassExpression testconcept){
 		// step 1: classification
 
 		System.out.println("Number of Nodes  Before pruning"+ tree.getComplexityMeasure());
@@ -783,142 +781,142 @@ boolean setSeed=true;
 	 */
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void classifyExampleDSTforPruning(List<Couple<Integer,MassFunction<Integer>>> list,int indTestEx, DSTDLTree tree, OWLDescription testconcept) {
-		System.out.println(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept));
-		System.out.printf(tree+ "[%d %d %d %d] \n", tree.getMatch(), tree.getCommission(),tree.getOmission(),tree.getInduction());
-		OWLDescription rootClass = tree.getRoot(); 
-		MassFunction m= tree.getRootBBA();
-		//		System.out.println("BBA "+m);
-		//		System.out.printf("%d %d %d %d \n", tree.getMatch(), tree.getCommission(),tree.getOmission(),tree.getInduction());
-		OWLDataFactory dataFactory = kb.getDataFactory();
-		if (rootClass.equals(dataFactory.getOWLThing())){
-			//			System.out.println("Caso 1");
-			Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
-			result.setFirstElement(+1);
-			result.setSecondElement(m);
-			list.add(result);
-			if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
-				tree.setMatch(0);
-			else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
-				tree.setCommission(0);
-			else{
-				tree.setInduction(0);
-			}
+	private void classifyExampleDSTforPruning(List<Couple<Integer,MassFunction<Integer>>> list,int indTestEx, DSTDLTree tree, OWLClassExpression testconcept) {
+		
+//		System.out.printf(tree+ "[%d %d %d %d] \n", tree.getMatch(), tree.getCommission(),tree.getOmission(),tree.getInduction());
+//		OWLClassExpression rootClass = tree.getRoot(); 
+//		MassFunction m= tree.getRootBBA();
+//		//		System.out.println("BBA "+m);
+//		//		System.out.printf("%d %d %d %d \n", tree.getMatch(), tree.getCommission(),tree.getOmission(),tree.getInduction());
+//		OWLDataFactory dataFactory = kb.getDataFactory();
+//		if (rootClass.equals(dataFactory.getOWLThing())){
+//			//			System.out.println("Caso 1");
+//			Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
+//			result.setFirstElement(+1);
+//			result.setSecondElement(m);
+//			list.add(result);
+//			if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
+//				tree.setMatch(0);
+//			else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
+//				tree.setCommission(0);
+//			else{
+//				tree.setInduction(0);
+//			}
 			//
 			//			}
-		}
+//		}
 
-		if (rootClass.equals(dataFactory.getOWLNothing())){
-			//			System.out.println("Caso 2");
-			System.out.println("++++"+rootClass.equals(dataFactory.getOWLNothing()));
-			Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
-			result.setFirstElement(-1);
-			result.setSecondElement(m);
-			list.add(result);
-			if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
-				System.out.println("c");
-				tree.setCommission(0);
-			}
-			else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
-				System.out.println("+m");
-				tree.setMatch(0);
-			}
-			else{
-				System.out.println("i");
-				tree.setInduction(0);
-			}
-			//			System.out.printf(tree+"%d %d %d %d \n", tree.getMatch(), tree.getCommission(),tree.getOmission(),tree.getInduction());
-		}
-
-		if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass)){
-			//System.out.println(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass));
-			if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
-				tree.setMatch(0);
-			else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
-				tree.setCommission(0);
-			else{
-				tree.setInduction(0);
-			}
-
-			if (tree.getPosSubTree()!=null){				
-				classifyExampleDSTforPruning( list, indTestEx, tree.getPosSubTree(), testconcept);	
-				//				System.out.println("------");
-			}
-			else{
-				//				System.out.println("Caso 4");
-				Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
-				result.setFirstElement(+1);
-				result.setSecondElement(m);
-				list.add(result);
-				//				System.out.println("ADdded");
-			}
-		}
-		else
-			if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass))){
-				//				System.out.println(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass)));
-				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
-					tree.setCommission(0);
-				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
-					tree.setMatch(0);
-				else{
-					tree.setInduction(0);
-				}
-				//				System.out.printf(tree+"%d %d %d %d \n", tree.getMatch(), tree.getCommission(),tree.getOmission(),tree.getInduction());
-				if (tree.getNegSubTree()!=null){
-					//					System.out.println("Caso 5");
-					classifyExampleDSTforPruning(list,indTestEx, tree.getNegSubTree(), testconcept);
-					//					System.out.println("#######");
-				}
-				else{
-					//					System.out.println("Caso 6"+ tree);
-					Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
-					result.setFirstElement(-1);
-					result.setSecondElement(m);
-					list.add(result);
-					//					System.out.println("ADdded");
-				}
-			}
-			else{
-				//seguo entrambi i percorsi
-				System.out.println("---->");
-
-				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
-					tree.setOmission(0);
-				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
-					tree.setOmission(0);
-				else{
-					tree.setMatch(0);
-				}
-
-
-				if (tree.getPosSubTree()!=null){
-					//					System.out.println("Caso 7");
-					//					m1=tree.getPosSubTree().getRootBBA();
-					classifyExampleDSTforPruning(list, indTestEx, tree.getPosSubTree(), testconcept);
-				}
-				else{
-					//					System.out.println("Caso 8");
-					Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
-					result.setFirstElement(+1);
-					result.setSecondElement(m);
-					list.add(result);	
-					//					//					System.out.println("ADdded");
-				}
-				System.out.println("---->");
-				if (tree.getNegSubTree()!=null){
-					//			neg		System.out.println("Caso 9");
-					//					m2=tree.getNegSubTree().getRootBBA();
-					classifyExampleDSTforPruning(list,indTestEx, tree.getNegSubTree(), testconcept);
-				}
-				else{
-					Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
-					result.setFirstElement(-1);
-					result.setSecondElement(m);
-					list.add(result);
-					//						System.out.println("ADdded");
-				}
-
-			}
+//		if (rootClass.equals(dataFactory.getOWLNothing())){
+//			//			System.out.println("Caso 2");
+//			System.out.println("++++"+rootClass.equals(dataFactory.getOWLNothing()));
+//			Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
+//			result.setFirstElement(-1);
+//			result.setSecondElement(m);
+//			list.add(result);
+//			if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept)){
+//				System.out.println("c");
+//				tree.setCommission(0);
+//			}
+//			else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept))){
+//				System.out.println("+m");
+//				tree.setMatch(0);
+//			}
+//			else{
+//				System.out.println("i");
+//				tree.setInduction(0);
+//			}
+//			//			System.out.printf(tree+"%d %d %d %d \n", tree.getMatch(), tree.getCommission(),tree.getOmission(),tree.getInduction());
+//		}
+//
+//		if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass)){
+//			//System.out.println(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass));
+//			if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
+//				tree.setMatch(0);
+//			else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
+//				tree.setCommission(0);
+//			else{
+//				tree.setInduction(0);
+//			}
+//
+//			if (tree.getPosSubTree()!=null){				
+//				classifyExampleDSTforPruning( list, indTestEx, tree.getPosSubTree(), testconcept);	
+//				//				System.out.println("------");
+//			}
+//			else{
+//				//				System.out.println("Caso 4");
+//				Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
+//				result.setFirstElement(+1);
+//				result.setSecondElement(m);
+//				list.add(result);
+//				//				System.out.println("ADdded");
+//			}
+//		}
+//		else
+//			if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass))){
+//				//				System.out.println(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass)));
+//				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
+//					tree.setCommission(0);
+//				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
+//					tree.setMatch(0);
+//				else{
+//					tree.setInduction(0);
+//				}
+//				//				System.out.printf(tree+"%d %d %d %d \n", tree.getMatch(), tree.getCommission(),tree.getOmission(),tree.getInduction());
+//				if (tree.getNegSubTree()!=null){
+//					//					System.out.println("Caso 5");
+//					classifyExampleDSTforPruning(list,indTestEx, tree.getNegSubTree(), testconcept);
+//					//					System.out.println("#######");
+//				}
+//				else{
+//					//					System.out.println("Caso 6"+ tree);
+//					Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
+//					result.setFirstElement(-1);
+//					result.setSecondElement(m);
+//					list.add(result);
+//					//					System.out.println("ADdded");
+//				}
+//			}
+//			else{
+//				//seguo entrambi i percorsi
+//				System.out.println("---->");
+//
+//				if(kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], testconcept))
+//					tree.setOmission(0);
+//				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(testconcept)))
+//					tree.setOmission(0);
+//				else{
+//					tree.setMatch(0);
+//				}
+//
+//
+//				if (tree.getPosSubTree()!=null){
+//					//					System.out.println("Caso 7");
+//					//					m1=tree.getPosSubTree().getRootBBA();
+//					classifyExampleDSTforPruning(list, indTestEx, tree.getPosSubTree(), testconcept);
+//				}
+//				else{
+//					//					System.out.println("Caso 8");
+//					Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
+//					result.setFirstElement(+1);
+//					result.setSecondElement(m);
+//					list.add(result);	
+//					//					//					System.out.println("ADdded");
+//				}
+//				System.out.println("---->");
+//				if (tree.getNegSubTree()!=null){
+//					//			neg		System.out.println("Caso 9");
+//					//					m2=tree.getNegSubTree().getRootBBA();
+//					classifyExampleDSTforPruning(list,indTestEx, tree.getNegSubTree(), testconcept);
+//				}
+//				else{
+//					Couple<Integer,MassFunction<Integer>> result=new Couple<Integer,MassFunction<Integer>>();
+//					result.setFirstElement(-1);
+//					result.setSecondElement(m);
+//					list.add(result);
+//					//						System.out.println("ADdded");
+//				}
+//
+//			}
 
 		//		System.out.println("Tree "+ tree);
 	}
