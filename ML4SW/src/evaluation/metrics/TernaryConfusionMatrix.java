@@ -10,9 +10,9 @@ import java.io.PrintStream;
 import java.util.SortedSet;
 
 
-import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 
-import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -227,7 +227,7 @@ public class TernaryConfusionMatrix extends AbstractMetrics{
 		
 	}
 	*/
-	public void printResults(OWLDescription d, int nFolds){
+	public void printResults(OWLClassExpression d, int nFolds){
 
 	System.out.println("\n\n >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OUTCOMES"+ d +"FOLD #"+nFolds);
 	//stream.println("\n\n >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OUTCOMES FOLD #"+fold);

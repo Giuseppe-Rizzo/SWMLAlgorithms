@@ -386,6 +386,11 @@ public class ClassMembershipPrediction implements Evaluation {
 
 
 
+	}
+	@Override
+	public void computeDirectClassSeparabilityMeasure() {
+		// TODO Auto-generated method stub
+		
 	} 
 
 }

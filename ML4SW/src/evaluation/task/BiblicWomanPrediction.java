@@ -3,8 +3,8 @@ package evaluation.task;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
 
 import utils.Couple;
 import evaluation.AIFBConceptGenerator;

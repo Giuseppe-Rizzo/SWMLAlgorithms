@@ -2,7 +2,7 @@ package evaluation.task;
 
 import knowledgeBasesHandler.KnowledgeBase;
 
-import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import utils.Couple;
 
@@ -17,7 +17,7 @@ public class GeoSkillsPrediction extends ClassMembershipPrediction{
 			kb= k;
 			GeoSkillsGenerator gen= new GeoSkillsGenerator(kb);
 			
-			Couple<OWLDescription[], OWLDescription[]> query= gen.generateQueryConcept();
+			Couple<OWLClassExpression[], OWLClassExpression[]> query= gen.generateQueryConcept();
 			
 			testConcepts= query.getFirstElement();
 			System.out.println("-----"+testConcepts[0]);

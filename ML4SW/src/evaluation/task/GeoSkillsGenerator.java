@@ -5,14 +5,16 @@ import java.util.HashSet;
 
 import java.util.Set;
 
-import org.mindswap.pellet.owlapi.Reasoner;
-import org.semanticweb.owl.model.OWLClass;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
-import org.semanticweb.owl.model.OWLObjectOneOf;
-import org.semanticweb.owl.model.OWLObjectProperty;
-import org.semanticweb.owl.model.OWLObjectSomeRestriction;
+
+import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectOneOf;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 
 import evaluation.ConceptGenerator;
 import utils.Couple;
@@ -31,18 +33,19 @@ public class GeoSkillsGenerator extends ConceptGenerator {
 	private OWLIndividual[] examples;
 
 
-	public  Couple<OWLDescription[],OWLDescription[]> generateQueryConcept(){
+	public  Couple<OWLClassExpression[],OWLClassExpression[]> generateQueryConcept(){
 
 		OWLClass domain=kb.getClasses()[495];  //EducationalLevel
 		OWLClass range= kb.getClasses()[144];   //EducationalPathway
 		OWLObjectProperty prop= kb.getRoles()[1]; // belongsToEducationalPathway
 		Set<OWLIndividual> inds=domain.getIndividuals(kb.getOntology());
 		Set<OWLIndividual> fillers= new HashSet<OWLIndividual>();
-		final Reasoner reasoner2 = kb.getReasoner();
+		 Reasoner reasoner2 = kb.getReasoner();
 
 		examples= new OWLIndividual[inds.size()];
 		for (OWLIndividual ind:inds){
-			fillers.addAll( reasoner2.getRelatedIndividuals(ind, prop));			
+			if (ind instanceof OWLNamedIndividual)
+			     fillers.addAll( reasoner2.getObjectPropertyValues((OWLNamedIndividual)ind, prop).getFlattened());			
 		}
 		// add all the observed values
 		System.out.println("Domain:"+ inds.size());
@@ -52,15 +55,15 @@ public class GeoSkillsGenerator extends ConceptGenerator {
 		//
 		ArrayList<OWLIndividual> indList= new ArrayList<OWLIndividual>(fillers);
 
-		OWLDescription[] queries= new OWLDescription[fillers.size()]; // queries
-		OWLDescription[] negQueries= new OWLDescription[fillers.size()]  ;// neg queries
+		OWLClassExpression[] queries= new OWLClassExpression[fillers.size()]; // queries
+		OWLClassExpression[] negQueries= new OWLClassExpression[fillers.size()]  ;// neg queries
 		for(int i=0; i<indList.size();i++){
 			OWLIndividual owlIndividual = indList.get(i);
 
 
-			OWLDescription owlObjectOneOf = dataFactory.getOWLObjectOneOf(owlIndividual);
+			OWLClassExpression owlObjectOneOf = dataFactory.getOWLObjectOneOf(owlIndividual);
 			
-			OWLObjectSomeRestriction owlObjectSomeRestriction = dataFactory.getOWLObjectSomeRestriction(prop, owlObjectOneOf);
+			OWLObjectSomeValuesFrom owlObjectSomeRestriction = dataFactory.getOWLObjectSomeValuesFrom(prop, owlObjectOneOf);
 			queries[i]= owlObjectSomeRestriction;
 			//			for  (OWLIndividual ind: inds){
 			//				final boolean hasType = reasoner2.hasType(ind, owlObjectSomeRestriction);
@@ -68,18 +71,18 @@ public class GeoSkillsGenerator extends ConceptGenerator {
 			//					System.out.println(hasType);
 			//			 
 
-			OWLDescription owlcomplement=dataFactory.getOWLObjectComplementOf(owlObjectSomeRestriction);
+			OWLClassExpression owlcomplement=dataFactory.getOWLObjectComplementOf(owlObjectSomeRestriction);
 			negQueries[i]= owlcomplement;
-			int size = reasoner.getIndividuals(owlObjectSomeRestriction, false).size();
+			int size = reasoner.getInstances(owlObjectSomeRestriction, false).getFlattened().size();
 			int size2= inds.size()-size;
 			System.out.println("Instances p:"+ size+" n:"+size2);
 		}
 
 		
- Couple<OWLDescription[], OWLDescription[]> couple = new Couple<OWLDescription[], OWLDescription[]>();
- OWLDescription[] toReturn={queries[2]};
+ Couple<OWLClassExpression[], OWLClassExpression[]> couple = new Couple<OWLClassExpression[], OWLClassExpression[]>();
+ OWLClassExpression[] toReturn={queries[2]};
  couple.setFirstElement(toReturn);
- OWLDescription[] toReturn2 ={negQueries[2]};
+ OWLClassExpression[] toReturn2 ={negQueries[2]};
 couple.setSecondElement(toReturn2);
 
 		return couple;

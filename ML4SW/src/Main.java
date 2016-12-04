@@ -83,9 +83,9 @@ kb = new KnowledgeBase(Parameters.urlOwlFile);
 		case MUTAGENICPREDICTION:
 			kb = new KnowledgeBase(Parameters.urlOwlFile);
 			if (Parameters.mutagenicAsDataPropertyPrediction)
-			vcm=new MutagenicoPrediction(kb);
+			vcm=new MutagenicPrediction(kb);
 			else
-				vcm=new MutagenicoPrediction(kb,true);
+				vcm=new MutagenicPrediction(kb,true);
 		 break;
 
 		case POLITICIANPREDICTION: 
