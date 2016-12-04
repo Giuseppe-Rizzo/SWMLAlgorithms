@@ -5,7 +5,9 @@ package classifiers.trees.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+
+
 
 
 
@@ -79,11 +81,11 @@ public class DLTree extends AbstractTree {
 	int nFoglie;
 	private class DLNode {
 
-		OWLDescription concept;		// node concept
+		OWLClassExpression concept;		// node concept
 		DLTree pos; 			// positive decision subtree
 		DLTree neg; 			// negative decision subtree
 
-		public DLNode(OWLDescription c) {
+		public DLNode(OWLClassExpression c) {
 			concept = c;
 			this.pos = this.neg = null; // node has no children
 		}
@@ -108,14 +110,14 @@ public class DLTree extends AbstractTree {
 		this.root = null;
 	}
 
-	public DLTree (OWLDescription c) {		
+	public DLTree (OWLClassExpression c) {		
 		this.root = new DLNode(c);
 	}
 
 	/**
 	 * @param root the root to set
 	 */
-	public void setRoot(OWLDescription concept) {
+	public void setRoot(OWLClassExpression concept) {
 		this.root = new DLNode(concept);
 		//		this.root.concept = concept;
 	}
@@ -123,7 +125,7 @@ public class DLTree extends AbstractTree {
 	/**
 	 * @return the root
 	 */
-	public OWLDescription getRoot() {
+	public OWLClassExpression getRoot() {
 		return root.concept;
 	}
 

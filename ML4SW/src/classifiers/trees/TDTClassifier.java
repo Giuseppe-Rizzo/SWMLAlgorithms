@@ -6,11 +6,15 @@ import java.util.List;
 
 import java.util.Stack;
 
+import org.semanticweb.owlapi.io.OWLObjectRenderer;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+
+//import org.coode.owlapi.functionalrenderer.OWLObjectRenderer;
+
 import knowledgeBasesHandler.KnowledgeBase;
 
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDescription;
 
+import uk.ac.manchester.cs.owlapi.dlsyntax.DLSyntaxObjectRenderer;
 import utils.Couple;
 import utils.Npla;
 
@@ -20,522 +24,348 @@ import classifiers.trees.models.AbstractTree;
 import classifiers.trees.models.DLTree;
 import evaluation.Parameters;
 
-public class TDTClassifier extends AbstractTDTClassifier {
+public class TDTClassifier  {
 
+	KnowledgeBase k;
 
 	public TDTClassifier(KnowledgeBase k){
+		this.k=k;
 
-		super(k);
+		//super(k);
 
 	}
 
 
 
-	public DLTree induceDLTree( ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, 
-			int dim, double prPos, double prNeg, RefinementOperator op) {		
-		System.out.printf("Learning problem\t p:%d\t n:%d\t u:%d\t prPos:%4f\t prNeg:%4f\n", 
+	static final OWLObjectRenderer renderer = new DLSyntaxObjectRenderer(); 
+
+	// P for postive, N for negative, u for unknown memb. examples
+	// L/R for left/right branch 
+	static final int PL=0, NL=1, UL=2, PR=3, NR=4, UR=5;  
+
+	
+	/**
+	 * TDT induction algorithm implementation
+	 * 
+	 * @param prob Learning problem
+	 * @param father father concept
+	 * @param posExs positive examples
+	 * @param negExs negative examples
+	 * @param undExs unknown m. examples
+	 * @param nCandRefs 
+	 * @param prPos
+	 * @param prNeg
+	 * @return
+	 */
+	DLTree  induceDLTree	(OWLClassExpression father, 
+				ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, 
+				int nCandRefs, double prPos, double prNeg) {		
+		
+		final double THRESHOLD = 0.05;
+		
+		System.out.printf("\n * Learning problem\t p:%d\t n:%d\t u:%d\t prPos:%4f\t prNeg:%4f\n", 
 				posExs.size(), negExs.size(), undExs.size(), prPos, prNeg);
-		ArrayList<Integer> truePos= posExs;
-		ArrayList<Integer> trueNeg= negExs;
-		Stack<OWLDescription> fatherConcepts= new Stack<OWLDescription>();
 		
-		
-		Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double> examples = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExs, negExs, undExs, dim, prPos, prNeg);
-		DLTree tree = new DLTree(); // new (sub)tree
-		Stack<Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>> stack= new Stack<Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>>();
-		Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>> toInduce= new Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>();
-		toInduce.setFirstElement(tree);
-		toInduce.setSecondElement(examples);
-		stack.push(toInduce);
-		
-		boolean setSeed=false; // set initial seed for concept refinement
-		final OWLDataFactory dataFactory = super.kb.getDataFactory();
-		while(!stack.isEmpty()){
-			System.out.printf("Stack: %d \n",stack.size());
-			 OWLDescription fatherConceptPop = fatherConcepts.isEmpty()?dataFactory.getOWLThing(): (fatherConcepts.pop())  ;
-					 
-					 //fatherConcepts.pop();  //
+		DLTree tree = new DLTree (); // new (sub)tree		
+
+		if ((posExs.size()+negExs.size())<=43){
 			
-			Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>> current= stack.pop(); // extract the next element
-			DLTree currentTree= current.getFirstElement();
-			Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double> currentExamples= current.getSecondElement();
-			// set of negative, positive and undefined example
-			posExs=currentExamples.getFirst();
-			negExs=currentExamples.getSecond();
-			undExs=currentExamples.getThird();
-			if (posExs.size() == 0 && negExs.size() == 0) // no exs
-				if (prPos >= prNeg) { // prior majority of positives
-					currentTree.setRoot(kb.getDataFactory().getOWLThing()); // set positive leaf
-				}
-				else { // prior majority of negatives
-					currentTree.setRoot(kb.getDataFactory().getOWLNothing()); // set negative leaf
-				}
+			if (prPos >= prNeg) { // prior majority of positives
+				tree.setRoot(k.getDataFactory().getOWLThing()); // set positive leaf
+				System.out.println("-----\nPOS leaf (prior)");
+				return tree;
+			}
+			else { // prior majority of negatives
+				tree.setRoot(k.getDataFactory().getOWLNothing()); // set negative leaf
+				System.out.println("-----\nNEG leaf (prior)");
+				return tree;
+			}
+			
+		}
+		
+		if (posExs.size() == 0 && negExs.size() == 0) // no exs
+			if (prPos >= prNeg) { // prior majority of positives
+				tree.setRoot(k.getDataFactory().getOWLThing()); // set positive leaf
+				System.out.println("-----\nPOS leaf (prior)");
+				return tree;
+			}
+			else { // prior majority of negatives
+				tree.setRoot(k.getDataFactory().getOWLNothing()); // set negative leaf
+				System.out.println("-----\nNEG leaf (prior)");
+				return tree;
+			}			
+		
+		
+//		double numPos = posExs.size() + undExs.size()*prPos;
+//		double numNeg = negExs.size() + undExs.size()*prNeg;
+		double numPos = posExs.size();
+		double numNeg = negExs.size();
+		double perPos = numPos/(numPos+numNeg);
+		double perNeg = numNeg/(numPos+numNeg);
+		
 
-			//		double numPos = posExs.size() + undExs.size()*prPos;
-			//		double numNeg = negExs.size() + undExs.size()*prNeg;
-			else{
-				double numPos = posExs.size();
-				double numNeg = negExs.size();
-				double perPos = numPos/(numPos+numNeg);
-				double perNeg = numNeg/(numPos+numNeg);
-//				prPos=perPos;
-//				prNeg=perNeg;
+		if (perNeg==0 && perPos > THRESHOLD) { // no negative
+			tree.setRoot(k.getDataFactory().getOWLThing()); // set positive leaf
+			System.out.println("-----\nPOS leaf (prior)");
+			return tree;
+			}
+		else 
+		if (perPos==0 && perNeg > THRESHOLD) { // no positive			
+			tree.setRoot(k.dataFactory.getOWLNothing()); // set negative leaf
+			System.out.println("-----\nNEG leaf (thr)\n");
+			return tree;
+		}		
+		// else (a non-leaf node) ...
+		
+		
+		
+		OWLClassExpression[] cConcepts = generateRefs(k, father, nCandRefs, posExs, negExs);
+		
+		// select node concept
+		OWLClassExpression bestConcept = selectBestConcept(k, cConcepts, posExs, negExs, undExs, prPos, prNeg);
+		
+		ArrayList<Integer> posExsL = new ArrayList<Integer>();
+		ArrayList<Integer> negExsL = new ArrayList<Integer>();
+		ArrayList<Integer> undExsL = new ArrayList<Integer>();
+		ArrayList<Integer> posExsR = new ArrayList<Integer>();
+		ArrayList<Integer> negExsR = new ArrayList<Integer>();
+		ArrayList<Integer> undExsR = new ArrayList<Integer>();
+		
+		split(k, bestConcept, 
+				posExs, negExs, undExs, 
+				posExsL, negExsL, undExsL, 
+				posExsR, negExsR, undExsR);
+		// select node concept
+		tree.setRoot(bestConcept.getNNF());		
+		// build subtrees
+		
+		
+		tree.setLSubTree(induceDLTree(prob, bestConcept, posExsL, negExsL, undExsL, nCandRefs, prPos, prNeg));
+		tree.setRSubTree(induceDLTree(prob, bestConcept.getComplementNNF(), posExsR, negExsR, undExsR, nCandRefs, prPos, prNeg));
+				
+		return tree;
+	}
 
-				if (perNeg==0 && perPos > Parameters.PURITY_THRESHOLD) { // no negative
-					currentTree.setRoot(kb.getDataFactory().getOWLThing()); // set positive leaf
 
-				}
-				else{
-					if (perPos==0 && perNeg > Parameters.PURITY_THRESHOLD) { // no positive			
-						currentTree.setRoot(kb.getDataFactory().getOWLNothing()); // set negative leaf
 
-					}		
-					// else (a non-leaf node) ...
-					else{
-						OWLDescription[] cConcepts= new OWLDescription[0];
-						ArrayList<OWLDescription> cConceptsL = op.generateNewConcepts(fatherConceptPop,dim, posExs, negExs, setSeed);
-						//						cConceptsL= getRandomSelection(cConceptsL); // random selection of feature set
-						setSeed=false;
-						
-						cConcepts = cConceptsL.toArray(cConcepts);
-						// select node concept
-						OWLDescription newRootConcept= null;
-						if (cConceptsL.size()>1)
-						 newRootConcept= Parameters.CCP?(selectBestConceptCCP(cConcepts, posExs, negExs, undExs, prPos, prNeg, truePos, trueNeg)):(selectBestConcept(cConcepts, posExs, negExs, undExs, prPos, prNeg));
-						 else{
-							newRootConcept= cConcepts[0]; // for the seed
-						 }
-						
-						
-						ArrayList<Integer> posExsT = new ArrayList<Integer>();
-						ArrayList<Integer> negExsT = new ArrayList<Integer>();
-						ArrayList<Integer> undExsT = new ArrayList<Integer>();
-						ArrayList<Integer> posExsF = new ArrayList<Integer>();
-						ArrayList<Integer> negExsF = new ArrayList<Integer>();
-						ArrayList<Integer> undExsF = new ArrayList<Integer>();
+	/**
+	 * routine selecting the best in a list (array) of refinements 
+	 * @param prob
+	 * @param concepts
+	 * @param posExs
+	 * @param negExs
+	 * @param undExs
+	 * @param prPos
+	 * @param prNeg
+	 * @return
+	 */
+	private static OWLClassExpression selectBestConcept(KnowledgeBase prob, OWLClassExpression[] concepts,
+			ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, 
+			double prPos, double prNeg) {
 
-						split(newRootConcept, posExs, negExs, undExs, posExsT, negExsT, undExsT, posExsF, negExsF, undExsF);
-						// select node concept
-						;
-						if (fatherConceptPop!=null);{
-								newRootConcept= dataFactory.getOWLObjectIntersectionOf(fatherConceptPop,newRootConcept);
-						}
-						currentTree.setRoot(newRootConcept);		
-						
-						
-						// build subtrees
+		int[] counts;
 
-						//		undExsT = union(undExsT,);
-						DLTree posTree= new DLTree();
-						DLTree negTree= new DLTree(); // recursive calls simulation
-						currentTree.setPosTree(posTree);
-						currentTree.setNegTree(negTree);
-						Npla<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>, Integer, Double, Double> npla1 = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExsT, negExsT, undExsT, dim, perPos, perNeg);
-						Npla<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>, Integer, Double, Double> npla2 = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExsF, negExsF, undExsF, dim, perPos, perNeg);
-						Couple<DLTree,Npla<ArrayLis<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>> pos= new Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>();
-						pos.setFirstElement(posTree);
-						pos.setSecondElement(npla1);
-						
-						// negative branch
-						Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>> neg= new Couple<DLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>();
-						neg.setFirstElement(negTree);
-						neg.setSecondElement(npla2);
-						// push
-						stack.push(neg);
-						stack.push(pos);
-						fatherConcepts.push(dataFactory.getOWLObjectComplementOf(newRootConcept));
-						fatherConcepts.push(newRootConcept);
-					}
-				}
+		
+		int bestConceptIndex = 0;
+		
+		counts = getSplitCounts(prob, concepts[0], posExs, negExs, undExs);
+		System.out.printf("%4s\tp:%4d\t n:%4d\t u:%4d\t --- p:%4d\t n:%4d\t u:%4d\t ", 
+				"#"+0, counts[PL], counts[NL], counts[UL], counts[PR], counts[NR], counts[UR]);
+		
+//		System.out.println(concepts[0]);		
+		
+		double bestGain = gain(counts);
+		System.out.printf("%10f\n",bestGain);
+			
+		for (int c=1; c<concepts.length; c++) {
+			
+			counts = getSplitCounts(prob, concepts[c], posExs, negExs, undExs);
+			System.out.printf("%4s\tp:%4d\t n:%4d\t u:%4d\t --- p:%4d\t n:%4d\t u:%4d\t ", 
+					"#"+c, counts[PL], counts[NL], counts[UL], counts[PR], counts[NR], counts[UR]);
+			
+			double thisGain = gain(counts);
+			System.out.printf("%10f\n",thisGain);
+//			System.out.println(concepts[c]);
+			
+			if(thisGain > bestGain) {
+				bestConceptIndex = c;
+				bestGain = thisGain;
 			}
 		}
-		System.out.println("Induced tree: "+tree);
-		return tree;
-
+		
+		System.out.printf("\n -------- best gain: %f \t split #%d\n %s\n\n", bestGain, bestConceptIndex, concepts[bestConceptIndex]);
+		return concepts[bestConceptIndex];
 	}
 
 
-	@Override
-	public void prune(Integer[] pruningSet, AbstractTree tree,
-			AbstractTree subtree) {
 
+	
+	/**
+	 * @param counts
+	 * @return
+	 */
+	private static double gain(int[] counts) {	
 
-
-		DLTree treeDL= (DLTree) tree;
-
-		Stack<DLTree> stack= new Stack<DLTree>();
-		stack.add(treeDL);
-		// array list come pila
-		double nodes= treeDL.getComplexityMeasure();
-		if(nodes>1){
-			while(!stack.isEmpty()){
-				DLTree current= stack.pop(); // leggo l'albero corrente
-
-				DLTree pos= current.getPosSubTree();
-				DLTree neg= current.getNegSubTree();
-				System.out.println("Current: "+pos+" ----- "+neg+"visited? "+current.isVisited());
-
-				if(current.isVisited()){
-					System.out.println("Valutazione");
-					int comissionRoot=current.getCommission();
-					int comissionPosTree= pos.getCommission();
-					int comissionNegTree= neg.getCommission();
-					
-					int gainC=comissionRoot-(comissionPosTree+comissionNegTree);
-
-					if(gainC<0){
-
-						int posExs=current.getPos();
-						int negExs= current.getNeg();
-						// rimpiazzo rispetto alla classe di maggioranza
-						if(posExs<=negExs){
-
-							current.setRoot(kb.getDataFactory()	.getOWLNothing());
-						}
-						else{
-
-							current.setRoot(kb.getDataFactory()	.getOWLThing());
-						}
-
-						current.setNegTree(null);
-						current.setPosTree(null);	
-
-
-
-					}
-				}
-				else{
-					current.setAsVisited();
-					stack.push(current); // rimetto in  pila  e procedo alle chiamate ricorsive
-					if(pos!=null){
-						if((pos.getNegSubTree()!=null)||(pos.getPosSubTree()!=null))
-							stack.push(pos);
-
-					}
-					if(neg!=null){
-						if((neg.getNegSubTree()!=null)||(neg.getPosSubTree()!=null))
-							stack.push(neg);
-
-					}
-				}
-
-			}				
-		}
-
-	}
-
-	public void prunePEP(Integer[] pruningSet, AbstractTree tree,
-			AbstractTree subtree) {
-
-
-
-		DLTree treeDL= (DLTree) tree;
-
-		Stack<DLTree> stack= new Stack<DLTree>();
-		stack.add(treeDL);
-		// array list come pila
+		// twoing
 		
-			while(!stack.isEmpty()){
-				System.out.println("Print");
-				DLTree current= stack.pop(); // leggo l'albero corrente
-
-				List<DLTree> leaves= current.getFoglie();
-				System.out.println("Print 2");
-				
-				   int commissionRoot= current.getCommission();
-				   
-				   int nExsForLeaves=0;
-				   int commissions=0;
-				
-				   
-					for (Iterator iterator = leaves.iterator(); iterator
-							.hasNext();) {
-						System.out.println("Print");
-						DLTree dlTree = (DLTree) iterator.next();
-						commissions+=dlTree.getCommission();
-						nExsForLeaves=nExsForLeaves+current.getPos()+current.getNeg();
-						
-						
-					} 
-					nExsForLeaves+=2; // laplace correction
-					commissions+=1;
-					int gainC=commissionRoot-commissions;
-
-					if(gainC<0){
-
-						int posExs=current.getPos();
-						int negExs= current.getNeg();
-						// rimpiazzo rispetto alla classe di maggioranza
-						if(posExs<=negExs){
-
-							current.setRoot(kb.getDataFactory()	.getOWLNothing());
-						}
-						else{
-
-							current.setRoot(kb.getDataFactory()	.getOWLThing());
-						}
-
-						current.setNegTree(null);
-						current.setPosTree(null);	
-
-
-
-					}
-				else{
+		double totL = counts[PL]+counts[NL]+0.001;
+		double totR = counts[PR]+counts[NR]+0.001;
+		double tot = totL+totR;
+		double pPL = counts[PL]/totL, pPR = counts[PR]/totR, pNL = counts[NL]/totL,  pNR = counts[NR]/totR; 
 		
-					DLTree pos=current.getPosSubTree();
-					DLTree neg= current.getNegSubTree();
-					if(pos!=null){
+		return (totL/tot)*(totR/tot)*
+				Math.pow(Math.abs(pPL-pPR)/Math.abs(pPL+pPR)+Math.abs(pNL-pNR)/Math.abs(pNL+pNR),2); 
 		
-							stack.push(pos);
-
-					}
-					if(neg!=null){
-						
-							stack.push(neg);
-
-					}
-				}
-
-			}				
-		
-
 	}
 	
-	
-	
-	
+//	private static double gini(double numPos, double numNeg, double numUnd) {
+//		
+//		double sum = numPos+numNeg;
+//		
+//		if (sum>0) {
+//			double p1 = numPos/sum;
+//			double p2 = numNeg/sum;
+//			double p3 = numUnd/sum;
+//
+//			return (1.0-p1*p1-p2*p2);
+//		}
+//		else 
+//			return (Double.MAX_VALUE);
+//
+//	}
 	
 	
 	/**
-	 * Implementation of a REP-pruning algorithm for TDT
-	 * @param pruningset
-	 * @param tree
-	 * @param results2
+	 * @param prob
+	 * @param concept
+	 * @param posExs
+	 * @param negExs
+	 * @param undExs
 	 * @return
 	 */
-	public int[] doREPPruning(Integer[] pruningset, DLTree tree, int[] results2){
-		// step 1: classification
-		System.out.println("Number of Nodes  Before pruning"+ tree.getComplexityMeasure());
-		int[] results= new int[pruningset.length];
-		//for each element of the pruning set
-		for (int element=0; element< pruningset.length; element++){
-			//  per ogni elemento del pruning set
-			// versione modificata per supportare il pruning
-			classifyExampleforPruning(pruningset[element], tree,results2); // classificazione top down
+	private static int[] getSplitCounts(KnowledgeBase prob, OWLClassExpression concept, 
+			ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs) {
+		
+		int[] counts = new int[6];
 
-		}
-
-		prune(pruningset, tree, tree);
-		System.out.println("Number of Nodes  After pruning"+ tree.getComplexityMeasure());
-
-		return results;
+		ArrayList<Integer> posExsL = new ArrayList<Integer>();
+		ArrayList<Integer> negExsL = new ArrayList<Integer>();
+		ArrayList<Integer> undExsL = new ArrayList<Integer>();
+		ArrayList<Integer> posExsR = new ArrayList<Integer>();
+		ArrayList<Integer> negExsR = new ArrayList<Integer>();
+		ArrayList<Integer> undExsR = new ArrayList<Integer>();
+		
+		splitGroup(prob, concept, posExs, posExsL, posExsR);
+		splitGroup(prob, concept, negExs, negExsL, negExsR);	
+		splitGroup(prob, concept, undExs, undExsL, undExsR);	
+		
+		counts[PL] = posExsL.size(); 
+		counts[NL] = negExsL.size(); 
+		counts[UL] = undExsL.size(); 
+		counts[PR] = posExsR.size(); 
+		counts[NR] = negExsR.size();
+		counts[UR] = undExsR.size();
+		
+		return counts;
+		
 	}
 	
-	
-	public int[] doPEPPruning(Integer[] pruningset, DLTree tree, int[] results2){
-		// step 1: classification
-		System.out.println("Number of Nodes  Before pruning"+ tree.getComplexityMeasure());
-		int[] results= new int[pruningset.length];
-		//for each element of the pruning set
-		for (int element=0; element< pruningset.length; element++){
-			//  per ogni elemento del pruning set
-			// versione modificata per supportare il pruning
-			classifyExampleforPruning(pruningset[element], tree,results2); // classificazione top down
-
-		}
-        System.out.println("Classification for pruning");
-		prunePEP(pruningset, tree, tree);
-		System.out.println("Number of Nodes  After pruning"+ tree.getComplexityMeasure());
-
-		return results;
+	/**
+	 * @param prob
+	 * @param concept
+	 * @param posExs
+	 * @param negExs
+	 * @param undExs
+	 * @param posExsL
+	 * @param negExsL
+	 * @param undExsL
+	 * @param posExsR
+	 * @param negExsR
+	 * @param undExsR
+	 */
+	private static void split(KnowledgeBase prob, OWLClassExpression concept,
+			ArrayList<Integer> posExs,  ArrayList<Integer> negExs,  ArrayList<Integer> undExs,
+			ArrayList<Integer> posExsL, ArrayList<Integer> negExsL,	ArrayList<Integer> undExsL, 
+			ArrayList<Integer> posExsR,	ArrayList<Integer> negExsR, ArrayList<Integer> undExsR) {
+				
+		splitGroup(prob, concept, posExs, posExsL, posExsR);
+		splitGroup(prob, concept, negExs, negExsL, negExsR);
+		splitGroup(prob, concept, undExs, undExsL, undExsR);	
+		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
 
 
 	/**
-	 * Ad-hoc implementation for evaluation step in REP-pruning. the method count positive, negative and uncertain instances 
-	 * @param indTestEx
-	 * @param tree
-	 * @param results2
+	 * @param prob
+	 * @param concept
+	 * @param nodeExamples
+	 * @param leftExs
+	 * @param rightExs
+	 */
+	private static void splitGroup(KnowledgeBase  prob, OWLClassExpression concept, ArrayList<Integer> nodeExamples,
+			ArrayList<Integer> leftExs, ArrayList<Integer> rightExs) {
+
+		OWLClassExpression negConcept = prob.getDataFactory().getOWLObjectComplementOf(concept);
+		
+		for (int e=0; e<nodeExamples.size(); e++) {
+			int exIndex = nodeExamples.get(e);
+			if (prob.getReasoner().isEntailed(prob.getDataFactory().getOWLClassAssertionAxiom(concept, prob.getIndividuals()[exIndex])))
+				leftExs.add(exIndex);
+			else if (prob.getDataFactory().isEntailed(prob.getDataFactory().getOWLClassAssertionAxiom(negConcept, prob.getIndividuals()[exIndex])))
+				rightExs.add(exIndex);
+			else { 
+				leftExs.add(exIndex); 
+				rightExs.add(exIndex); 
+			}		
+		}	
+	}
+
+
+	/**
+	 * @param prob
+	 * @param concept
+	 * @param dim
+	 * @param posExs
+	 * @param negExs
 	 * @return
 	 */
-	public int classifyExampleforPruning(int indTestEx, DLTree tree,int[] results2) {
-		Stack<DLTree> stack= new Stack<DLTree>();
-		OWLDataFactory dataFactory = kb.getDataFactory();
-		stack.add(tree);
-		int result=0;
-		boolean stop=false;
+	private static OWLClassExpression[] generateRefs(LProblem prob, OWLClassExpression concept, int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {
+		
+		System.out.printf("\nGenerating node concepts ");
+		OWLClassExpression[] rConcepts = new OWLClassExpression[dim];
+		OWLClassExpression newConcept, refinement;
+		boolean emptyIntersection;
+		for (int c=0; c<dim; c++) {
+			do {
+				emptyIntersection = false; // true
+				refinement = RandomGenerator.getRandomConcept(prob);
+            	HashSet<OWLClassExpression> newConcepts = new HashSet<OWLClassExpression>();	            	
+            	newConcepts.add(concept);
+            	newConcepts.add(refinement);
+            	newConcept = prob.dataFactory.getOWLObjectIntersectionOf(newConcepts);
+            	
+//				Iterator<OWLIndividual> instIterator = reasoner.getIndividuals(newConcept, false).iterator();
+//				emptyIntersection = reasoner.getIndividuals(newConcept, false).size()<1;
+				emptyIntersection = !prob.reasoner.isSatisfiable(newConcept);
 
-
-		if (!Parameters.BINARYCLASSIFICATION){
-			while(!stack.isEmpty() && !stop){
-				DLTree currentTree= stack.pop();
-
-				OWLDescription rootClass = currentTree.getRoot();
-				//			System.out.println("Root class: "+ rootClass);
-				if (rootClass.equals(dataFactory.getOWLThing())){
-					if (results2[indTestEx]==+1){
-						currentTree.setMatch(0);
-						currentTree.setPos();
-					}
-					else if (results2[indTestEx]==-1){
-						currentTree.setCommission(0);
-						currentTree.setNeg(0);
-					}else{
-						currentTree.setInduction(0);
-						currentTree.setUnd();
-					}
-					stop=true;
-					result=+1;
-
-				}
-				else if (rootClass.equals(dataFactory.getOWLNothing())){
-
-					if(results2[indTestEx]==+1){
-
-						currentTree.setPos();
-						currentTree.setCommission(0);
-					}
-					else if (results2[indTestEx]==-1){
-						currentTree.setNeg(0);
-						currentTree.setMatch(0);
-					}
-					else{
-						currentTree.setUnd();
-						currentTree.setInduction(0);
-					}
-					stop=true;
-					result=-1;
-
-				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass)){
-					if(results2[indTestEx]==+1){
-						currentTree.setMatch(0);
-						currentTree.setPos();
-					}else if (results2[indTestEx]==-1){
-						currentTree.setCommission(0);
-						currentTree.setNeg(0);
-					}else{
-						currentTree.setUnd();
-						currentTree.setInduction(0);
-					}
-					stack.push(currentTree.getPosSubTree());
-
-				}
-				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass))){
-
-					if(results2[indTestEx]==+1){
-						currentTree.setPos();
-						currentTree.setCommission(0);
-					}else if(results2[indTestEx]==-1){
-						currentTree.setNeg(0);
-						currentTree.setMatch(0);
-					}else{
-						currentTree.setUnd();
-						currentTree.setInduction(0);
-					}
-					stack.push(currentTree.getNegSubTree());
-
-				}
-				else {
-					if(results2[indTestEx]==+1){
-						currentTree.setPos();
-						currentTree.setInduction(0);
-					}else if(results2[indTestEx]==-1){
-						currentTree.setNeg(0);
-						currentTree.setInduction(0);
-					}else{
-						currentTree.setUnd();
-						currentTree.setMatch(0);
-					}
-					stop=true;
-					result=0; 
-
-				}
-			};
-		}else{
-			
-			while(!stack.isEmpty() && !stop){
-				DLTree currentTree= stack.pop();
-
-				OWLDescription rootClass = currentTree.getRoot();
-				//			System.out.println("Root class: "+ rootClass);
-				if (rootClass.equals(dataFactory.getOWLThing())){
-					if(results2[indTestEx]==+1){
-						currentTree.setMatch(0);
-						currentTree.setPos();
-					}
-					else{
-						currentTree.setCommission(0);
-						currentTree.setNeg(0);
-					}
-					stop=true;
-					result=+1;
-
-				}
-				else if (rootClass.equals(dataFactory.getOWLNothing())){
-
-					if(results2[indTestEx]==+1){
-
-						currentTree.setPos();
-						currentTree.setCommission(0);
-					}
-					else {
-						currentTree.setNeg(0);
-						currentTree.setMatch(0);
-					}
-					
-					stop=true;
-					result=-1;
-
-				} else {
-					boolean hasType;
-					try{
-					hasType= kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass);
-					}catch(Exception e){
-						hasType=false;
-					}
-					if (hasType){
-						if(results2[indTestEx]==+1){
-							currentTree.setMatch(0);
-							currentTree.setPos();
-						}else{
-							currentTree.setCommission(0);
-							currentTree.setNeg(0);
-						}
-						stack.push(currentTree.getPosSubTree());
-
-					}
-					else {
-
-						if(results2[indTestEx]==+1){
-							currentTree.setPos();
-							currentTree.setCommission(0);
-						}else{
-							currentTree.setNeg(0);
-							currentTree.setMatch(0);
-						}
-						stack.push(currentTree.getNegSubTree());
-
-					}
-				}
-				
-			};
-			
-			
+//				while (emptyIntersection && instIterator.hasNext()) {
+//					OWLIndividual nextInd = (OWLIndividual) instIterator.next();
+//					int index = -1;
+//					for (int i=0; index<0 && i<allIndividuals.length; ++i)
+//						if (nextInd.equals(allIndividuals[i])) index = i;
+//					if (posExs.contains(index))
+//						emptyIntersection = false;
+//					else if (negExs.contains(index))
+//						emptyIntersection = false;
+//				}					
+			} while (emptyIntersection);
+			rConcepts[c] = newConcept; // normalized ?
+			System.out.printf("%d ", c);
 		}
-
-		return result;
+		System.out.println();
+		
+		return rConcepts;
+	}
 
 	}
 

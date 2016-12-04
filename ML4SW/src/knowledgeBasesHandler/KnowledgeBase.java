@@ -34,7 +34,7 @@ import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 
 import evaluation.Parameters;
 /**
- *  una classe per rappresentare una Knowledge base
+ *  a class for ontology interfacing
  */
 public class KnowledgeBase implements IKnowledgeBase {
 	static final double d = 0.3;
@@ -258,7 +258,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		for(int i=0;i<properties.length;i++){
 
 			domini[i]=new OWLIndividual[0];
-			Map<OWLIndividual, Set<OWLLiteral>> prodottoCartesiano=creazioneProdottoCartesianoDominioXValore(properties[i]);
+			Map<OWLIndividual, Set<OWLLiteral>> prodottoCartesiano=getDatatypeAssertions(properties[i]);
 			Set<OWLIndividual> chiavi=prodottoCartesiano.keySet();
 			//			System.out.println("Dominio propriet�: "+chiavi);
 			domini[i]=chiavi.toArray(domini[i]);// ottenimento individui facenti parte del dominio
@@ -287,7 +287,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 
 	}
-	public Map<OWLIndividual, Set<OWLLiteral>> creazioneProdottoCartesianoDominioXValore(OWLDataProperty dataProperty){
+	public Map<OWLIndividual, Set<OWLLiteral>> getDatatypeAssertions(OWLDataProperty dataProperty){
 		//final Set<OWLDatatype> datatypesInSignature = ontology.getDatatypesInSignature();
 		Map<OWLIndividual, Set<OWLLiteral>> asserzioni =  new HashMap<OWLIndividual, Set<OWLLiteral>>();
 		for  (OWLIndividual ex: allExamples) {
