@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="knowledgeBasesHandler/KnowledgeBaseForRoughConceptLearning.java|classifiers/RoughTerminologicalDecisionTreeInducer.java|classifiers/PUlearning/|Tests.java" kind="src" path="src"/>
+	<classpathentry excluding="knowledgeBasesHandler/KnowledgeBaseForRoughConceptLearning.java|classifiers/RoughTerminologicalDecisionTreeInducer.java|classifiers/PUlearning/|Tests.java|lib/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/aterm-java-1.6.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-cli.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-core.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-datatypes.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-dig.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-el.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-explanation.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-jena.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-modularity.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-owlapi.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-pellint.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-query.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-rules.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-test.jar"/>
-	<classpathentry kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/servlet.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/aterm-java-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-cli.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-datatypes.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-dig.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-el.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-explanation.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-jena.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-modularity.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-owlapi.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-pellint.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-query.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-rules.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/pellet-test.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/lib/pellet-2.0.0-rc7/pellet-2.0.0-rc7/pellet-2.0.0-rc7/lib/servlet.jar"/>
 	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/aopalliance-1.0.jar"/>
 	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/cal10n-api-0.7.2.jar"/>
 	<classpathentry kind="lib" path="C:/dllearner-1.0-beta-3/lib/collections-0.7.2.jar"/>
