@@ -1,6 +1,5 @@
 package classifiers;
 
-import org.semanticweb.owl.model.OWLDescription;
 
 
 import java.io.File;
@@ -11,16 +10,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.mindswap.pellet.owlapi.Reasoner;
-import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.owlapi.model.OWLException;
+import org.semanticweb.owlapi.model.OWLIndividual;
+
 
 import utils.Generator;
 
 import knowledgeBasesHandler.KnowledgeBase;
 
-
-import classifiers.refinementOperator.NonRandomRefinementOperator;
-import classifiers.refinementOperator.NonRecursiveDownwardRefinementOperator;
 import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.TDTClassifier;
 import classifiers.trees.models.DLTree;
@@ -60,7 +58,7 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 	 * @see classifiers.SupervisedLearnable#training(java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[], org.semanticweb.owl.model.OWLDescription[])
 	 */
 	@Override
-	public void training(int[][] results,Integer[] trainingExs, OWLDescription[] testConcepts, OWLDescription[] negTestConcepts){
+	public void training(int[][] results,Integer[] trainingExs, OWLClassExpression[] testConcepts, OWLClassExpression[] negTestConcepts){
         RefinementOperator op=new RefinementOperator(kb);
 		Reasoner reasoner = kb.getReasoner();
 		OWLIndividual[] allExamples= kb.getIndividuals();

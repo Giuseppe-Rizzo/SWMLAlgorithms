@@ -361,7 +361,7 @@ public class TDTClassifier  {
 	 * @param tree
 	 * @return
 	 */
-	private int classify(OWLIndividual ind, DLTree tree) {
+	public  int classify(OWLIndividual ind, DLTree tree) {
 		
 		OWLClassExpression rootClass = tree.getRoot();
 		
@@ -393,6 +393,199 @@ public class TDTClassifier  {
  
 
 
+	public void prune(Integer[] pruningSet, AbstractTree tree,
+			AbstractTree subtree) {
+
+
+
+		DLTree treeDL= (DLTree) tree;
+
+		Stack<DLTree> stack= new Stack<DLTree>();
+		stack.add(treeDL);
+		// array list come pila
+		double nodes= treeDL.getComplexityMeasure();
+		if(nodes>1){
+			while(!stack.isEmpty()){
+				DLTree current= stack.pop(); // leggo l'albero corrente
+
+				DLTree pos= current.getPosSubTree();
+				DLTree neg= current.getNegSubTree();
+				System.out.println("Current: "+pos+" ----- "+neg+"visited? "+current.isVisited());
+
+				if(current.isVisited()){
+					System.out.println("Valutazione");
+					int comissionRoot=current.getCommission();
+					int comissionPosTree= pos.getCommission();
+					int comissionNegTree= neg.getCommission();
+					
+					int gainC=comissionRoot-(comissionPosTree+comissionNegTree);
+
+					if(gainC<0){
+
+						int posExs=current.getPos();
+						int negExs= current.getNeg();
+						// rimpiazzo rispetto alla classe di maggioranza
+						if(posExs<=negExs){
+
+							current.setRoot(k.getDataFactory().getOWLNothing());
+						}
+						else{
+
+							current.setRoot(k.getDataFactory().getOWLThing());
+						}
+
+						current.setNegTree(null);
+						current.setPosTree(null);	
+
+
+
+					}
+				}
+				else{
+					current.setAsVisited();
+					stack.push(current); // rimetto in  pila  e procedo alle chiamate ricorsive
+					if(pos!=null){
+						if((pos.getNegSubTree()!=null)||(pos.getPosSubTree()!=null))
+							stack.push(pos);
+
+					}
+					if(neg!=null){
+						if((neg.getNegSubTree()!=null)||(neg.getPosSubTree()!=null))
+							stack.push(neg);
+
+					}
+				}
+
+			}				
+		}
+
+	}
+
+	public void prunePEP(Integer[] pruningSet, AbstractTree tree,
+			AbstractTree subtree) {
+
+
+
+		DLTree treeDL= (DLTree) tree;
+
+		Stack<DLTree> stack= new Stack<DLTree>();
+		stack.add(treeDL);
+		// array list come pila
+		
+			while(!stack.isEmpty()){
+				;
+				DLTree current= stack.pop(); 
+
+				List<DLTree> leaves= current.getFoglie();
+				
+				   int commissionRoot= current.getCommission();
+				   
+				   int nExsForLeaves=0;
+				   int commissions=0;
+				
+				   
+					for (Iterator iterator = leaves.iterator(); iterator
+							.hasNext();) {
+						System.out.println("Print");
+						DLTree dlTree = (DLTree) iterator.next();
+						commissions+=dlTree.getCommission();
+						nExsForLeaves=nExsForLeaves+current.getPos()+current.getNeg();
+						
+						
+					} 
+					nExsForLeaves+=2; // laplace correction
+					commissions+=1;
+					int gainC=commissionRoot-commissions;
+
+					if(gainC<0){
+
+						int posExs=current.getPos();
+						int negExs= current.getNeg();
+						// rimpiazzo rispetto alla classe di maggioranza
+						if(posExs<=negExs){
+
+							current.setRoot(k.getDataFactory().getOWLNothing());
+						}
+						else{
+
+							current.setRoot(k.getDataFactory().getOWLThing());
+						}
+
+						current.setNegTree(null);
+						current.setPosTree(null);	
+
+
+
+					}
+				else{
+		
+					DLTree pos=current.getPosSubTree();
+					DLTree neg= current.getNegSubTree();
+					if(pos!=null){
+		
+							stack.push(pos);
+
+					}
+					if(neg!=null){
+						
+							stack.push(neg);
+
+					}
+				}
+
+			}				
+		
+
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * Implementation of a REP-pruning algorithm for TDT
+	 * @param pruningset
+	 * @param tree
+	 * @param results2
+	 * @return
+	 */
+	public int[] doREPPruning(Integer[] pruningset, DLTree tree, int[] results2){
+		// step 1: classification
+		System.out.println("Number of Nodes  Before pruning"+ tree.getComplexityMeasure());
+		int[] results= new int[pruningset.length];
+		//for each element of the pruning set
+		for (int element=0; element< pruningset.length; element++){
+			//  per ogni elemento del pruning set
+			// versione modificata per supportare il pruning
+			classifyExampleforPruning(pruningset[element], tree,results2); // classificazione top down
+
+		}
+
+		prune(pruningset, tree, tree);
+		System.out.println("Number of Nodes  After pruning"+ tree.getComplexityMeasure());
+
+		return results;
+	}
+	
+	
+	public int[] doPEPPruning(Integer[] pruningset, DLTree tree, int[] results2){
+		// step 1: classification
+		System.out.println("Number of Nodes  Before pruning"+ tree.getComplexityMeasure());
+		int[] results= new int[pruningset.length];
+		//for each element of the pruning set
+		for (int element=0; element< pruningset.length; element++){
+			//  per ogni elemento del pruning set
+			// versione modificata per supportare il pruning
+			classifyExampleforPruning(pruningset[element], tree,results2); // classificazione top down
+
+		}
+        System.out.println("Classification for pruning");
+		prunePEP(pruningset, tree, tree);
+		System.out.println("Number of Nodes  After pruning"+ tree.getComplexityMeasure());
+
+		return results;
+	}
 
 }
 
