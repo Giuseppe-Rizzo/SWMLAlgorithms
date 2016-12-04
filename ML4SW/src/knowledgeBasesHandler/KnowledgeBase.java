@@ -24,9 +24,10 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
 import org.semanticweb.owlapi.util.SimpleIRIMapper;
+import org.semanticweb.HermiT.Reasoner;
 
 import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
-import com.hp.hpl.jena.reasoner.Reasoner;
+//import com.hp.hpl.jena.reasoner.Reasoner;
 
 import evaluation.Parameters;
 /**
@@ -37,7 +38,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 	//private String urlOwlFile = "file:///C:/Users/Giuseppe/Desktop//mod-biopax-example-ecocyc-glycolysis.owl";
 	private String urlOwlFile = "file:///C:/Users/Giusepp/Desktop/Ontologie/GeoSkills.owl";
 	private  OWLOntology ontology;
-	protected  PelletReasoner reasoner;
+	protected  Reasoner reasoner;
 	private  OWLOntologyManager manager;
 	private  OWLClass[] allConcepts;
 	private  OWLObjectProperty[] allRoles;
@@ -89,7 +90,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		}
 
 
-		reasoner = new PelletReasoner(ontology, BufferingMode.NON_BUFFERING);
+		reasoner = new   Reasoner(ontology);//PelletReasoner(ontology, BufferingMode.NON_BUFFERING);
 
 //		reasoner.getKB().realize();
 		System.out.println("\nClasses\n-------");
@@ -144,14 +145,15 @@ public class KnowledgeBase implements IKnowledgeBase {
 			System.out.printf("[%d] ",c);
 			for (int e=0; e<esempi.length; ++e) {			
 				classifications[c][e] = 0;
-				if (reasoner.hasType(esempi[e],testConcepts[c])) {
+				
+				if (reasoner.isEntailed(dataFactory.getOWLClassAssertionAxiom(testConcepts[c],  esempi[e]))) {
 					classifications[c][e] = +1;
 					p++;
 
 				}
 				else{ 
 					if (!Parameters.BINARYCLASSIFICATION){
-						if (reasoner.hasType(esempi[e],negTestConcepts[c])) 
+						if (reasoner.isEntailed(dataFactory.getOWLClassAssertionAxiom(negTestConcepts[c],  esempi[e])) )
 							classifications[c][e] = -1;
 					}
 					else
@@ -200,7 +202,8 @@ public class KnowledgeBase implements IKnowledgeBase {
 					// verifico che l'esempio j � correlato all'esempio k rispetto alla regola i
 					//System.out.println(regole[i]+" vs "+dataFactory.getOWLNegativeObjectPropertyAssertionAxiom(esempi[j], regole[i], esempi[k]).getProperty());
 					correlati[i][j][k]=0;
-					if(reasoner.hasObjectPropertyRelationship(esempi[j], ruoli[i], esempi[k]))
+					
+					if(reasoner.isEntailed(dataFactory.getOWLObjectPropertyAssertionAxiom(ruoli[i], esempi[j], esempi[k])))
 					{correlati[i][j][k]=1;
 					//System.out.println(" Regola "+i+":   "+regole[i]+" Individui: "+i+" "+esempi[j]+" "+k+" "+esempi[k]+" "+correlati[i][j][k]);
 
@@ -281,13 +284,12 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 
 	}
-	public Map<OWLIndividual, Set<OWLLiteral>> creazioneProdottoCartesianoDominioXValore(OWLDataProperty dataProperty){
-		Map<OWLIndividual, Set<OWLLiteral>> asserzioni = reasoner.getDataPropertyValues(arg0, arg1)(dataProperty);
-		
-		return asserzioni;
-
-
-	}
+//	public Map<OWLIndividual, Set<OWLLiteral>> creazioneProdottoCartesianoDominioXValore(OWLDataProperty dataProperty){
+//		Map<OWLIndividual, Set<OWLLiteral>> asserzioni = reasoner.getgetDataPropertyValues(arg0, arg1)(dataProperty);
+//		return asserzioni;
+//
+//
+//	}
 
 
 	//********************METODI DI ACCESSO  ALLE COMPONENTI DELL'ONTOLOGIA*******************************//
@@ -385,7 +387,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 	}
 
-	public PelletReasoner getReasoner(){
+	public Reasoner getReasoner(){
 		return reasoner;
 	}
 
