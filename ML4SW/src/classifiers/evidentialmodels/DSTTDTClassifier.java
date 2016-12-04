@@ -4,6 +4,7 @@ package classifiers.evidentialmodels;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -75,6 +76,7 @@ public class DSTTDTClassifier{
 
 		Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double> examples = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExs, negExs, undExs, dim, prPos, prNeg);
 		DSTDLTree tree = new DSTDLTree(); // new (sub)tree
+		tree.setRoot(kb.getDataFactory().getOWLThing(), null);
 		Stack<Couple<DSTDLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>> stack= new Stack<Couple<DSTDLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>>();
 		Couple<DSTDLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>> toInduce= new Couple<DSTDLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>>();
 		toInduce.setFirstElement(tree);
@@ -127,14 +129,12 @@ boolean setSeed=true;
 				undValue= 0;
 			}
 			mass.setValues(frame, undValue);
-			
-
 			//	System.out.println("MASS: "+ positiveValue +", "+negativeValue+", "+undValue);
 			//  ragionamento sui prior
 
 			if (psize == 0 && nsize == 0) // no exs
 				if (prPos >= prNeg) {
-					//			System.out.println("8======D");// prior majority of positives
+					
 					currentTree.setRoot(dataFactory.getOWLThing(), mass); // set positive leaf
 					//					return tree;
 				}
@@ -163,12 +163,12 @@ boolean setSeed=true;
 
 					if (!Parameters.nonspecificityControl){
 						
-							ArrayList<OWLClassExpression> generateNewConcepts = op.generateNewConcepts(Parameters.beam, posExs, negExs,setSeed); // genera i concetti sulla base degli esempi
+						OWLClassExpression[] cConcepts  =generateRefs(kb,currentTree.getRoot(),50, posExs,negExs); // genera i concetti sulla base degli esempi
 							setSeed=false;
 							
-							OWLClassExpression[] cConcepts = new OWLClassExpression[generateNewConcepts.size()];
+							//OWLClassExpression[] cConcepts = new OWLClassExpression[generateNewConcepts.size()];
 							
-							cConcepts= generateNewConcepts.toArray(cConcepts);
+							//cConcepts= generateNewConcepts.toArray(cConcepts);
 							
 							//	OWLClassExpression[] cConcepts = allConcepts;
 
@@ -188,15 +188,17 @@ boolean setSeed=true;
 						split(newRootConcept.getFirstElement(), posExs, negExs, undExs, posExsT, negExsT, undExsT, posExsF, negExsF, undExsF);
 						// select node concept
 
-						currentTree.setRoot(newRootConcept.getFirstElement(), refinementMass);		
+						currentTree.setRoot(newRootConcept.getFirstElement().getNNF(), refinementMass);		
 
 						//	undExsT = union(undExsT,
 						//						tree.setPosTree(induceDSTDLTree(posExsT, negExsT, undExsT, dim, prPos, prNeg));
 						//						tree.setNegTree(induceDSTDLTree(posExsF, negExsF, undExsF, dim, prPos, prNeg));
 
 						DSTDLTree posTree= new DSTDLTree();
+						posTree.setRoot(newRootConcept.getFirstElement().getNNF(),refinementMass);
 						DSTDLTree negTree= new DSTDLTree(); // recursive calls simulation
 						currentTree.setPosTree(posTree);
+						posTree.setRoot(kb.getDataFactory().getOWLObjectComplementOf(newRootConcept.getFirstElement()).getNNF(),refinementMass);
 						currentTree.setNegTree(negTree);
 						Npla<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>, Integer, Double, Double> npla1 = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExsT, negExsT, undExsT, dim, perPos, perNeg);
 						Npla<ArrayList<Integer>, ArrayList<Integer>, ArrayList<Integer>, Integer, Double, Double> npla2 = new Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>(posExsF, negExsF, undExsF, dim, perPos, perNeg);
@@ -282,6 +284,44 @@ boolean setSeed=true;
 		return tree;
 	}
 
+
+	private static OWLClassExpression[] generateRefs(KnowledgeBase prob, OWLClassExpression concept, int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {
+		
+		System.out.printf("\nGenerating node concepts ");
+		OWLClassExpression[] rConcepts = new OWLClassExpression[dim];
+		OWLClassExpression newConcept, refinement;
+		boolean emptyIntersection;
+		for (int c=0; c<dim; c++) {
+			do {
+				emptyIntersection = false; // true
+				refinement = new RefinementOperator(prob).getRandomConcept(prob);
+            	HashSet<OWLClassExpression> newConcepts = new HashSet<OWLClassExpression>();	            	
+            	newConcepts.add(concept);
+            	newConcepts.add(refinement);
+            	newConcept = prob.getDataFactory().getOWLObjectIntersectionOf(newConcepts);
+            	
+//				Iterator<OWLIndividual> instIterator = reasoner.getIndividuals(newConcept, false).iterator();
+//				emptyIntersection = reasoner.getIndividuals(newConcept, false).size()<1;
+				emptyIntersection = !prob.getReasoner().isSatisfiable(newConcept);
+
+//				while (emptyIntersection && instIterator.hasNext()) {
+//					OWLIndividual nextInd = (OWLIndividual) instIterator.next();
+//					int index = -1;
+//					for (int i=0; index<0 && i<allIndividuals.length; ++i)
+//						if (nextInd.equals(allIndividuals[i])) index = i;
+//					if (posExs.contains(index))
+//						emptyIntersection = false;
+//					else if (negExs.contains(index))
+//						emptyIntersection = false;
+//				}					
+			} while (emptyIntersection);
+			rConcepts[c] = newConcept; // normalized ?
+			System.out.printf("%d ", c);
+		}
+		System.out.println();
+		
+		return rConcepts;
+	}
 
 
 

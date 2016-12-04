@@ -4,7 +4,9 @@ package classifiers;
 import java.lang.reflect.InvocationTargetException;
 	import java.util.ArrayList;
 
+import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
 
 	
 
@@ -65,7 +67,7 @@ public class DSTTerminologicalDecisionTreeInducer implements SupervisedLearnable
 			e1.printStackTrace();
 		}
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
-		PelletReasoner reasoner = kb.getReasoner();
+		Reasoner reasoner = kb.getReasoner();
 		OWLIndividual[] allExamples= kb.getIndividuals();
 		//		ArrayList<Triple<Integer, Integer, Integer>> testSetComposition= new ArrayList<Triple<Integer, Integer, Integer>>();
 		for (int c=0; c<testConcepts.length; c++) {

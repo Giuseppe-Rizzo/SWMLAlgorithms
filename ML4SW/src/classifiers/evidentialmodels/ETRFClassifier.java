@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import knowledgeBasesHandler.*;
 
-import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import classifiers.ensemble.Ensemble;
 import classifiers.evidentialmodels.dempstershafer.MassFunction;
@@ -115,7 +115,7 @@ public class ETRFClassifier {
 	}
 
 	@SuppressWarnings("unchecked")
-	public	void classifyExamples(int indTestEx, @SuppressWarnings("rawtypes") Ensemble[] forests, int[] results, OWLDescription[] testConcepts, int...rclass) {
+	public	void classifyExamples(int indTestEx, @SuppressWarnings("rawtypes") Ensemble[] forests, int[] results, OWLClassExpression[] testConcepts, int...rclass) {
 
 		for (int c=0; c < testConcepts.length; c++) {
 			

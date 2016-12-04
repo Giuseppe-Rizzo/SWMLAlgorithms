@@ -9,10 +9,9 @@ import java.util.Stack;
 
 import knowledgeBasesHandler.KnowledgeBase;
 
-import org.semanticweb.owl.inference.OWLReasonerException;
-import org.semanticweb.owl.model.OWLDataFactory;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
 
 import classifiers.refinementOperator.RefinementOperator;
 import classifiers.trees.models.AbstractTree;
@@ -34,7 +33,7 @@ public abstract class AbstractTDTClassifier {
 
 
 
-	public	void classifyExamples(int indTestEx, DLTree[] trees, int[] results, OWLDescription[] testConcepts, int...rclass) {
+	public	void classifyExamples(int indTestEx, DLTree[] trees, int[] results, OWLClassExpression[] testConcepts, int...rclass) {
 
 		int length = testConcepts!=null?testConcepts.length:1;
 		for (int c=0; c < length; c++) {
@@ -65,118 +64,119 @@ public abstract class AbstractTDTClassifier {
 	}
 
 	public int classifyExample(int indTestEx, DLTree tree) {
-
-
-		Stack<DLTree> stack= new Stack<DLTree>();
-		OWLDataFactory dataFactory = kb.getDataFactory();
-		stack.add(tree);
-		int result=0;
-		boolean stop=false;
-
-		if (!Parameters.BINARYCLASSIFICATION){
-			while(!stack.isEmpty() && !stop){
-				DLTree currentTree= stack.pop();
-
-				OWLDescription rootClass = currentTree.getRoot();
-				//			System.out.println("Root class: "+ rootClass);
-				if (rootClass.equals(dataFactory.getOWLThing())){
-					stop=true;
-					result=+1;
-
-				}
-				else if (rootClass.equals(dataFactory.getOWLNothing())){
-					stop=true;
-					result=-1;
-
-				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass))
-					stack.push(currentTree.getPosSubTree());
-				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass)))
-					stack.push(currentTree.getNegSubTree());
-				else {
-					stop=true;
-					result=0; 
-
-				}
-
-			}
-		}else{
-			while(!stack.isEmpty() && !stop){
-				DLTree currentTree= stack.pop();
-
-				OWLDescription rootClass = currentTree.getRoot();
-				//			System.out.println("Root class: "+ rootClass);
-				if (rootClass.equals(dataFactory.getOWLThing())){
-					stop=true;
-					result=+1;
-
-				}
-				else if (rootClass.equals(dataFactory.getOWLNothing())){
-					stop=true;
-					result=-1;
-
-				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass))
-					stack.push(currentTree.getPosSubTree());
-				else 
-					stack.push(currentTree.getNegSubTree()); // for those kb having no full complement
-
-			}
-		}
-	
-
-	return result;
+//
+//
+//		Stack<DLTree> stack= new Stack<DLTree>();
+//		OWLDataFactory dataFactory = kb.getDataFactory();
+//		stack.add(tree);
+//		int result=0;
+//		boolean stop=false;
+//
+//		if (!Parameters.BINARYCLASSIFICATION){
+//			while(!stack.isEmpty() && !stop){
+//				DLTree currentTree= stack.pop();
+//
+//				OWLClassExpression rootClass = currentTree.getRoot();
+//				//			System.out.println("Root class: "+ rootClass);
+//				if (rootClass.equals(dataFactory.getOWLThing())){
+//					stop=true;
+//					result=+1;
+//
+//				}
+//				else if (rootClass.equals(dataFactory.getOWLNothing())){
+//					stop=true;
+//					result=-1;
+//
+//				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass))
+//					stack.push(currentTree.getPosSubTree());
+//				else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass)))
+//					stack.push(currentTree.getNegSubTree());
+//				else {
+//					stop=true;
+//					result=0; 
+//
+//				}
+//
+//			}
+//		}else{
+//			while(!stack.isEmpty() && !stop){
+//				DLTree currentTree= stack.pop();
+//
+//				OWLClassExpression rootClass = currentTree.getRoot();
+//				//			System.out.println("Root class: "+ rootClass);
+//				if (rootClass.equals(dataFactory.getOWLThing())){
+//					stop=true;
+//					result=+1;
+//
+//				}
+//				else if (rootClass.equals(dataFactory.getOWLNothing())){
+//					stop=true;
+//					result=-1;
+//
+//				}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass))
+//					stack.push(currentTree.getPosSubTree());
+//				else 
+//					stack.push(currentTree.getNegSubTree()); // for those kb having no full complement
+//
+//			}
+//		}
+//	
+//
+	return 0;
 
 }
 
 
 public int classifyExample(List<Integer> list, int indTestEx, DLTree tree) {
-	Stack<DLTree> stack= new Stack<DLTree>();
-	OWLDataFactory dataFactory = kb.getDataFactory();
-	stack.add(tree);
-	int result=0;
-	boolean stop=false;
-	while(!stack.isEmpty() && !stop){
-		DLTree currentTree= stack.pop();
+//	Stack<DLTree> stack= new Stack<DLTree>();
+//	OWLDataFactory dataFactory = kb.getDataFactory();
+//	stack.add(tree);
+//	int result=0;
+//	boolean stop=false;
+//	while(!stack.isEmpty() && !stop){
+//		DLTree currentTree= stack.pop();
+//
+//		OWLClassExpression rootClass = currentTree.getRoot();
+//		//			System.out.println("Root class: "+ rootClass);
+//		if (rootClass.equals(dataFactory.getOWLThing())){
+//			//				stop=true;
+//			result=+1;
+//			list.add(result);
+//
+//		}
+//		else if (rootClass.equals(dataFactory.getOWLNothing())){
+//			//				stop=true;
+//			result=-1;
+//			list.add(result);
+//
+//		}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass))
+//			stack.push(currentTree.getPosSubTree());
+//		else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass)))
+//			stack.push(currentTree.getNegSubTree());
+//		else {
+//			//				stop=true;
+//			result=0; 
+//			stack.push(currentTree.getPosSubTree());
+//			stack.push(currentTree.getNegSubTree());
+//
+//		}
+//	};
+//
+//	int posFr= Collections.frequency(list, +1);
+//	int negFr= Collections.frequency(list, -1);
+//
+//	if (posFr>negFr)
+//		return +1;
+//	else
+//		return -1;
 
-		OWLDescription rootClass = currentTree.getRoot();
-		//			System.out.println("Root class: "+ rootClass);
-		if (rootClass.equals(dataFactory.getOWLThing())){
-			//				stop=true;
-			result=+1;
-			list.add(result);
-
-		}
-		else if (rootClass.equals(dataFactory.getOWLNothing())){
-			//				stop=true;
-			result=-1;
-			list.add(result);
-
-		}else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], rootClass))
-			stack.push(currentTree.getPosSubTree());
-		else if (kb.getReasoner().hasType(kb.getIndividuals()[indTestEx], dataFactory.getOWLObjectComplementOf(rootClass)))
-			stack.push(currentTree.getNegSubTree());
-		else {
-			//				stop=true;
-			result=0; 
-			stack.push(currentTree.getPosSubTree());
-			stack.push(currentTree.getNegSubTree());
-
-		}
-	};
-
-	int posFr= Collections.frequency(list, +1);
-	int negFr= Collections.frequency(list, -1);
-
-	if (posFr>negFr)
-		return +1;
-	else
-		return -1;
-
+return 0;
 
 }
 
 
 
-protected OWLDescription selectBestConcept(OWLDescription[] concepts, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
+protected OWLClassExpression selectBestConcept(OWLClassExpression[] concepts, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
 		ArrayList<Integer> undExs, double prPos, double prNeg) {
 
 	int[] counts;
@@ -212,7 +212,7 @@ protected OWLDescription selectBestConcept(OWLDescription[] concepts, ArrayList<
 	return concepts[bestConceptIndex];
 }
 
-protected OWLDescription selectBestConceptCCP(OWLDescription[] concepts, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
+protected OWLClassExpression selectBestConceptCCP(OWLClassExpression[] concepts, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
 		ArrayList<Integer> undExs, double prPos, double prNeg, ArrayList<Integer> truePosExs, ArrayList<Integer> trueNegExs) {
 
 	int[] counts;
@@ -307,7 +307,7 @@ public AbstractTDTClassifier() {
 	super();
 }
 
-private int[] getSplitCounts(OWLDescription concept, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
+private int[] getSplitCounts(OWLClassExpression concept, ArrayList<Integer> posExs, ArrayList<Integer> negExs,
 		ArrayList<Integer> undExs) {
 	
 	int[] counts = new int[9];
@@ -343,7 +343,7 @@ private int[] getSplitCounts(OWLDescription concept, ArrayList<Integer> posExs, 
 
 }
 
-protected void split(OWLDescription concept, ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs,
+protected void split(OWLClassExpression concept, ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs,
 		ArrayList<Integer> posExsT, ArrayList<Integer> negExsT, ArrayList<Integer> undExsT, ArrayList<Integer> posExsF, ArrayList<Integer> negExsF,
 		ArrayList<Integer> undExsF) {
 
@@ -357,15 +357,15 @@ protected void split(OWLDescription concept, ArrayList<Integer> posExs, ArrayLis
 
 }
 
-private void splitGroup(OWLDescription concept, ArrayList<Integer> nodeExamples, ArrayList<Integer> trueExs,
+private void splitGroup(OWLClassExpression concept, ArrayList<Integer> nodeExamples, ArrayList<Integer> trueExs,
 		ArrayList<Integer> falseExs, ArrayList<Integer> undExs) {
-	OWLDescription negConcept = kb.getDataFactory().getOWLObjectComplementOf(concept);
+	OWLClassExpression negConcept = kb.getDataFactory().getOWLObjectComplementOf(concept);
 
 	for (int e=0; e<nodeExamples.size(); e++) {
 		int exIndex = nodeExamples.get(e);
-		if (kb.getReasoner().hasType(kb.getIndividuals()[exIndex], concept))
+		if (kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(concept, kb.getIndividuals()[exIndex])))
 			trueExs.add(exIndex);
-		else if (kb.getReasoner().hasType(kb.getIndividuals()[exIndex], negConcept))
+		else if ((kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(negConcept, kb.getIndividuals()[exIndex]))))
 			falseExs.add(exIndex);
 		else
 			undExs.add(exIndex);		
