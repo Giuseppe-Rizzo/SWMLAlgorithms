@@ -80,12 +80,12 @@ public class DSTTerminologicalDecisionTreeInducer implements SupervisedLearnable
 			// ha splittato in istanze negative, positive e incerte per un singolo albero
 			for (int e=0; e<trainingExs.length; e++){
 
-				if (reasoner.hasType(allExamples[trainingExs[e]], testConcepts[c]))
-					posExs.add(trainingExs[e]);
-				else if (reasoner.hasType(allExamples[trainingExs[e]], negTestConcepts[c]))
-					negExs.add(trainingExs[e]);
+				if (this.kb.getReasoner().isEntailed(this.kb.getDataFactory().getOWLClassAssertionAxiom(testConcepts[c], kb.getIndividuals()[trainingExs[e]])))
+					posExs.add(e);
+				else if ((kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(testConcepts[c], kb.getIndividuals()[trainingExs[e]]))))
+					negExs.add(e);
 				else
-					undExs.add(trainingExs[e]);
+					undExs.add(e);		
 			}
 
 			// queste istanze devono essere suddivise in istanze negative, positive e incerte sull'ensemble
@@ -165,4 +165,4 @@ public class DSTTerminologicalDecisionTreeInducer implements SupervisedLearnable
 
 }
 
-	}
+	

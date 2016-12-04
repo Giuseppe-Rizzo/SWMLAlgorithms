@@ -2,9 +2,9 @@ package classifiers;
 
 import java.util.ArrayList;
 
-import org.mindswap.pellet.owlapi.Reasoner;
-import org.semanticweb.owl.model.OWLDescription;
-import org.semanticweb.owl.model.OWLIndividual;
+
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLIndividual;
 
 import knowledgeBasesHandler.KnowledgeBase;
 
