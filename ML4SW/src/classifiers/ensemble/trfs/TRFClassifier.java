@@ -4,7 +4,7 @@ package classifiers.ensemble.trfs;
 import java.util.ArrayList;
 import knowledgeBasesHandler.*;
 
-import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import classifiers.ensemble.Ensemble;
 import classifiers.refinementOperator.RefinementOperator;
@@ -108,13 +108,13 @@ public class TRFClassifier {
 	}
 
 	@SuppressWarnings("unchecked")
-	public	void classifyExamples(int indTestEx, @SuppressWarnings("rawtypes") Ensemble[] forests, int[] results, OWLDescription[] testConcepts, int...rclass) {
+	public void classifyExamples(int indTestEx, @SuppressWarnings("rawtypes") Ensemble[] forests, int[] results, OWLClassExpression[] testConcepts, int...rclass) {
 
 		int length = testConcepts!=null?testConcepts.length:1;
 		for (int c=0; c < length; c++) {
 			
 			results[c] = classifyEnsemble(indTestEx, forests[c]);
-			System.out.println(forests[c].printVotes());
+			
 		} // for c
 
 

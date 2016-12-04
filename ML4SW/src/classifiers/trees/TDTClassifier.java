@@ -1,6 +1,7 @@
 package classifiers.trees;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -68,20 +69,6 @@ public class TDTClassifier  {
 		
 		DLTree tree = new DLTree (); // new (sub)tree		
 
-		if ((posExs.size()+negExs.size())<=43){
-			
-			if (prPos >= prNeg) { // prior majority of positives
-				tree.setRoot(k.getDataFactory().getOWLThing()); // set positive leaf
-				System.out.println("-----\nPOS leaf (prior)");
-				return tree;
-			}
-			else { // prior majority of negatives
-				tree.setRoot(k.getDataFactory().getOWLNothing()); // set negative leaf
-				System.out.println("-----\nNEG leaf (prior)");
-				return tree;
-			}
-			
-		}
 		
 		if (posExs.size() == 0 && negExs.size() == 0) // no exs
 			if (prPos >= prNeg) { // prior majority of positives
@@ -140,8 +127,8 @@ public class TDTClassifier  {
 		// build subtrees
 		
 		
-		tree.setLSubTree(induceDLTree(prob, bestConcept, posExsL, negExsL, undExsL, nCandRefs, prPos, prNeg));
-		tree.setRSubTree(induceDLTree(prob, bestConcept.getComplementNNF(), posExsR, negExsR, undExsR, nCandRefs, prPos, prNeg));
+		tree.setPosTree(induceDLTree(bestConcept, posExsL, negExsL, undExsL, nCandRefs, prPos, prNeg));
+		tree.setNegTree(induceDLTree( bestConcept.getComplementNNF(), posExsR, negExsR, undExsR, nCandRefs, prPos, prNeg));
 				
 		return tree;
 	}
@@ -329,7 +316,7 @@ public class TDTClassifier  {
 	 * @param negExs
 	 * @return
 	 */
-	private static OWLClassExpression[] generateRefs(LProblem prob, OWLClassExpression concept, int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {
+	private static OWLClassExpression[] generateRefs(KnowledgeBase prob, OWLClassExpression concept, int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {
 		
 		System.out.printf("\nGenerating node concepts ");
 		OWLClassExpression[] rConcepts = new OWLClassExpression[dim];
@@ -338,15 +325,15 @@ public class TDTClassifier  {
 		for (int c=0; c<dim; c++) {
 			do {
 				emptyIntersection = false; // true
-				refinement = RandomGenerator.getRandomConcept(prob);
+				refinement = new RefinementOperator(prob).getRandomConcept(prob);
             	HashSet<OWLClassExpression> newConcepts = new HashSet<OWLClassExpression>();	            	
             	newConcepts.add(concept);
             	newConcepts.add(refinement);
-            	newConcept = prob.dataFactory.getOWLObjectIntersectionOf(newConcepts);
+            	newConcept = prob.getDataFactory().getOWLObjectIntersectionOf(newConcepts);
             	
 //				Iterator<OWLIndividual> instIterator = reasoner.getIndividuals(newConcept, false).iterator();
 //				emptyIntersection = reasoner.getIndividuals(newConcept, false).size()<1;
-				emptyIntersection = !prob.reasoner.isSatisfiable(newConcept);
+				emptyIntersection = !prob.getReasoner().isSatisfiable(newConcept);
 
 //				while (emptyIntersection && instIterator.hasNext()) {
 //					OWLIndividual nextInd = (OWLIndividual) instIterator.next();
@@ -369,13 +356,6 @@ public class TDTClassifier  {
 
 	}
 
-
-
-
-
-
-
-}
 
 
 

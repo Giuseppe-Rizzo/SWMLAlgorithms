@@ -34,7 +34,7 @@ public class RefinementOperator {
 
 
 
-OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentConcept) {
+public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentConcept) {
 		
 	Random generator = new Random ();
 		OWLClassExpression newConcept = null;
@@ -74,7 +74,7 @@ OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentConcept) {
  * @param prob
  * @return
  */
-private OWLClassExpression getRandomConcept(KnowledgeBase k) {
+public OWLClassExpression getRandomConcept(KnowledgeBase k) {
 	
 	OWLClassExpression newConcept = null;
 	Random generator= new Random();		
