@@ -111,7 +111,7 @@ public class TDTClassifier  {
 			}
 		else 
 		if (perPos==0 && perNeg > THRESHOLD) { // no positive			
-			tree.setRoot(k.dataFactory.getOWLNothing()); // set negative leaf
+			tree.setRoot(k.getDataFactory().getOWLNothing()); // set negative leaf
 			System.out.println("-----\nNEG leaf (thr)\n");
 			return tree;
 		}		
@@ -311,7 +311,7 @@ public class TDTClassifier  {
 			int exIndex = nodeExamples.get(e);
 			if (prob.getReasoner().isEntailed(prob.getDataFactory().getOWLClassAssertionAxiom(concept, prob.getIndividuals()[exIndex])))
 				leftExs.add(exIndex);
-			else if (prob.getDataFactory().isEntailed(prob.getDataFactory().getOWLClassAssertionAxiom(negConcept, prob.getIndividuals()[exIndex])))
+			else if (prob.getReasoner().isEntailed(prob.getDataFactory().getOWLClassAssertionAxiom(negConcept, prob.getIndividuals()[exIndex])))
 				rightExs.add(exIndex);
 			else { 
 				leftExs.add(exIndex); 
