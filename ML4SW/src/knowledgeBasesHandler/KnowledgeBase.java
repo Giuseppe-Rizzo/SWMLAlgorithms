@@ -3,6 +3,7 @@ package knowledgeBasesHandler;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -26,6 +28,7 @@ import org.semanticweb.owlapi.reasoner.BufferingMode;
 import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import org.semanticweb.HermiT.Reasoner;
 
+import com.clarkparsia.owlapiv3.OWL;
 import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 //import com.hp.hpl.jena.reasoner.Reasoner;
 
@@ -284,12 +287,18 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 
 	}
-//	public Map<OWLIndividual, Set<OWLLiteral>> creazioneProdottoCartesianoDominioXValore(OWLDataProperty dataProperty){
-//		Map<OWLIndividual, Set<OWLLiteral>> asserzioni = reasoner.getgetDataPropertyValues(arg0, arg1)(dataProperty);
-//		return asserzioni;
-//
-//
-//	}
+	public Map<OWLIndividual, Set<OWLLiteral>> creazioneProdottoCartesianoDominioXValore(OWLDataProperty dataProperty){
+		//final Set<OWLDatatype> datatypesInSignature = ontology.getDatatypesInSignature();
+		Map<OWLIndividual, Set<OWLLiteral>> asserzioni =  new HashMap<OWLIndividual, Set<OWLLiteral>>();
+		for  (OWLIndividual ex: allExamples) {
+		   Set<OWLLiteral> dataPropertyValues = reasoner.getDataPropertyValues((OWLNamedIndividual) ex, dataProperty);
+		  asserzioni.put(ex, dataPropertyValues);
+		}
+		  
+		  return asserzioni;
+
+
+	}
 
 
 	//********************METODI DI ACCESSO  ALLE COMPONENTI DELL'ONTOLOGIA*******************************//
