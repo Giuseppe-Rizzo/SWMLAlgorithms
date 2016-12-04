@@ -9,6 +9,7 @@ import java.util.Stack;
 
 import org.semanticweb.owlapi.io.OWLObjectRenderer;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 
 //import org.coode.owlapi.functionalrenderer.OWLObjectRenderer;
@@ -59,7 +60,7 @@ public class TDTClassifier  {
 	 * @param prNeg
 	 * @return
 	 */
-	DLTree  induceDLTree	(OWLClassExpression father, 
+	public DLTree  induceDLTree	(OWLClassExpression father, 
 				ArrayList<Integer> posExs, ArrayList<Integer> negExs, ArrayList<Integer> undExs, 
 				int nCandRefs, double prPos, double prNeg) {		
 		
@@ -392,12 +393,171 @@ public class TDTClassifier  {
 	}
  
 
+	
+	public int classifyExampleforPruning(int indTestEx, DLTree tree,int[] results2) {
+		Stack<DLTree> stack= new Stack<DLTree>();
+		OWLDataFactory dataFactory = k.getDataFactory();
+		stack.add(tree);
+		int result=0;
+		boolean stop=false;
+
+
+		if (!Parameters.BINARYCLASSIFICATION){
+			while(!stack.isEmpty() && !stop){
+				DLTree currentTree= stack.pop();
+
+				OWLClassExpression rootClass = currentTree.getRoot();
+				//			System.out.println("Root class: "+ rootClass);
+				if (rootClass.equals(dataFactory.getOWLThing())){
+					if (results2[indTestEx]==+1){
+						currentTree.setMatch(0);
+						currentTree.setPos();
+					}
+					else if (results2[indTestEx]==-1){
+						currentTree.setCommission(0);
+						currentTree.setNeg(0);
+					}else{
+						currentTree.setInduction(0);
+						currentTree.setUnd();
+					}
+					stop=true;
+					result=+1;
+
+				}
+				else if (rootClass.equals(dataFactory.getOWLNothing())){
+
+					if(results2[indTestEx]==+1){
+
+						currentTree.setPos();
+						currentTree.setCommission(0);
+					}
+					else if (results2[indTestEx]==-1){
+						currentTree.setNeg(0);
+						currentTree.setMatch(0);
+					}
+					else{
+						currentTree.setUnd();
+						currentTree.setInduction(0);
+					}
+					stop=true;
+					result=-1;
+
+				}else if (k.getReasoner().isEntailed(k.getDataFactory().getOWLClassAssertionAxiom(rootClass, k.getIndividuals()[indTestEx]))){
+					if(results2[indTestEx]==+1){
+						currentTree.setMatch(0);
+						currentTree.setPos();
+					}else if (results2[indTestEx]==-1){
+						currentTree.setCommission(0);
+						currentTree.setNeg(0);
+					}else{
+						currentTree.setUnd();
+						currentTree.setInduction(0);
+					}
+					stack.push(currentTree.getPosSubTree());
+
+				}
+				else if  (k.getReasoner().isEntailed(k.getDataFactory().getOWLClassAssertionAxiom(dataFactory.getOWLObjectComplementOf(rootClass), k.getIndividuals()[indTestEx]))){
+
+					if(results2[indTestEx]==+1){
+						currentTree.setPos();
+						currentTree.setCommission(0);
+					}else if(results2[indTestEx]==-1){
+						currentTree.setNeg(0);
+						currentTree.setMatch(0);
+					}else{
+						currentTree.setUnd();
+						currentTree.setInduction(0);
+					}
+					stack.push(currentTree.getNegSubTree());
+
+				}
+				else {
+					if(results2[indTestEx]==+1){
+						currentTree.setPos();
+						currentTree.setInduction(0);
+					}else if(results2[indTestEx]==-1){
+						currentTree.setNeg(0);
+						currentTree.setInduction(0);
+					}else{
+						currentTree.setUnd();
+						currentTree.setMatch(0);
+					}
+					stop=true;
+					result=0; 
+
+				}
+			};
+		}else{
+			
+			while(!stack.isEmpty() && !stop){
+				DLTree currentTree= stack.pop();
+
+				OWLClassExpression  rootClass = currentTree.getRoot();
+				//			System.out.println("Root class: "+ rootClass);
+				if (rootClass.equals(dataFactory.getOWLThing())){
+					if(results2[indTestEx]==+1){
+						currentTree.setMatch(0);
+						currentTree.setPos();
+					}
+					else{
+						currentTree.setCommission(0);
+						currentTree.setNeg(0);
+					}
+					stop=true;
+					result=+1;
+
+				}
+				else if (rootClass.equals(dataFactory.getOWLNothing())){
+
+					if(results2[indTestEx]==+1){
+
+						currentTree.setPos();
+						currentTree.setCommission(0);
+					}
+					else {
+						currentTree.setNeg(0);
+						currentTree.setMatch(0);
+					}
+					
+					stop=true;
+					result=-1;
+
+				}else if  (k.getReasoner().isEntailed(k.getDataFactory().getOWLClassAssertionAxiom(dataFactory.getOWLObjectComplementOf(rootClass), k.getIndividuals()[indTestEx]))){
+					if(results2[indTestEx]==+1){
+						currentTree.setMatch(0);
+						currentTree.setPos();
+					}else{
+						currentTree.setCommission(0);
+						currentTree.setNeg(0);
+					}
+					stack.push(currentTree.getPosSubTree());
+
+				}
+				else {
+
+					if(results2[indTestEx]==+1){
+						currentTree.setPos();
+						currentTree.setCommission(0);
+					}else{
+						currentTree.setNeg(0);
+						currentTree.setMatch(0);
+					}
+					stack.push(currentTree.getNegSubTree());
+
+				}
+				
+			};
+			
+			
+		}
+
+		return result;
+
+	}
+
 
 	public void prune(Integer[] pruningSet, AbstractTree tree,
 			AbstractTree subtree) {
-
-
-
 		DLTree treeDL= (DLTree) tree;
 
 		Stack<DLTree> stack= new Stack<DLTree>();

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLIndividual;
 
@@ -113,7 +114,7 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 			System.out.println("Learning a tree ");
 
 
-			trees[c] = cl.induceDLTree(posExs, negExs, undExs, Parameters.beam,prPos, prNeg,op);
+			trees[c] = cl.induceDLTree(kb.getDataFactory().getOWLThing(),posExs, negExs, undExs, Parameters.beam,prPos, prNeg);
 //			stream.println(trees[c]);
 			
 			if (Parameters.pruning==PruningType.REP)
@@ -155,7 +156,7 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 	 * @see classifiers.SupervisedLearnable#test(int, java.lang.Integer[], org.semanticweb.owl.model.OWLDescription[])
 	 */
 	@Override
-	public int[][] test(int f,Integer[] testExs,OWLDescription[] testConcepts) {
+	public int[][] test(int f,Integer[] testExs,OWLClassExpression[] testConcepts) {
 		int[][] labels= new int[testExs.length][nOfConcepts]; // classifier answers for each example and for each concept
 		for (int te=0; te < testExs.length; te++ ) { 
 
@@ -166,9 +167,12 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 
 			int[] indClassifications = new int[nOfConcepts];
 			//			cl.classifyExamplesTree(indTestEx, forests, indClassifications, testConcepts);
-			cl.classifyExamples(indTestEx, trees, indClassifications, testConcepts);
+			labels[te]= new int[nOfConcepts];
+			for (int i=0; i< nOfConcepts-1;i++){
+				labels[te][i]= cl.classify(kb.getIndividuals()[testExs[indTestEx]], trees[i]);
+			}
 
-			labels[te]=indClassifications; 
+			
 			
 
 

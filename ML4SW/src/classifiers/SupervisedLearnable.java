@@ -1,6 +1,7 @@
 package classifiers;
 
-import org.semanticweb.owl.model.OWLDescription;
+
+import org.semanticweb.owlapi.model.OWLClassExpression;
 /**
  * A generic supervised learning algorithm
  * @author Utente
@@ -15,7 +16,7 @@ public interface SupervisedLearnable {
 	 * @param negTestConcepts, the complement of query concepts
 	 */
 	public abstract void training(int[][] results,Integer[] trainingExs,
-			OWLDescription[] testConcepts, OWLDescription[] negTestConcepts);
+			OWLClassExpression[] testConcepts, OWLClassExpression[] negTestConcepts);
 
 	
 	
@@ -27,7 +28,7 @@ public interface SupervisedLearnable {
 	 * @return the classification results
 	 */
 	public abstract int[][] test(int f, Integer[] testExs,
-			OWLDescription[] testConcepts);
+			OWLClassExpression[] testConcepts);
 
 	
 	public abstract double[] getComplexityValues();
