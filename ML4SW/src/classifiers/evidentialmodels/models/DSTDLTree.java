@@ -3,7 +3,8 @@ package classifiers.evidentialmodels.models;
 
 import java.util.ArrayList;
 
-import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+
 
 import classifiers.evidentialmodels.dempstershafer.MassFunction;
 
@@ -12,14 +13,14 @@ import classifiers.trees.models.*;
 public class DSTDLTree extends AbstractTree implements EvidentialModel{
 
 	private class DLNode {
-		OWLDescription concept;	// node concept
+		OWLClassExpression concept;	// node concept
 		
 		DSTDLTree pos; 			// positive decision subtree
 		DSTDLTree neg; 	// negative decision subtree
 		@SuppressWarnings("rawtypes")
 		MassFunction m;
 		@SuppressWarnings("rawtypes")
-		public DLNode(OWLDescription c, MassFunction m) {
+		public DLNode(OWLClassExpression c, MassFunction m) {
 			concept = c;
 			this.pos = this.neg = null; // node has no children
 			this.m= m; // Dempster-Shafer extension
@@ -53,7 +54,7 @@ public class DSTDLTree extends AbstractTree implements EvidentialModel{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public DSTDLTree (OWLDescription c, MassFunction m) {		
+	public DSTDLTree (OWLClassExpression c, MassFunction m) {		
 		this.root = new DLNode(c,m);
 	
 	}
@@ -62,7 +63,7 @@ public class DSTDLTree extends AbstractTree implements EvidentialModel{
 	 * @param root the root to set
 	 */
 	@SuppressWarnings("rawtypes")
-	public void setRoot(OWLDescription concept, MassFunction m) {
+	public void setRoot(OWLClassExpression concept, MassFunction m) {
 		this.root = new DLNode(concept, m);
 //		this.root.concept = concept;
 	}
@@ -70,7 +71,7 @@ public class DSTDLTree extends AbstractTree implements EvidentialModel{
 	/**
 	 * @return the root
 	 */
-	public OWLDescription getRoot() {
+	public OWLClassExpression getRoot() {
 		return root.concept;
 	}
 	
