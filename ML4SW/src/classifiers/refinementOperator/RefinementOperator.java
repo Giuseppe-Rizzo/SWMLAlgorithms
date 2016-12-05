@@ -1,6 +1,7 @@
 package classifiers.refinementOperator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
@@ -8,6 +9,8 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import knowledgeBasesHandler.KnowledgeBase;
@@ -60,7 +63,13 @@ public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentCon
 				}
 				else if ((generator.nextDouble() < 0.75)){
 					final OWLDataProperty owlDataProperty = allProperties[generator.nextInt(allProperties.length)];
-					owlDataProperty.get
+					Set<OWLNamedIndividual> individualsInSignature = owlDataProperty.getIndividualsInSignature();
+					ArrayList<OWLNamedIndividual> inds= new ArrayList<OWLNamedIndividual>(individualsInSignature);
+					Set<OWLLiteral> dataPropertyValues = new HashSet<OWLLiteral>();
+					for (OWLNamedIndividual i: inds){
+					dataPropertyValues.addAll( i.getDataPropertyValues(owlDataProperty, kb.getOntology()));	
+						
+					}
 					newConcept = kb.getDataFactory().getOWLDataHasValue(owlDataProperty, arg1);
 						
 				}
