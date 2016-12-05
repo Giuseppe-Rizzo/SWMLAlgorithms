@@ -8,7 +8,9 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
@@ -32,17 +34,16 @@ public class BiopaxPrediction extends ClassMembershipPrediction{
 	}
 	public  Couple<OWLClassExpression[],OWLClassExpression[]> generateQueryConcept(){
 
-		OWLClass domain=kb.getClasses()[2];  // to be controlled
-		OWLClass range= kb.getClasses()[56];   
-		OWLObjectProperty prop= kb.getRoles()[6];  
+		OWLClass domain=kb.getClasses()[2];  // 		
+		OWLClass range= kb.getClasses()[56];   // 
+		OWLDataProperty prop= kb.getDataProperties()[5];  
 		Set<OWLIndividual> inds=domain.getIndividuals(kb.getOntology());
-		Set<OWLIndividual> fillers= new HashSet<OWLIndividual>();
+		Set<OWLLiteral> fillers= new HashSet<OWLLiteral>();
 		 Reasoner reasoner2 = kb.getReasoner();
-
 		examples= new OWLIndividual[inds.size()];
 		for (OWLIndividual ind:inds){
 			if (ind instanceof OWLNamedIndividual)
-			     fillers.addAll( reasoner2.getObjectPropertyValues((OWLNamedIndividual)ind, prop).getFlattened());			
+			     fillers.addAll(reasoner2.getDataPropertyValues((OWLNamedIndividual)ind, prop));			
 		}
 		// add all the observed values
 		System.out.println("Domain:"+ inds.size());
@@ -50,29 +51,29 @@ public class BiopaxPrediction extends ClassMembershipPrediction{
     
 	 examples= inds.toArray(examples);
 		//
-		ArrayList<OWLIndividual> indList= new ArrayList<OWLIndividual>(fillers);
+		ArrayList<OWLLiteral> indList= new ArrayList<OWLLiteral>(fillers);
 
 		OWLClassExpression[] queries= new OWLClassExpression[fillers.size()]; // queries
 		OWLClassExpression[] negQueries= new OWLClassExpression[fillers.size()]  ;// neg queries
 		for(int i=0; i<indList.size();i++){
-			OWLIndividual owlIndividual = indList.get(i);
+			OWLLiteral owlIndividual = indList.get(i);
 
 			final OWLDataFactory dataFactory = kb.getDataFactory();
-			OWLClassExpression owlObjectOneOf = dataFactory.getOWLObjectOneOf(owlIndividual);
+			OWLClassExpression owlObjectOneOf = dataFactory.getOWLDataHasValue(prop, owlIndividual);
 			
-			OWLObjectSomeValuesFrom owlObjectSomeRestriction = 
+			//OWLObjectSomeValuesFrom owlObjectSomeRestriction = 
 					
 					//dataFactory.getOWLDataAllValuesFrom(prop, owlObjectOneOf);
-			queries[i]= owlObjectSomeRestriction;
+			queries[i]= owlObjectOneOf;
 			//			for  (OWLIndividual ind: inds){
 			//				final boolean hasType = reasoner2.hasType(ind, owlObjectSomeRestriction);
 			//				if (hasType)
 			//					System.out.println(hasType);
 			//			 
 
-			OWLClassExpression owlcomplement=dataFactory.getOWLObjectComplementOf(owlObjectSomeRestriction);
+			OWLClassExpression owlcomplement=dataFactory.getOWLObjectComplementOf(owlObjectOneOf);
 			negQueries[i]= owlcomplement;
-			int size = reasoner2.getInstances(owlObjectSomeRestriction, false).getFlattened().size();
+			int size = reasoner2.getInstances(owlObjectOneOf, false).getFlattened().size();
 			int size2= inds.size()-size;
 			System.out.println("Instances p:"+ size+" n:"+size2);
 		}
