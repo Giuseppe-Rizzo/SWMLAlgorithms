@@ -6,6 +6,7 @@ public abstract class AbstractModel {
 		
 	}
 	
+	
 	public abstract double getComplexityMeasure();
 
 }
