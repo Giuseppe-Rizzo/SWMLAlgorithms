@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import knowledgeBasesHandler.KnowledgeBase;
@@ -22,12 +23,14 @@ public class RefinementOperator {
 	static final double d = 0.5;
 	private OWLClassExpression[] allConcepts;
 	private OWLObjectProperty[] allRoles;
+	private OWLDataProperty[] allProperties;
 	private OWLDataFactory dataFactory;
 	public RefinementOperator(KnowledgeBase kb) {
 		// TODO Auto-generated constructor stub
 		this.kb=kb;
 		allConcepts=kb.getClasses();
 		allRoles=kb.getRoles();
+		allProperties= kb.getDataProperties();
 		dataFactory = kb.getDataFactory();
 
 	}
@@ -37,8 +40,7 @@ public class RefinementOperator {
 public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentConcept) {
 		
 	Random generator = new Random ();
-		OWLClassExpression newConcept = null;
-				
+		OWLClassExpression newConcept = null;			
 		do {
 			if (generator.nextDouble() < 0.5) 
 				newConcept = allConcepts[generator.nextInt(allConcepts.length)];
@@ -50,14 +52,19 @@ public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentCon
 					newConceptBase = allConcepts[generator.nextInt(allConcepts.length)];
 				if (generator.nextDouble() < 0.5) { // new role restriction
 					OWLObjectProperty role = allRoles[generator.nextInt(allRoles.length)];
-//					OWLDescription roleRange = (OWLDescription) role.getRange;
-					
+//					OWLDescription roleRange = (OWLDescription) role.getRange;		
 					if (generator.nextDouble() < 0.5)
 						newConcept = kb.getDataFactory().getOWLObjectAllValuesFrom(role, newConceptBase);
 					else
 						newConcept = kb.getDataFactory().getOWLObjectSomeValuesFrom(role, newConceptBase);
 				}
-				else					
+				else if ((generator.nextDouble() < 0.75)){
+					final OWLDataProperty owlDataProperty = allProperties[generator.nextInt(allProperties.length)];
+					owlDataProperty.get
+					newConcept = kb.getDataFactory().getOWLDataHasValue(owlDataProperty, arg1);
+						
+				}
+					
 					newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase);
 			} // else
 //			System.out.printf("-->\t %s\n",newConcept);
@@ -96,7 +103,7 @@ public OWLClassExpression getRandomConcept(KnowledgeBase k) {
 				else
 					newConcept = kb.getDataFactory().getOWLObjectSomeValuesFrom(role, newConceptBase);
 			}
-			else					
+			else	 if (generator.nextDouble() < 0.8)			
 				newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase);
 		} // else
 //		System.out.printf("-->\t %s\n",newConcept);
