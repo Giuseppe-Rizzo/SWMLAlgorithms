@@ -75,6 +75,7 @@ public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentCon
 					else	
 						newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase); //in case there are no dataproperties
 				}
+				else
 					
 					newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase);
 			} // else
