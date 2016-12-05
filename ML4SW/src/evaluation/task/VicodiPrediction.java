@@ -32,14 +32,16 @@ public class VicodiPrediction extends ClassMembershipPrediction{
 	}
 	public  Couple<OWLClassExpression[],OWLClassExpression[]> generateQueryConcept(){
 
-		OWLClass domain=kb.getClasses()[43];  // to be controlled
-		OWLClass range= kb.getClasses()[86];   
-		OWLObjectProperty prop= kb.getRoles()[6]; 
+		OWLClass domain=kb.getClasses()[43];  // TimeDependent
+		OWLClass range= kb.getClasses()[86];    //Category
+		OWLObjectProperty prop= kb.getRoles()[6];  // hasCategory
 		Set<OWLIndividual> inds=domain.getIndividuals(kb.getOntology());
 		Set<OWLIndividual> fillers= new HashSet<OWLIndividual>();
 		 Reasoner reasoner2 = kb.getReasoner();
 
 		examples= new OWLIndividual[inds.size()];
+		
+		//only four individuals
 		for (OWLIndividual ind:inds){
 			if (ind instanceof OWLNamedIndividual)
 			     fillers.addAll( reasoner2.getObjectPropertyValues((OWLNamedIndividual)ind, prop).getFlattened());			

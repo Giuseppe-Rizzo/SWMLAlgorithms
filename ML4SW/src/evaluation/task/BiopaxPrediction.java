@@ -60,7 +60,9 @@ public class BiopaxPrediction extends ClassMembershipPrediction{
 			final OWLDataFactory dataFactory = kb.getDataFactory();
 			OWLClassExpression owlObjectOneOf = dataFactory.getOWLObjectOneOf(owlIndividual);
 			
-			OWLObjectSomeValuesFrom owlObjectSomeRestriction = dataFactory.getOWLObjectSomeValuesFrom(prop, owlObjectOneOf);
+			OWLObjectSomeValuesFrom owlObjectSomeRestriction = 
+					
+					//dataFactory.getOWLDataAllValuesFrom(prop, owlObjectOneOf);
 			queries[i]= owlObjectSomeRestriction;
 			//			for  (OWLIndividual ind: inds){
 			//				final boolean hasType = reasoner2.hasType(ind, owlObjectSomeRestriction);
