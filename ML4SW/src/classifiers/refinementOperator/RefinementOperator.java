@@ -9,6 +9,7 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -72,6 +73,20 @@ public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentCon
 					ArrayList<OWLLiteral> values= new ArrayList<OWLLiteral>(dataPropertyValues);
 					if (!values.isEmpty())
 					newConcept = kb.getDataFactory().getOWLDataHasValue(owlDataProperty, values.get(generator.nextInt(values.size())));
+					else	
+						newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase); //in case there are no dataproperties
+				}
+				else if ((generator.nextDouble() < 0.9)){
+					 OWLObjectProperty owlDataProperty = allRoles[generator.nextInt(allProperties.length)];
+					Set<OWLNamedIndividual> individualsInSignature = owlDataProperty.getIndividualsInSignature();
+					ArrayList<OWLIndividual> inds= new ArrayList<OWLIndividual>(individualsInSignature);
+					Set<OWLIndividual> objValues = new HashSet<OWLIndividual>();
+					for (OWLIndividual i: inds){
+					objValues.addAll( i.getObjectPropertyValues(owlDataProperty, kb.getOntology()));	
+					}
+					ArrayList<OWLIndividual> values= new ArrayList<OWLIndividual>(objValues);
+					if (!values.isEmpty())
+					newConcept = kb.getDataFactory().getOWLObjectHasValue(owlDataProperty, values.get(generator.nextInt(values.size())));
 					else	
 						newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase); //in case there are no dataproperties
 				}
