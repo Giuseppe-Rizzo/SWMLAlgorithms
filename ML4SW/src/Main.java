@@ -92,6 +92,10 @@ kb = new KnowledgeBase(Parameters.urlOwlFile);
 			kb = new KnowledgeBase(Parameters.urlOwlFile);
 			vcm= new PoliticianPrediction(kb);
 			break;
+		case VICODIPREDICTION: 
+			kb = new KnowledgeBase(Parameters.urlOwlFile);
+			vcm= new BiblicWomanPrediction(kb);
+			break;
 			
 		case BIBLICWOMANPREDICTION: 
 			kb = new KnowledgeBase(Parameters.urlOwlFile);

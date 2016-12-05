@@ -17,24 +17,24 @@ import utils.Couple;
 
 
 /**
- * Learning problem for Vicodi ontology
+ * Learning problem for Biopax ontology
  * @author Utente
  *
  */
-public class VicodiPrediction extends ClassMembershipPrediction{
+public class BiopaxPrediction extends ClassMembershipPrediction{
 
 	private OWLIndividual[] examples;
 	
-	public VicodiPrediction (KnowledgeBase k){
+	public BiopaxPrediction (KnowledgeBase k){
 		super();
 		kb= k;
 		
 	}
 	public  Couple<OWLClassExpression[],OWLClassExpression[]> generateQueryConcept(){
 
-		OWLClass domain=kb.getClasses()[43];  // to be controlled
-		OWLClass range= kb.getClasses()[86];   
-		OWLObjectProperty prop= kb.getRoles()[6]; 
+		OWLClass domain=kb.getClasses()[2];  // to be controlled
+		OWLClass range= kb.getClasses()[56];   
+		OWLObjectProperty prop= kb.getRoles()[6];  
 		Set<OWLIndividual> inds=domain.getIndividuals(kb.getOntology());
 		Set<OWLIndividual> fillers= new HashSet<OWLIndividual>();
 		 Reasoner reasoner2 = kb.getReasoner();
@@ -56,7 +56,6 @@ public class VicodiPrediction extends ClassMembershipPrediction{
 		OWLClassExpression[] negQueries= new OWLClassExpression[fillers.size()]  ;// neg queries
 		for(int i=0; i<indList.size();i++){
 			OWLIndividual owlIndividual = indList.get(i);
-
 
 			final OWLDataFactory dataFactory = kb.getDataFactory();
 			OWLClassExpression owlObjectOneOf = dataFactory.getOWLObjectOneOf(owlIndividual);
