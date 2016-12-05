@@ -68,10 +68,12 @@ public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentCon
 					Set<OWLLiteral> dataPropertyValues = new HashSet<OWLLiteral>();
 					for (OWLNamedIndividual i: inds){
 					dataPropertyValues.addAll( i.getDataPropertyValues(owlDataProperty, kb.getOntology()));	
-						
 					}
-					newConcept = kb.getDataFactory().getOWLDataHasValue(owlDataProperty, arg1);
-						
+					ArrayList<OWLLiteral> values= new ArrayList<OWLLiteral>(dataPropertyValues);
+					if (!values.isEmpty())
+					newConcept = kb.getDataFactory().getOWLDataHasValue(owlDataProperty, values.get(generator.nextInt(values.size())));
+					else	
+						newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase); //in case there are no dataproperties
 				}
 					
 					newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase);
