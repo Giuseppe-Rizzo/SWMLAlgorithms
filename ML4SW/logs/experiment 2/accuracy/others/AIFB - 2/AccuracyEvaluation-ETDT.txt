@@ -1,6 +1,0 @@
- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ OVERALL OUTCOMES
-
-              matching commission   omission  induction  F-measure
-
-avg Values      98,45    0,00       0,00      1,55       97,63       
-stdDev Values   5,56    0,00       0,00      5,56        5,54       
