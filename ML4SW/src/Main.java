@@ -96,15 +96,15 @@ kb = new KnowledgeBase(Parameters.urlOwlFile);
 			vcm= new BiblicWomanPrediction(kb);
 			break;
 //			
-//		case BIBLICWOMANPREDICTION: 
-//			kb = new KnowledgeBase(Parameters.urlOwlFile);
-//			vcm= new BiblicWomanPrediction(kb);
-//			break;
+		case BIBLICWOMANPREDICTION: 
+			kb = new KnowledgeBase(Parameters.urlOwlFile);
+			vcm= new BiblicWomanPrediction(kb);
+			break;
 //			
-//			case GEOSKILLSPREDICTION: 
-//				kb = new KnowledgeBase(Parameters.urlOwlFile);
-//				vcm= new GeoSkillsPrediction(kb);
-//				break;
+			case GEOSKILLSPREDICTION: 
+				kb = new KnowledgeBase(Parameters.urlOwlFile);
+				vcm= new GeoSkillsPrediction(kb);
+				break;
 //				
 			case BIOPAXPREDICTION: 
 				kb = new KnowledgeBase(Parameters.urlOwlFile);
