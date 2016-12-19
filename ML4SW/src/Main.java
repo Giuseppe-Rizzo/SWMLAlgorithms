@@ -19,7 +19,6 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import evaluation.Evaluation;
 import evaluation.Parameters;
 import evaluation.task.*;
-import evaluation.task.ClassMembershipPrediction;
 
 
 
@@ -73,68 +72,73 @@ kb = new KnowledgeBase(Parameters.urlOwlFile);
 		
 		
 		Evaluation vcm= null; 
-		switch (Parameters.task) {
+//		switch (Parameters.task) {
 					
-	case CLASSMEMBERSHIPREDICTION:
+	//case CLASSMEMBERSHIPREDICTION:
 		kb = new KnowledgeBase(Parameters.urlOwlFile);
 		vcm= new ClassMembershipPrediction(kb);
-		break;
+//		break;
 		
-		case MUTAGENICPREDICTION:
-			kb = new KnowledgeBase(Parameters.urlOwlFile);
-			if (Parameters.mutagenicAsDataPropertyPrediction)
-			vcm=new MutagenicPrediction(kb);
-			else
-				vcm=new MutagenicPrediction(kb,true);
-		 break;
-
-		case POLITICIANPREDICTION: 
-			kb = new KnowledgeBase(Parameters.urlOwlFile);
-			vcm= new PoliticianPrediction(kb);
-			break;
-		case VICODIPREDICTION: 
-			kb = new KnowledgeBase(Parameters.urlOwlFile);
-			vcm= new BiblicWomanPrediction(kb);
-			break;
-			
-		case BIBLICWOMANPREDICTION: 
-			kb = new KnowledgeBase(Parameters.urlOwlFile);
-			vcm= new BiblicWomanPrediction(kb);
-			break;
-			
-			case GEOSKILLSPREDICTION: 
-				kb = new KnowledgeBase(Parameters.urlOwlFile);
-				vcm= new GeoSkillsPrediction(kb);
-				break;
-		 
-		case AFFILIATIONPROBLEM:
-			 kb = new KnowledgeBase(Parameters.urlOwlFile);
-     		 vcm= new AffiliationPrediction(kb);
-			break;
-		default:
-		//	kb =new KnowledgeBaseForRoughConceptLearning(Parameters.urlOwlFile);
-			//vcm= new PUClassMembershipPrediction(kb);
-  }
+//	  case MUTAGENICPREDICTION:
+//			kb = new KnowledgeBase(Parameters.urlOwlFile);
+//			if (Parameters.mutagenicAsDataPropertyPrediction)
+//			vcm=new MutagenicPrediction(kb);
+//			else
+//				vcm=new MutagenicPrediction(kb,true);
+//		 break;
+//
+//		case POLITICIANPREDICTION: 
+//			kb = new KnowledgeBase(Parameters.urlOwlFile);
+//			vcm= new PoliticianPrediction(kb);
+//			break;
+//		case VICODIPREDICTION: 
+//			kb = new KnowledgeBase(Parameters.urlOwlFile);
+//			vcm= new BiblicWomanPrediction(kb);
+//			break;
+//			
+//		case BIBLICWOMANPREDICTION: 
+//			kb = new KnowledgeBase(Parameters.urlOwlFile);
+//			vcm= new BiblicWomanPrediction(kb);
+//			break;
+//			
+//			case GEOSKILLSPREDICTION: 
+//				kb = new KnowledgeBase(Parameters.urlOwlFile);
+//				vcm= new GeoSkillsPrediction(kb);
+//				break;
+//				
+//			case BIOPAXPREDICTION: 
+//				kb = new KnowledgeBase(Parameters.urlOwlFile);
+//				vcm= new BiopaxPrediction(kb);
+//				break;
+//		 
+//		case AFFILIATIONPROBLEM:
+//			 kb = new KnowledgeBase(Parameters.urlOwlFile);
+//     		 vcm= new AffiliationPrediction(kb);
+//			break;
+//		default:
+//		//	kb =new KnowledgeBaseForRoughConceptLearning(Parameters.urlOwlFile);
+//			//vcm= new PUClassMembershipPrediction(kb);
+//  }
 		
 	String className =  Parameters.algorithm.toString(); 		// package name
 	//
 //		
 //		
-	if (Parameters.task.compareTo(Tasks.DATASETCREATION)!=0){
-		switch (Parameters.design) {
-		case BOOTSTRAP:
-		 // n. of folds	
+//	if (Parameters.task.compareTo(Tasks.DATASETCREATION)!=0){
+//		switch (Parameters.design) {
+//		case BOOTSTRAP:
+//		 // n. of folds	
 	vcm.bootstrap(10, className);
-		break;
-//		
-	case CROSSVALIDATION:
-			vcm.crossValidation(Parameters.NFOLDS,className); 
-			break;
-		case OVERLAPPINGMEASUREMENT:
-			vcm.computeDirectClassSeparabilityMeasure();
-		break;	
-		}
-	}
+//		break;
+////		
+//	case CROSSVALIDATION:
+//			vcm.crossValidation(Parameters.NFOLDS,className); 
+//			break;
+//		case OVERLAPPINGMEASUREMENT:
+//			vcm.computeDirectClassSeparabilityMeasure();
+//		break;	
+//		}
+//	}
 		
 //System.out.println("\n\nEnding: "+Parameters.urlOwlFile);
 

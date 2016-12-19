@@ -87,7 +87,6 @@ boolean setSeed=true;
    OWLDataFactory dataFactory = kb.getDataFactory();
 		while (!stack.isEmpty()){
 
-
 			// pop from the stack
 			Couple<DSTDLTree,Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double>> current= stack.pop(); // extract the next element
 			Npla<ArrayList<Integer>,ArrayList<Integer>,ArrayList<Integer>, Integer, Double, Double> currentExamples= current.getSecondElement();
@@ -150,12 +149,13 @@ boolean setSeed=true;
 				double perPos = numPos/(numPos+numNeg);
 				double perNeg = numNeg/(numPos+numNeg);
 				if (perNeg==0 && perPos > THRESHOLD) { // no negative
-					//			System.out.println("Thing as leaf");
+					System.out.println("Leaf: Thing ");
 					currentTree.setRoot(dataFactory.getOWLThing(), mass); // set positive lea
 					//				return tree;
 				}
 				else if (perPos==0 && perNeg > THRESHOLD) { // no positive	
 					//				System.out.println("NoThing as leaf");
+					System.out.println("Leaf: Nothing ");
 					currentTree.setRoot(dataFactory.getOWLNothing(), mass); // set negative leaf
 					//					return tree;
 				}		
@@ -163,7 +163,7 @@ boolean setSeed=true;
 
 					if (!Parameters.nonspecificityControl){
 						
-						OWLClassExpression[] cConcepts  =generateRefs(kb,currentTree.getRoot(),50, posExs,negExs); // genera i concetti sulla base degli esempi
+						OWLClassExpression[] cConcepts  =generateRefs(kb,currentTree.getRoot(),Parameters.beam, posExs,negExs); // genera i concetti sulla base degli esempi
 							setSeed=false;
 							
 							//OWLClassExpression[] cConcepts = new OWLClassExpression[generateNewConcepts.size()];

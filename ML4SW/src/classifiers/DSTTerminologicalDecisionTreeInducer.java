@@ -82,7 +82,7 @@ public class DSTTerminologicalDecisionTreeInducer implements SupervisedLearnable
 
 				if (this.kb.getReasoner().isEntailed(this.kb.getDataFactory().getOWLClassAssertionAxiom(testConcepts[c], kb.getIndividuals()[trainingExs[e]])))
 					posExs.add(trainingExs[e]);
-				else if ((kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(testConcepts[c], kb.getIndividuals()[trainingExs[e]]))))
+				else if ((kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(kb.getDataFactory().getOWLObjectComplementOf(testConcepts[c]), kb.getIndividuals()[trainingExs[e]]))))
 					negExs.add(trainingExs[e]);
 				else
 					undExs.add(trainingExs[e]);		
