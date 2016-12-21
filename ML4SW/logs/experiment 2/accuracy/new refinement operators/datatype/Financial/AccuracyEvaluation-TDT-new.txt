@@ -2,5 +2,5 @@
 
     Query#   matching commission   omission  induction  F-measure
 
-avg Values      86,43    13,57       0,00      0,00       87,14       
-stdDev Values   07,10    7,10       0,00      0,00        8,29       
+avg Values      86,76    13,23       0,00      0,00       88,45       
+stdDev Values   2,67    2,67       0,00      0,00        8,27       
