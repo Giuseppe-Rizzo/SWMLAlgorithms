@@ -29,6 +29,7 @@ public class QHDNN implements SupervisedLearnable {
 	static final double EPSILON = 1E-4;
 	static final double UNCERTAINTY_THRESHOLD = 0.7;
 	private KnowledgeBase kb;
+	private Integer[] neighbors;
 	
 	public QHDNN(KnowledgeBase  kb){
 		this.kb= kb;
@@ -84,9 +85,9 @@ public class QHDNN implements SupervisedLearnable {
 
 
 
-	private static int[] getNeighbors(int indTestExample, int[] trainingExamples, int k) {
+	private  Integer[] getNeighbors(int indTestExample, Integer[] trainingExamples, int k) {
 		// restituzione dei vicini considerando la distanza semplice
-		int[] neighborExs = new int[k];
+		Integer[] neighborExs = new Integer[k];
 		double[] dissNeighboor = new double[k];
 		java.util.Arrays.fill(neighborExs, -1);
 		java.util.Arrays.fill(dissNeighboor, Double.MAX_VALUE); // any value greater than the max dissimilarity would do
@@ -120,23 +121,27 @@ public class QHDNN implements SupervisedLearnable {
 			OWLClassExpression[] negTestConcepts) {
 		 // no training for lazy-learning methods
 		System.out.print("No training phase");
+		neighbors = trainingExs; // store the training set
+		
 		
 	}
 
 	@Override
 	public int[][] test(int f, Integer[] testExs, OWLClassExpression[] testConcepts) {
 		// TODO Auto-generated method stub
+		int [][] classificationresults = new int [testExs.length][testConcepts.length]; 
 		
+		int k= (int)Math.log(neighbors.length);
+		for (int ex=0; ex<testExs.length;ex++){
+			final Integer[] neighbors2 = getNeighbors(testExs[ex], neighbors, k);
+			//classification w.r.t.\ a set of target concept
+			for (OWLClassExpression cl:testConcepts){
+				classify(testExs[ex], neighbors2, testConcepts, classificationresults[ex]);
+				
+			}
+		}
+		return classificationresults;
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		return null;
 	}
 
 	@Override
