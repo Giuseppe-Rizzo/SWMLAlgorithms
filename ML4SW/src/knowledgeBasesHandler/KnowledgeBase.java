@@ -33,6 +33,7 @@ import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 //import com.hp.hpl.jena.reasoner.Reasoner;
 
 import evaluation.Parameters;
+import evaluation.designOfExperiments.AlgorithmName;
 /**
  *  a class for ontology interfacing
  */
@@ -60,6 +61,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		ontology=initKB();
 
 		// object property  Attribut-3AForschungsgruppe
+		if  Parameters.algorithm.compareTo(AlgorithmName.knn);
 
 
 

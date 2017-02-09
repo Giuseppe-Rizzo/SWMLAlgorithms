@@ -22,10 +22,6 @@ public class QHDNN implements SupervisedLearnable {
 	static final int POS = 0;	
 	static final int BOH = 1;
 	static final int NEG = 2;
-	
-	static final int NUM_Q_CONCEPTS =10;//10;
-	static final int NUM_FOLDS = 10;//100;
-	static final int SEED = 1;
 	static final double EPSILON = 1E-4;
 	static final double UNCERTAINTY_THRESHOLD = 0.7;
 	private KnowledgeBase kb;
@@ -33,7 +29,7 @@ public class QHDNN implements SupervisedLearnable {
 	
 	public QHDNN(KnowledgeBase  kb){
 		this.kb= kb;
-		
+	
 		
 	}
 	
