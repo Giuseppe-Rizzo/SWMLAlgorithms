@@ -32,6 +32,7 @@ import com.clarkparsia.owlapiv3.OWL;
 import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 //import com.hp.hpl.jena.reasoner.Reasoner;
 
+import classifiers.knn.FeaturesDrivenDistance;
 import evaluation.Parameters;
 import evaluation.designOfExperiments.AlgorithmName;
 /**
@@ -60,9 +61,11 @@ public class KnowledgeBase implements IKnowledgeBase {
 		urlOwlFile=url;
 		ontology=initKB();
 
-		// object property  Attribut-3AForschungsgruppe
-		if  Parameters.algorithm.compareTo(AlgorithmName.knn);
-
+		// projection function and entropy computation for distance-based  methods
+		if  (Parameters.algorithm.compareTo(AlgorithmName.knn)==0){
+		    FeaturesDrivenDistance.computeFeatureEntropies(this, getDataFactory(), getClasses());
+			FeaturesDrivenDistance.preLoadPi(this, getClasses(), getIndividuals());
+		}
 
 
 	}
