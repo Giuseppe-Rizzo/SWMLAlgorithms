@@ -30,13 +30,13 @@ import evaluation.Parameters;
 
 
 
-public class DSTTDTClassifier{
+public class EvidentialTDTClassifier{
 	//	RegolaCombinazione regola;
 	static final double THRESHOLD = 0.05;
 	static final double M = 3;	
 
 	private KnowledgeBase kb;
-	public DSTTDTClassifier(KnowledgeBase kb) {
+	public EvidentialTDTClassifier(KnowledgeBase kb) {
 		this.kb=kb;
 	}
 
@@ -460,13 +460,12 @@ boolean setSeed=true;
 		list= new  ArrayList<Couple<Integer,MassFunction<Integer>>>();
 		classifyExampleDST(list,indTestEx, model);
 		// estraggo le BBA da tutte le foglie raggiunte
-		System.out.println("Lista di foglie");
+		
 		System.out.println(list);
 		MassFunction<Integer> bba=list.get(0).getSecondElement();
 
 		MassFunction<Integer>[] others= new MassFunction[(list.size()-1)];
-		System.out.println("_____________BBA TO COMBINE______________________");
-		System.out.println("BBA: "+bba);
+
 		for(int i=1; i<list.size();i++){
 			MassFunction next=list.get(i).getSecondElement();
 			// applicare la regola di combinazione
@@ -524,7 +523,7 @@ boolean setSeed=true;
 		else
 			results[c]=-1;
 
-		System.out.println("Outcomes: "+ results[c]);
+
 	}
 
 
@@ -652,7 +651,7 @@ boolean setSeed=true;
 
 	private OWLClassExpression[] generateNewConcepts(int dim, ArrayList<Integer> posExs, ArrayList<Integer> negExs) {
 
-		System.out.printf("Generating node concepts ");
+		
 		OWLClassExpression[] rConcepts = new OWLClassExpression[dim];
 		OWLClassExpression newConcept;
 		boolean emptyIntersection;
@@ -716,7 +715,7 @@ boolean setSeed=true;
 				System.out.println("Current: "+current);
 				DSTDLTree pos= current.getPosSubTree();
 				DSTDLTree neg= current.getNegSubTree();
-				System.out.println("Current: "+pos+" ----- "+neg+"visited? "+current.isVisited());
+			//	System.out.println("Current: "+pos+" ----- "+neg+"visited? "+current.isVisited());
 
 				if(current.isVisited()){
 					int comissionRoot=current.getCommission();

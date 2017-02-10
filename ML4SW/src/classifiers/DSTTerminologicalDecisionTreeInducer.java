@@ -13,7 +13,7 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 	import knowledgeBasesHandler.KnowledgeBase;
 
 
-import classifiers.evidentialmodels.DSTTDTClassifier;
+import classifiers.evidentialmodels.EvidentialTDTClassifier;
 import classifiers.evidentialmodels.models.DSTDLTree;
 import classifiers.refinementOperator.RefinementOperator;
 import evaluation.Parameters;
@@ -24,7 +24,7 @@ import evaluation.Parameters;
  */
 public class DSTTerminologicalDecisionTreeInducer implements SupervisedLearnable {
 	DSTDLTree[] trees; //for each query concept induce an ensemble
-	DSTTDTClassifier cl;
+	EvidentialTDTClassifier cl;
 
 	KnowledgeBase kb;
 	int nOfConcepts;	
@@ -32,7 +32,7 @@ public class DSTTerminologicalDecisionTreeInducer implements SupervisedLearnable
 		this.nOfConcepts=nOfConcepts;
 		kb=k;
 		trees = new DSTDLTree [nOfConcepts]; 
-		cl= new DSTTDTClassifier(kb);
+		cl= new EvidentialTDTClassifier(kb);
 
 	}
 

@@ -20,9 +20,9 @@ import utils.Triple;
 public class ETRFClassifier {
 	
 
-	private DSTTDTClassifier data;
+	private EvidentialTDTClassifier data;
 	public ETRFClassifier(KnowledgeBase kb) {
-		 data = new DSTTDTClassifier(kb);
+		 data = new EvidentialTDTClassifier(kb);
 	}
 
 	
