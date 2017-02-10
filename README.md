@@ -10,4 +10,4 @@ The software provides the implementation of the algorithms for inducing:
 - kernelized perceptron 
 - k-nearest neighbor
 
-for predicting the class-membership of OWL individuals
+in order to assess the class-membership of OWL individuals
