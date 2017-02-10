@@ -63,32 +63,32 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 
 			if (label == 1){
 				foundNum[c]++;
-				System.out.println("----"+foundNum[c]);
+				
 				
 			}
 
 			if (rclass == +1){
 				trueNum[c]++;
-				System.out.println("----"+trueNum[c]);
+				//System.out.println("----"+trueNum[c]);
 			}
 
 
 			if (label == rclass) { 
-				System.out.println("\t"+rclass+"matched");
+				//System.out.println("\t"+rclass+"matched");
 				++matchingNum[c];
 				if (rclass==1) 
 					++hitNum[c];
 			}
 			else if (Math.abs(label - rclass)>1) { 
-				System.out.println("\t "+rclass+"committed");
+				//System.out.println("\t "+rclass+"committed");
 				++commissionNum[c];
 			}
 			else if (rclass != 0) {
-				System.out.println("\t"+rclass+" omitted");
+				//System.out.println("\t"+rclass+" omitted");
 				++omissionNum[c];
 			}	
 			else {
-				System.out.println("\t"+rclass+" induced");
+				//System.out.println("\t"+rclass+" induced");
 				++inducedNum[c];
 			}
 
@@ -98,7 +98,7 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 	}
 	
 	public void computeMetricsperIndividual( int[] labels, int[][] classification, int nOfConcepts, int te,int[] foundNum,int[] trueNum, int[] hitNum, int[] matchingNum, int[] commissionNum, int[] omissionNum, int[] inducedNum){
-	System.out.println();
+	
 		for (int c=0; c < nOfConcepts; c++) {
 			int rclass= classification[c][te];
 			computeMetricsperIndividualperClass(labels[c], rclass, classification, c, te, foundNum, trueNum, hitNum, matchingNum, commissionNum, omissionNum, inducedNum);
@@ -116,7 +116,7 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 		int[] commissionNum= new int[nOfConcepts];
 		int[] omissionNum= new int[nOfConcepts] ;
 		int[] inducedNum= new int[nOfConcepts] ;
-		System.out.println("No esempi test: "+testExs.length);
+
 		for (int te=0; te < testExs.length; te++ ) { 
 
 			int indTestEx = testExs[te];
@@ -128,14 +128,13 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 		stream.printf("\n%10s %10s %10s %10s %10s %10s %10s\n", "Query#",  "matching", "commission", "omission", "induction","precision","recall");
 		
 		for (int c=0; c < nOfConcepts; c++) {
-			System.out.println(matchingNum[c]+ "-"+ commissionNum[c]+ "-"+ omissionNum[c]+""+inducedNum[c]);
-			
+						
 			totMatchingRate[c][fold] = matchingNum[c]/(double) testExs.length; 
-			System.out.println(totMatchingRate[c][fold]);
+			;
 			
 //
 			totCommissionRate[c][fold] = commissionNum[c]/(double)testExs.length; 
-			System.out.println(totCommissionRate[c][fold]);
+			
 			totOmissionRate[c][fold] = omissionNum[c]/(double)testExs.length;  
 			totInducedRate[c][fold] = inducedNum[c]/(double)testExs.length;
 			totPrecision[c][fold] = ((double)hitNum[c]+1)/(((double)foundNum[c])+1);

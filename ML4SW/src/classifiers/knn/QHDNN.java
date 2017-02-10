@@ -27,7 +27,7 @@ public class QHDNN implements SupervisedLearnable {
 	private KnowledgeBase kb;
 	private Integer[] neighbors;
 	
-	public QHDNN(KnowledgeBase  kb){
+	public QHDNN(KnowledgeBase  kb, int nOfConcepts){
 		this.kb= kb;
 	
 		
@@ -129,7 +129,7 @@ public class QHDNN implements SupervisedLearnable {
 		
 		int k= (int)Math.log(neighbors.length);
 		for (int ex=0; ex<testExs.length;ex++){
-			final Integer[] neighbors2 = getNeighbors(testExs[ex], neighbors, k);
+			Integer[] neighbors2 = getNeighbors(testExs[ex], neighbors, k);
 			//classification w.r.t.\ a set of target concept
 			for (OWLClassExpression cl:testConcepts){
 				classify(testExs[ex], neighbors2, testConcepts, classificationresults[ex]);

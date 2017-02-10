@@ -75,12 +75,12 @@ kb = new KnowledgeBase(Parameters.urlOwlFile);
 		switch (Parameters.task) {
 					
 	case CLASSMEMBERSHIPREDICTION:
-		kb = new KnowledgeBase(Parameters.urlOwlFile);
+	//	kb = new KnowledgeBase(Parameters.urlOwlFile);
 		vcm= new ClassMembershipPrediction(kb);
 	break;
 		
 	  case MUTAGENICPREDICTION:
-			kb = new KnowledgeBase(Parameters.urlOwlFile);
+		//	kb = new KnowledgeBase(Parameters.urlOwlFile);
 			if (Parameters.mutagenicAsDataPropertyPrediction)
 			vcm=new MutagenicPrediction(kb);
 			else
@@ -88,31 +88,31 @@ kb = new KnowledgeBase(Parameters.urlOwlFile);
 		 break;
 //
 		case POLITICIANPREDICTION: 
-			kb = new KnowledgeBase(Parameters.urlOwlFile);
+		//	kb = new KnowledgeBase(Parameters.urlOwlFile);
 			vcm= new PoliticianPrediction(kb);
 			break;
 		case VICODIPREDICTION: 
-			kb = new KnowledgeBase(Parameters.urlOwlFile);
+			//kb = new KnowledgeBase(Parameters.urlOwlFile);
 			vcm= new BiblicWomanPrediction(kb);
 			break;
 //			
 		case BIBLICWOMANPREDICTION: 
-			kb = new KnowledgeBase(Parameters.urlOwlFile);
+			//kb = new KnowledgeBase(Parameters.urlOwlFile);
 			vcm= new BiblicWomanPrediction(kb);
 			break;
 //			
 			case GEOSKILLSPREDICTION: 
-				kb = new KnowledgeBase(Parameters.urlOwlFile);
+			//	kb = new KnowledgeBase(Parameters.urlOwlFile);
 				vcm= new GeoSkillsPrediction(kb);
 				break;
 //				
 			case BIOPAXPREDICTION: 
-				kb = new KnowledgeBase(Parameters.urlOwlFile);
+				//kb = new KnowledgeBase(Parameters.urlOwlFile);
 				vcm= new BiopaxPrediction(kb);
 				break;
 //		 
 		case AFFILIATIONPROBLEM:
-			 kb = new KnowledgeBase(Parameters.urlOwlFile);
+			// kb = new KnowledgeBase(Parameters.urlOwlFile);
      		 vcm= new AffiliationPrediction(kb);
 			break;
 		default:
@@ -122,6 +122,8 @@ kb = new KnowledgeBase(Parameters.urlOwlFile);
 		
 	String className =  Parameters.algorithm.toString(); 		// package name
 	//
+	
+	System.out.println("Algorithm: "+ className);
 //		
 //		
 	if (Parameters.task.compareTo(Tasks.DATASETCREATION)!=0){
