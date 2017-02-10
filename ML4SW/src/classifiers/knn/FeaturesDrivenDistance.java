@@ -314,8 +314,9 @@ public class FeaturesDrivenDistance {
 						// case unknown membership
 						pi[f][i] = 1;
 				}
-				System.out.printf(" | completed. %5.1f%% \n", 100.0*(f+1)*individuals.length / (features.length*individuals.length)); 
+			
 			}
+			System.out.printf(" | completed. %5.1f%% \n", 100.0*(f+1)*individuals.length / (features.length*individuals.length)); 
 			System.out.println("-----------------------------------------------------------------------------------------------------------");			
 		}
 	}

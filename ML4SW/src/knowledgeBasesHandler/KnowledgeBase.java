@@ -62,7 +62,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 		ontology=initKB();
 
 		// projection function and entropy computation for distance-based  methods
-		if  (Parameters.algorithm.compareTo(AlgorithmName.knn)==0){
+		if  (Parameters.algorithm.compareTo(AlgorithmName.knn)==0 ||(Parameters.algorithm.compareTo(AlgorithmName.perceptron)==0)){
 		    FeaturesDrivenDistance.computeFeatureEntropies(this, getDataFactory(), getClasses());
 			FeaturesDrivenDistance.preLoadPi(this, getClasses(), getIndividuals());
 		}

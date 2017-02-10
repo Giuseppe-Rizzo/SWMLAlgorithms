@@ -6,6 +6,7 @@ public enum AlgorithmName {
 	DSTTerminologicalDecisionTree,
 	TerminologicalRandomForests,
 	DSTTerminologicalRandomForests,
+	perceptron,
 	knn;
 
 	
@@ -25,6 +26,8 @@ public enum AlgorithmName {
 			return "classifiers.EvidentialTerminologicalRandomForestInducer";
 		else if (this.compareTo(knn)==0)
 			return "classifiers.knn";
+		else  if (this.compareTo(perceptron)==0)
+			return "classifiers.perceptron.Perceptron";
 		
 	
 		return "";
@@ -42,7 +45,9 @@ public enum AlgorithmName {
 //			return TerminologicalDecisionTree;
 		else if (name.compareTo("classifiers.knn")==0)
 			return knn;
-		else 
+		else if (name.compareTo("classifiers.perceptron.Perceptron")==0)
+			return perceptron;
+		else
 			return DSTTerminologicalRandomForests;
 		
 
