@@ -31,7 +31,7 @@ public class SetUtils{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public  static <T> List<T> interseca(List<T> lista1, List<T> lista2){
+	public  static <T> List<T> intersection(List<T> lista1, List<T> lista2){
 		// controllo di quale delle due liste è piu lunga
 		if(lista1.size()<=lista2.size()){
 			List<T> intersezione= new ArrayList<T>();
@@ -47,7 +47,7 @@ public class SetUtils{
 			return intersezione;
 		}
 		else
-			return interseca(lista2,lista1);
+			return intersection(lista2,lista1);
 	}
 	/**
 	 * Restituisce la lista che rappresenta l'unione di due liste senza elementi duplicati
@@ -58,7 +58,7 @@ public class SetUtils{
 	 */
 	public static <T> List<T> unisci(List<T> lista1,List<T> lista2){
 		
-		List<T> result= interseca(lista1, lista2);// prendo gli elementi in comune
+		List<T> result= intersection(lista1, lista2);// prendo gli elementi in comune
 		// aggiungo gli elementi di lista1 che non sono presenti in intersezione
 		for(T elem:lista1){
 			if(!appartiene(elem,lista1)){
@@ -89,7 +89,7 @@ public class SetUtils{
 		return false;
 	}
 	
-	public static <T> int cerca(List<T> categoria, List<List<T>> insiemePotenza){
+	public static <T> int find(List<T> categoria, List<List<T>> insiemePotenza){
 		int pos=0;
 		for(List<T> elem:insiemePotenza){
 			

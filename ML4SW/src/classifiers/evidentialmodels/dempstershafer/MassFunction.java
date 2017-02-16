@@ -6,15 +6,14 @@ import utils.Combination;
 import utils.SetUtils;
 
 /**
- * Classe che Rappresenta una bba
+ * Class for representing a BBA 
  * @author Giuseppe
- *
  * @param <S>
  * @param <T>
  */
 public class MassFunction <T extends Comparable<? super T>> {
 	private  List<T> frameOfDiscernement;//frame of Discernement
-	private  List<List<T>> insiemePotenza;
+	private  List<List<T>> getPowerSet;
 	private double[] valori;// contiene i valori   assunti dalla funzione considerando un certo 
 	// esempio, un individuo da classificare ed un frame of Discernement
 	
@@ -24,38 +23,38 @@ public class MassFunction <T extends Comparable<? super T>> {
 	}
 	
 	/**
-	 * Istanzia la funzione massa di probabilità per un certo esempio ed un certo individuo
+	 * Constructor 
 	 * @param set
 	 * @param individuo
 	 * @param example
 	 */
 	public MassFunction(List<T> set){
 		frameOfDiscernement=set;
-		generaInsiemePotenza();
-		valori= new double[insiemePotenza.size()];
+		generatePowerSet();
+		valori= new double[getPowerSet.size()];
 		
 	}
 	/**
-	 * Genera l'insieme potenza di un certo insieme
+	 * Generet the powerset of a set
 	 * @return
 	 */
-	public void  generaInsiemePotenza(){
+	public void  generatePowerSet(){
 
-		insiemePotenza=Combination.findCombinations(frameOfDiscernement);
+		getPowerSet=Combination.findCombinations(frameOfDiscernement);
 	}
 	
 	
 	/**
-	 * Restituisce l'insieme potenza ottenuto a partire dal frame of discernement
+	 * Return the power set of the frame of discernment
 	 * @return insieme potenza
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
-	public  List<T>[] getSottoinsiemiFrame(){
-		List[] result= new List[insiemePotenza.size()];
+	public  List<T>[] getFrameSubsets(){
+		List[] result= new List[getPowerSet.size()];
 		int i=0;
-		for(List<T> elem:insiemePotenza){
+		for(List<T> elem:getPowerSet){
 			
-			result[i]=insiemePotenza.get(i);
+			result[i]=getPowerSet.get(i);
 			i++;
 		}
 		return result;
@@ -66,26 +65,21 @@ public class MassFunction <T extends Comparable<? super T>> {
 		
 	}
 	/**
-	 * Consente di attribuire il valore della bba per la categoria di appartenenza
-	 * @param dissimilarity
-	 * @param distanza 
+	 * 
+	  * @param category
+	 * @param value 
 	 */
-	public void setValues(List<T> categoria,double value){
-		int pos= SetUtils.cerca(categoria,insiemePotenza);
+	public void setValues(List<T> hypothesis,double value){
+		int pos= SetUtils.find(hypothesis,getPowerSet);
 		valori[pos]=value;
 		
 		
 	}
 	
 	
-	/**
-	 * Restituisce il valore assunto dalla funzione bba per una certa categoria
-	 * @param categoria
-	 * @return il valore assunto dalla funzione bba oppure NaN se la funzione non è definita
-	 */
 	public double getValue(List<T> categoria){
 		//System.out.println(valori.get(categoria));
-		int pos= SetUtils.cerca(categoria, insiemePotenza);
+		int pos= SetUtils.find(categoria, getPowerSet);
 		return valori[pos];
 	
 	}
@@ -93,9 +87,9 @@ public class MassFunction <T extends Comparable<? super T>> {
 	
 	public double getNonSpecificity(){
 		double result=0;
-		for(List<T> categoria: insiemePotenza){
+		for(List<T> categoria: getPowerSet){
 			if(!categoria.isEmpty())
-				result+=(valori[SetUtils.cerca(categoria, insiemePotenza)]*Math.log(categoria.size())); 
+				result+=(valori[SetUtils.find(categoria, getPowerSet)]*Math.log(categoria.size())); 
 		}
 //		System.out.println("Non-sp: "+result);
 		return result;
@@ -104,9 +98,9 @@ public class MassFunction <T extends Comparable<? super T>> {
 	
 	public double getRandomnessMeasure(){
 		double result=0.0;
-		for (List<T> c: insiemePotenza){
+		for (List<T> c: getPowerSet){
 			double pignisticValue=getPignisticTransformation(c);
-			int posCategoria = SetUtils.cerca(c, insiemePotenza);
+			int posCategoria = SetUtils.find(c, getPowerSet);
 			 result+= -1* (valori[posCategoria]*Math.log(pignisticValue));
 		
 		}
@@ -121,11 +115,11 @@ public class MassFunction <T extends Comparable<? super T>> {
 		 double result=0.0;
 		for(T element: cl){
 			double pignisticValueForElement=0; // initialization
-			for(List<T> categoria: insiemePotenza){
+			for(List<T> categoria: getPowerSet){
 
 				if(!categoria.isEmpty()){
 					if (categoria.contains(element)){
-						int posCategoria = SetUtils.cerca(categoria, insiemePotenza);
+						int posCategoria = SetUtils.find(categoria, getPowerSet);
 						pignisticValueForElement += valori[posCategoria]/categoria.size();
 					}
 				}
@@ -154,9 +148,9 @@ public class MassFunction <T extends Comparable<? super T>> {
 	 */
 	public double getConfusionMeasure(){
 		double result=0;
-		for(List<T> categoria: insiemePotenza){
+		for(List<T> categoria: getPowerSet){
 			if(!categoria.isEmpty())
-				result-=(valori[SetUtils.cerca(categoria, insiemePotenza)]*Math.log(this.calcolaBeliefFunction(categoria))); 
+				result-=(valori[SetUtils.find(categoria, getPowerSet)]*Math.log(this.getBeliefValue(categoria))); 
 		}
 //		System.out.println("Non-sp: "+result);
 		return result;
@@ -164,20 +158,20 @@ public class MassFunction <T extends Comparable<? super T>> {
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public MassFunction applicaCombinazione(MassFunction function){
+	public MassFunction combines(MassFunction function){
 		MassFunction result= new MassFunction(frameOfDiscernement);
-		double conflitto=calcolaPesoConflitto(function);
+		double conflitto=getConflict(function);
 		// per l'iesima ipotesi dell'insieme potenza
-		for(List<T> elem:insiemePotenza){
-			int pos=SetUtils.cerca(elem, insiemePotenza);
+		for(List<T> elem:getPowerSet){
+			int pos=SetUtils.find(elem, getPowerSet);
 			// trovo gli insiemi intersecanti ipotesi1 e ipotesi2
-			for(List<T>ipotesi1: insiemePotenza){
-				for(List<T>ipotesi2:insiemePotenza){
-					List<T> ipotesi12=SetUtils.interseca(ipotesi1, ipotesi2);
+			for(List<T>ipotesi1: getPowerSet){
+				for(List<T>ipotesi2:getPowerSet){
+					List<T> ipotesi12=SetUtils.intersection(ipotesi1, ipotesi2);
 						// se l'intersezione è quella che mi aspetto e non è vuota
 						if(!(ipotesi12.isEmpty())&&(SetUtils.uguali(ipotesi12, elem))){
-							SetUtils.cerca(ipotesi1, insiemePotenza);
-							SetUtils.cerca(ipotesi2, insiemePotenza);
+							SetUtils.find(ipotesi1, getPowerSet);
+							SetUtils.find(ipotesi2, getPowerSet);
 							double prodottoMasse=getValue(ipotesi1)*function.getValue(ipotesi2)/conflitto;	
 							result.valori[pos]+=prodottoMasse;
 							
@@ -206,16 +200,16 @@ public class MassFunction <T extends Comparable<? super T>> {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public MassFunction applicaCombinazione(MassFunction... function){
+	public MassFunction combine(MassFunction... function){
 		if(function.length==0)
 			throw new RuntimeException("Occorre almeno passare una funzione di massa");
-		MassFunction result=this.applicaCombinazione(function[0]);
+		MassFunction result=this.combines(function[0]);
 		// l'operazione sfrutta l'associatività della regola di Dempster
 		for(int i=1;i<function.length;i++){
 			// applico una regola non normalizzata fino alla n-1esima funzione
 			
 			
-			result= result.applicaCombinazione(function[i]);
+			result= result.combines(function[i]);
 			
 		}
 		// faccio la normalizzazionesulla base del conflitto tra la combinata delle prime n-1 e l'ultima
@@ -227,26 +221,26 @@ public class MassFunction <T extends Comparable<? super T>> {
 	}
 	
 	/**
-	 * Implementa la regola di combinazione di Dubois-Prade
+	 * Dubois-Prade Combination rule
 	 * @param function
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public MassFunction<T> applicaCombinazioneDuboisPrade (MassFunction function){
+	public MassFunction<T> combineDuboisPrade (MassFunction function){
 		
 		MassFunction<T> result= new MassFunction(frameOfDiscernement);
 		
 		// per l'iesima ipotesi dell'insieme potenza
-		for(List<T> elem:insiemePotenza){
-			int pos=SetUtils.cerca(elem, insiemePotenza);
+		for(List<T> elem:getPowerSet){
+			int pos=SetUtils.find(elem, getPowerSet);
 			// trovo gli insiemi intersecanti ipotesi1 e ipotesi2
-			for(List<T>ipotesi1: insiemePotenza){
-				for(List<T>ipotesi2:insiemePotenza){
+			for(List<T>ipotesi1: getPowerSet){
+				for(List<T>ipotesi2:getPowerSet){
 					List<T> ipotesi12=SetUtils.unisci(ipotesi1, ipotesi2);
 						// se l'unione è quella che mi aspetto e non è vuota!ipotesi12.isEmpty()&&
 						if((SetUtils.uguali(ipotesi12, elem))){
-							SetUtils.cerca(ipotesi1, insiemePotenza);
-							SetUtils.cerca(ipotesi2, insiemePotenza);
+							SetUtils.find(ipotesi1, getPowerSet);
+							SetUtils.find(ipotesi2, getPowerSet);
 							double prodottoMasse=getValue(ipotesi1)*function.getValue(ipotesi2);	
 							result.valori[pos]+=prodottoMasse;
 							
@@ -264,19 +258,13 @@ public class MassFunction <T extends Comparable<? super T>> {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public MassFunction applicaCombinazioneDuboisPrade(MassFunction... function){
+	public MassFunction combineDuboisPrade(MassFunction... function){
 		if(function.length==0)
 			throw new RuntimeException("Occorre almeno passare una funzione di massa");
-		MassFunction result=this.applicaCombinazioneDuboisPrade(function[0]);
+		MassFunction result=this.combineDuboisPrade(function[0]);
 		// l'operazione sfrutta l'associatività della regola di Dempster
 		for(int i=1;i<function.length;i++)
-			result= result.applicaCombinazioneDuboisPrade(function[i]);
-			
-		
-		
-		
-	
-		
+			result= result.combineDuboisPrade(function[i]);	
 		return result;
 		
 	}
@@ -284,19 +272,19 @@ public class MassFunction <T extends Comparable<? super T>> {
 	
 	
 	/**
-	 * Restituisce il peso del conflitto associato a due ipotesi
+	 * compute the conflict of  a mass function
 	 * @param function
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public double calcolaPesoConflitto(MassFunction function){
+	public double getConflict(MassFunction function){
 		double massaVuota=0;
-		for(List<T> ipotesi1:insiemePotenza){
+		for(List<T> ipotesi1:getPowerSet){
 //			System.out.println("***************");
 //			System.out.println("Ipotesi 1:"+ipotesi1);
-			for(List<T> ipotesi2:insiemePotenza){
+			for(List<T> ipotesi2:getPowerSet){
 //				System.out.println("Ipotesi 2:"+ipotesi2);
-				List<T>intersezione=SetUtils.interseca(ipotesi1,ipotesi2);
+				List<T>intersezione=SetUtils.intersection(ipotesi1,ipotesi2);
 				if(!intersezione.isEmpty()){
 //					System.out.println("Intersezione vuota");
 					massaVuota+= (getValue(ipotesi1)*function.getValue(ipotesi2));
@@ -316,9 +304,9 @@ public class MassFunction <T extends Comparable<? super T>> {
 	 * @param ipotesi
 	 * @return
 	 */
-	public double calcolaBeliefFunction(List<T> ipotesi){
+	public double getBeliefValue(List<T> ipotesi){
 		double bel_ipotesi=0;
-		for(List<T> elem:insiemePotenza){
+		for(List<T> elem:getPowerSet){
 			// per ogni sottoinsieme non vuotodi ipotesi
 			if(!elem.isEmpty()&& ipotesi.containsAll(elem)){
 				// somma le masse
@@ -336,12 +324,12 @@ public class MassFunction <T extends Comparable<? super T>> {
 	 * @param ipotesi
 	 * @return
 	 */
-	public double calcolaPlausibilityFunction(List<T> ipotesi){
+	public double getPlausibilityFunction(List<T> ipotesi){
 		// applicando la definizione abbiamo
 		double pl_ipotesi=0;
-		for(List<T> elem:insiemePotenza){
+		for(List<T> elem:getPowerSet){
 			
-			if(!(SetUtils.interseca(ipotesi,elem)).isEmpty())
+			if(!(SetUtils.intersection(ipotesi,elem)).isEmpty())
 				// somma le masse
 				pl_ipotesi+=getValue(elem);
 //			System.out.println(pl_ipotesi);
@@ -353,19 +341,19 @@ public class MassFunction <T extends Comparable<? super T>> {
 		
 	}
 	/**
-	 * calcola il valore della confirmation function
+	 * compute the  confirmation function
 	 * @param ipotesi
 	 * @return
 	 */
-	public double calcolaConfirmationFunction(List<T>ipotesi){
-		return (calcolaBeliefFunction(ipotesi)+calcolaPlausibilityFunction(ipotesi)-1);
+	public double getConfirmationFunction(List<T>ipotesi){
+		return (getBeliefValue(ipotesi)+getPlausibilityFunction(ipotesi)-1);
 		
 	}
 	
 	public String toString(){
 		String res="";
-		for(int i=0;i<insiemePotenza.size();i++){
-			String string = ""+insiemePotenza.get(i)+valori[i];
+		for(int i=0;i<getPowerSet.size();i++){
+			String string = ""+getPowerSet.get(i)+valori[i];
 			res+= string;
 		}
 		return res;
