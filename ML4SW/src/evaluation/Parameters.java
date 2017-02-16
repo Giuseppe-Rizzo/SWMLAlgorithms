@@ -24,6 +24,7 @@ public class Parameters {
 		try {
 			input= new FileInputStream(new File("experiments.properties"));
 			props.load(input);
+			/*parameters*/
 			algorithm =  AlgorithmName.getClassifier(props.getProperty("algorithm"));
 			samplingrate = Double.parseDouble(props.getProperty("samplingrate"));
 			originalImbalance =Double.parseDouble(props.getProperty("originalImbalance"));
