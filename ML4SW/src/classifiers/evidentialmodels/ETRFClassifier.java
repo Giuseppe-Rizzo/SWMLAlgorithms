@@ -141,7 +141,7 @@ public class ETRFClassifier {
 			others[i-1]=function[i];
 		}
 		if(others.length>=1){
-			bba=bba.combine(others);
+			bba=bba.combineDempster(others);
 
 		}
 		//  apply combination rule for BBA

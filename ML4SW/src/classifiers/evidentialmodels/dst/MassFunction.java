@@ -85,6 +85,17 @@ public class MassFunction <T extends Comparable<? super T>> {
 	}
 	
 	
+	public double getUncMeasure(TotalUncertainty measure){
+		if (measure.compareTo(TotalUncertainty.nonspecificity)==0)
+		return getNonSpecificity();
+		else if (measure.compareTo(TotalUncertainty.confusion)==0)
+			return getConfusionMeasure();
+		else
+			return getRandomnessMeasure();
+			
+		
+	}
+	
 	public double getNonSpecificity(){
 		double result=0;
 		for(List<T> categoria: getPowerSet){
@@ -153,7 +164,7 @@ public class MassFunction <T extends Comparable<? super T>> {
 				result-=(valori[SetUtils.find(categoria, getPowerSet)]*Math.log(this.getBeliefValue(categoria))); 
 		}
 //		System.out.println("Non-sp: "+result);
-		return result;
+		return (result);
 	}
 	
 	
@@ -190,7 +201,15 @@ public class MassFunction <T extends Comparable<? super T>> {
 		
 		
 	
-	
+	public MassFunction combine(RuleType type, MassFunction...functions){
+		if (type.compareTo(RuleType.Dempster)==0)
+		return combineDempster(functions);
+		else
+			if (type.compareTo(RuleType.DuboisPrade)==0)
+				return combineDuboisPrade(functions);
+				else
+					return combineMixing(functions);
+	}
 	
 	
 	/**
@@ -199,9 +218,9 @@ public class MassFunction <T extends Comparable<? super T>> {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public MassFunction combine(MassFunction... function){
+	public MassFunction combineDempster(MassFunction... function){
 		if(function.length==0)
-			throw new RuntimeException("Occorre almeno passare una funzione di massa");
+			throw new RuntimeException("You can combine 2 or more BBAs");
 		MassFunction result=this.combines(function[0]);
 		// l'operazione sfrutta l'associatività della regola di Dempster
 		for(int i=1;i<function.length;i++){
