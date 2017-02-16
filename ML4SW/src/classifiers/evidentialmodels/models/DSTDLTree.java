@@ -5,10 +5,7 @@ import java.util.ArrayList;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
-
-import classifiers.evidentialmodels.dempstershafer.MassFunction;
-
-
+import classifiers.evidentialmodels.dst.MassFunction;
 import classifiers.trees.models.*;
 public class DSTDLTree extends AbstractTree implements EvidentialModel{
 

@@ -10,7 +10,7 @@ import knowledgeBasesHandler.*;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import classifiers.ensemble.Ensemble;
-import classifiers.evidentialmodels.dempstershafer.MassFunction;
+import classifiers.evidentialmodels.dst.MassFunction;
 import classifiers.evidentialmodels.models.DSTDLTree;
 import classifiers.refinementOperator.RefinementOperator;
 import evaluation.Parameters;

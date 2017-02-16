@@ -19,8 +19,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import utils.Couple;
 import utils.Npla;
-
-import classifiers.evidentialmodels.dempstershafer.MassFunction;
+import classifiers.evidentialmodels.dst.MassFunction;
 import classifiers.evidentialmodels.models.DSTDLTree;
 import classifiers.evidentialmodels.models.EvidentialModel;
 import classifiers.refinementOperator.RefinementOperator;

@@ -1,4 +1,4 @@
-package classifiers.evidentialmodels.dempstershafer;
+package classifiers.evidentialmodels.dst;
 
 
 import java.util.List;
