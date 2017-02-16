@@ -169,7 +169,7 @@ public class MassFunction <T extends Comparable<? super T>> {
 				for(List<T>ipotesi2:getPowerSet){
 					List<T> ipotesi12=SetUtils.intersection(ipotesi1, ipotesi2);
 						// se l'intersezione è quella che mi aspetto e non è vuota
-						if(!(ipotesi12.isEmpty())&&(SetUtils.uguali(ipotesi12, elem))){
+						if(!(ipotesi12.isEmpty())&&(SetUtils.equal(ipotesi12, elem))){
 							SetUtils.find(ipotesi1, getPowerSet);
 							SetUtils.find(ipotesi2, getPowerSet);
 							double prodottoMasse=getValue(ipotesi1)*function.getValue(ipotesi2)/conflitto;	
@@ -180,8 +180,7 @@ public class MassFunction <T extends Comparable<? super T>> {
 					}
 					
 				}
-				
-				
+					
 			}
 			
 		return result;
@@ -195,7 +194,7 @@ public class MassFunction <T extends Comparable<? super T>> {
 	
 	
 	/**
-	 * applica la regola di combinazione di dempster a n funzioni(sfruttando l'associatività dell'operatore)
+	 * combine n function according to the Dempster rule
 	 * @param function
 	 * @return
 	 */
@@ -220,6 +219,27 @@ public class MassFunction <T extends Comparable<? super T>> {
 		
 	}
 	
+	public MassFunction<T> combineMixing (MassFunction... function){
+		
+		MassFunction<T> result= new MassFunction(frameOfDiscernement);
+		double[] values= new double[result.getFrameSubsets().length];
+		for (MassFunction f: function){
+			for (int i=0; i<values.length;i++){
+				values[i]+=f.valori[i]; 
+			}
+
+		}
+	
+		for (int i=0; i<values.length;i++){
+			values[i]/=function.length; // compute the average with weight 2=1 
+		}
+
+		result.valori=values;
+		
+		return result;
+		
+	}
+	
 	/**
 	 * Dubois-Prade Combination rule
 	 * @param function
@@ -236,9 +256,9 @@ public class MassFunction <T extends Comparable<? super T>> {
 			// trovo gli insiemi intersecanti ipotesi1 e ipotesi2
 			for(List<T>ipotesi1: getPowerSet){
 				for(List<T>ipotesi2:getPowerSet){
-					List<T> ipotesi12=SetUtils.unisci(ipotesi1, ipotesi2);
+					List<T> ipotesi12=SetUtils.union(ipotesi1, ipotesi2);
 						// se l'unione è quella che mi aspetto e non è vuota!ipotesi12.isEmpty()&&
-						if((SetUtils.uguali(ipotesi12, elem))){
+						if((SetUtils.equal(ipotesi12, elem))){
 							SetUtils.find(ipotesi1, getPowerSet);
 							SetUtils.find(ipotesi2, getPowerSet);
 							double prodottoMasse=getValue(ipotesi1)*function.getValue(ipotesi2);	

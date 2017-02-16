@@ -56,7 +56,7 @@ public class SetUtils{
 	 * @param lista2
 	 * @return
 	 */
-	public static <T> List<T> unisci(List<T> lista1,List<T> lista2){
+	public static <T> List<T> union(List<T> lista1,List<T> lista2){
 		
 		List<T> result= intersection(lista1, lista2);// prendo gli elementi in comune
 		// aggiungo gli elementi di lista1 che non sono presenti in intersezione
@@ -81,7 +81,7 @@ public class SetUtils{
 	 * @param l2
 	 * @return
 	 */
-	public static <T> boolean uguali(List<T>l1, List<T> l2){
+	public static <T> boolean equal(List<T>l1, List<T> l2){
 		// due insiemi sono uguali se uno è incluso nell'altro
 		if (l1.containsAll(l2)&&l2.containsAll(l1))
 			return true;
@@ -93,7 +93,7 @@ public class SetUtils{
 		int pos=0;
 		for(List<T> elem:insiemePotenza){
 			
-			if(uguali(categoria,elem))
+			if(equal(categoria,elem))
 				return pos;
 			else
 				pos++;
@@ -106,7 +106,7 @@ public class SetUtils{
 		int pos=0;
 		for(List<T> elem:insiemePotenza){
 			
-			if(uguali(lista,elem))
+			if(equal(lista,elem))
 				return pos;
 			else
 				pos++;
