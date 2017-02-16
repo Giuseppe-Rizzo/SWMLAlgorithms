@@ -6,10 +6,6 @@ import java.io.PrintStream;
 
 import knowledgeBasesHandler.KnowledgeBase;
 
-import org.dllearner.core.ComponentInitException;
-import org.dllearner.kb.OWLAPIOntology;
-import org.dllearner.reasoning.FastInstanceChecker;
-import org.dllearner.reasoning.OWLAPIReasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;

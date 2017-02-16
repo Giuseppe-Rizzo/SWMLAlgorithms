@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.dllearner.core.owl.KB;
+
 import org.semanticweb.HermiT.Reasoner;
 
 //import org.mindswap.pellet.jena.OWLReasoner;
