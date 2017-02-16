@@ -474,7 +474,7 @@ boolean setSeed=true;
 			others[i-1]=next;
 		}
 		if(others.length>=1){
-			bba=bba.combine(RuleType.DuboisPrade, others);
+			bba=bba.combine(Parameters.rule, others);
 
 		}
 		return bba;
@@ -549,7 +549,7 @@ boolean setSeed=true;
 		System.out.println("Split: "+posExs2 +"---"+negExs2+"--"+undExs2);
 		MassFunction<Integer> bestBba = getBBA(posExs2,negExs2,undExs2);
 
-		double bestNonSpecificity = bestBba.getUncMeasure(TotalUncertainty.nonspecificity);
+		double bestNonSpecificity = bestBba.getUncMeasure(Parameters.ETDTheuristic);
 		bestBba.getConfusionMeasure();
 		System.out.printf("%+10e\n",bestNonSpecificity);
 
@@ -561,7 +561,7 @@ boolean setSeed=true;
 			System.out.printf("%4s\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t p:%d n:%d u:%d\t ", 
 					"#"+c, counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[7], counts[8]);
 			MassFunction<Integer> thisbba = getBBA(counts[0] + counts[1],counts[3] + counts[4],counts[6] + counts[7] + counts[2] + counts[5]);
-			double thisNonSpecificity = thisbba.getUncMeasure(TotalUncertainty.nonspecificity);;
+			double thisNonSpecificity = thisbba.getUncMeasure(Parameters.ETDTheuristic);
 		
 			//System.out.printf("%+10e\n",thisNonSpecificity);
 			System.out.println(concepts[c]);

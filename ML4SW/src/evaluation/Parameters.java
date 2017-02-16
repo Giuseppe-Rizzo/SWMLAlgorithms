@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import classifiers.evidentialmodels.dst.RuleType;
+import classifiers.evidentialmodels.dst.TotalUncertainty;
 import evaluation.designOfExperiments.AlgorithmName;
 import evaluation.designOfExperiments.ExperimentalDesign;
 import evaluation.task.Tasks;
@@ -34,6 +36,8 @@ public class Parameters {
 			SEED = Integer.parseInt(props.getProperty("SEED"));
 			PURITY_THRESHOLD = Double.parseDouble( props.getProperty("PURITY_THRESHOLD"));
 			pruning = PruningType.valueOf(props.getProperty("pruning")); //PruningType.NOPRUNING;
+			ETDTheuristic=TotalUncertainty.valueOf(props.getProperty("ETDTHeuristic"));
+			rule= RuleType.valueOf(props.getProperty("rule"));
 			/* Tipo di classificazione */
 			missingValueTreatmentForTDT = Boolean.parseBoolean(props.getProperty("missingValueTreatmentForTDT"));//true;
 			BINARYCLASSIFICATION = Boolean.parseBoolean(props.getProperty("BINARYCLASSIFICATION"));//false;
@@ -76,6 +80,8 @@ public class Parameters {
 	public static boolean missingValueTreatmentForTDT;//true;
 	public static boolean BINARYCLASSIFICATION;//false;
 	public static double M;
+	public static TotalUncertainty ETDTheuristic;
+	public static  RuleType rule;
 	public static boolean nonspecificityControl;//false;
 	//	final String urlOwlFile = "file:///C:/Users/Utente/Documents/Dataset/Tesi_triennale/Ontologie/Ontlogie_Non_vanno_bene/MDM0.73.owl";
 	//C:/Users/Utente/Documents/Dataset/AltreOntologie
