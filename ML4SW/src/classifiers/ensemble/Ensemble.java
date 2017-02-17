@@ -1,10 +1,11 @@
 package classifiers.ensemble;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import classifiers.AbstractModel;
 
-public class Ensemble<T> extends AbstractModel{
+public class Ensemble<T> extends AbstractModel implements Iterable{
 	
 	protected ArrayList<T> classifiers;
 	// counter for ensemble class-memebership
@@ -92,6 +93,14 @@ public class Ensemble<T> extends AbstractModel{
 	public double getComplexityMeasure() {
 
 		return 0;
+	}
+
+
+	@Override
+	public Iterator iterator() {
+		// TODO Auto-generated method stub
+		
+		return classifiers.iterator();
 	}
 	
 	

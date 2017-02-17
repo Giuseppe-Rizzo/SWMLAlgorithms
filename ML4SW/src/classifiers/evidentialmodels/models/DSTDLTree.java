@@ -162,6 +162,40 @@ public class DSTDLTree extends AbstractTree implements EvidentialModel{
 		
 		return getNodi();
 	}
+
+	public ArrayList<MassFunction> collectLeaves() {
+		ArrayList<MassFunction> bba = new ArrayList<MassFunction>();
+		ArrayList<DLNode>lista=new ArrayList<DLNode>();
+		if(root!=null){
+			while(!lista.isEmpty()){
+				DLNode node= lista.get(0);
+				lista.remove(0);
+				
+				DLNode sx=null;
+				
+				if ((node.pos==null) &&(node.neg==null))
+					bba.add(node.m); // add the bba 
+				if(node.pos!=null){
+					sx= node.pos.root;
+				 	if(sx!=null)
+					 lista.add(sx);
+				}
+				else
+					
+				if(node.neg!=null){
+				 sx= node.neg.root;
+				 if(sx!=null)
+					 lista.add(sx);
+				}
+					 
+			}
+			
+		}
+		
+		return bba;
+
+		
+	}
 	
 
 	

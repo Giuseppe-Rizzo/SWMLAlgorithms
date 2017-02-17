@@ -338,6 +338,8 @@ public class MassFunction <T extends Comparable<? super T>> {
 	
 		return (massaVuota);
 	}
+	
+	
 	/**
 	 * Effettua il calcolo della  belief function
 	 * @param ipotesi

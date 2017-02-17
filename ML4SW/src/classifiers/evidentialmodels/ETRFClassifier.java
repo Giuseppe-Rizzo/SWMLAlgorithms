@@ -5,12 +5,15 @@ package classifiers.evidentialmodels;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import knowledgeBasesHandler.*;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import classifiers.ensemble.Ensemble;
 import classifiers.evidentialmodels.dst.MassFunction;
+import classifiers.evidentialmodels.dst.RuleType;
 import classifiers.evidentialmodels.models.DSTDLTree;
 import classifiers.refinementOperator.RefinementOperator;
 import evaluation.Parameters;
@@ -68,11 +71,35 @@ public class ETRFClassifier {
 
 		}
 		System.out.println("forest size: "+ forest.getSize());
+		forest=prune(forest); // prune the ensemble
 
 		return forest;
 	}
 
 	
+	
+	public Ensemble<DSTDLTree>  prune(Ensemble<DSTDLTree> toPrune){
+		Ensemble<DSTDLTree>  newForest= new Ensemble<DSTDLTree>();
+		double currentConflict=0.0d;
+		final double nu=0.4d; 
+		
+		for(Object o: toPrune){
+			DSTDLTree current= (DSTDLTree) o;
+			ArrayList<MassFunction> collectLeaves = current.collectLeaves();
+			MassFunction massFunction = collectLeaves.get(0);
+					collectLeaves.remove(0);
+			MassFunction[] others= collectLeaves.toArray(new MassFunction[collectLeaves.size()]);
+			 MassFunction combine = massFunction.combine(RuleType.Dempster, others); 
+			 double conflict = combine.getConflict(combine);
+			//currentConflict += conflict; // auto-conflict
+			 if (conflict < nu)
+				 newForest.addClassifier(current);
+			
+		}
+		
+	
+		return newForest;
+	}
 
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
