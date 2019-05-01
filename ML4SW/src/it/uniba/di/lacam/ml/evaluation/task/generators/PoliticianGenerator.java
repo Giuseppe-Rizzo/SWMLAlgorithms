@@ -1,4 +1,4 @@
-package it.uniba.di.lacam.ml.evaluation.task;
+package it.uniba.di.lacam.ml.evaluation.task.generators;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -8,7 +8,6 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
-import it.uniba.di.lacam.ml.evaluation.task.generators.ConceptGenerator;
 import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
 /**
