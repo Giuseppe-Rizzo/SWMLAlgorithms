@@ -4,17 +4,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-import knowledgeBasesHandler.KnowledgeBase;
-
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
-import evaluation.Evaluation;
-import evaluation.Parameters;
-import evaluation.task.*;
+import it.uniba.di.lacam.ml.evaluation.Evaluation;
+import it.uniba.di.lacam.ml.evaluation.Parameters;
+import it.uniba.di.lacam.ml.evaluation.task.*;
+import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
 
 
 
