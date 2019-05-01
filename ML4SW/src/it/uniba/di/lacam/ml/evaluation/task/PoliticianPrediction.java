@@ -3,7 +3,7 @@ package it.uniba.di.lacam.ml.evaluation.task;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import it.uniba.di.lacam.ml.evaluation.task.generators.PoliticianGenerator;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
 
 public class PoliticianPrediction extends ClassMembershipPrediction{

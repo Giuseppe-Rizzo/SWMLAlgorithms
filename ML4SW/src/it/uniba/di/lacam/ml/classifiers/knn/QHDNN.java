@@ -14,7 +14,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import it.uniba.di.lacam.ml.classifiers.SupervisedLearnable;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 
 public class QHDNN implements SupervisedLearnable {
 	

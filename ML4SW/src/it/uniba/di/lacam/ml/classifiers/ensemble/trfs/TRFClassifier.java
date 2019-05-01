@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import it.uniba.di.lacam.ml.classifiers.ensemble.Ensemble;
-import it.uniba.di.lacam.ml.classifiers.refinementOperator.RefinementOperator;
+import it.uniba.di.lacam.ml.classifiers.refops.RefinementOperator;
 import it.uniba.di.lacam.ml.classifiers.trees.RandomizedTDTClassifier;
 import it.uniba.di.lacam.ml.classifiers.trees.models.DLTree;
 import it.uniba.di.lacam.ml.evaluation.Parameters;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.*;
+import it.uniba.di.lacam.ml.kbhandler.*;
 import it.uniba.di.lacam.ml.samplers.BalancedDataset;
 import it.uniba.di.lacam.ml.utils.Triple;
 /**

@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
 
 

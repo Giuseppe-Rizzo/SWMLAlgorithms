@@ -9,9 +9,9 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 
 import it.uniba.di.lacam.ml.classifiers.SupervisedLearnable;
-import it.uniba.di.lacam.ml.classifiers.refinementOperator.RefinementOperator;
+import it.uniba.di.lacam.ml.classifiers.refops.RefinementOperator;
 import it.uniba.di.lacam.ml.evaluation.Parameters;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 /**
  * Wrapper for DSTTDTClassifier
  * @author Utente

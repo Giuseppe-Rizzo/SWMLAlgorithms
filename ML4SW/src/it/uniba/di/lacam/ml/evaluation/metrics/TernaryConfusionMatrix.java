@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-//import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+//import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 
 
 import java.util.SortedSet;

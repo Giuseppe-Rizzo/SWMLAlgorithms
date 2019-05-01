@@ -4,7 +4,7 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import it.uniba.di.lacam.ml.classifiers.SupervisedLearnable;
 import it.uniba.di.lacam.ml.classifiers.knn.FeaturesDrivenDistance;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 
 /**
  * Implementation of kernelized perceptron with a kernel between individuals of a knowledge base

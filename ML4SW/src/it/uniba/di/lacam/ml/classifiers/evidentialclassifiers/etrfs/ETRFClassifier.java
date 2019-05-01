@@ -14,9 +14,9 @@ import it.uniba.di.lacam.ml.classifiers.evidentialclassifiers.dst.MassFunction;
 import it.uniba.di.lacam.ml.classifiers.evidentialclassifiers.dst.RuleType;
 import it.uniba.di.lacam.ml.classifiers.evidentialclassifiers.trees.DSTDLTree;
 import it.uniba.di.lacam.ml.classifiers.evidentialclassifiers.trees.EvidentialTDTClassifier;
-import it.uniba.di.lacam.ml.classifiers.refinementOperator.RefinementOperator;
+import it.uniba.di.lacam.ml.classifiers.refops.RefinementOperator;
 import it.uniba.di.lacam.ml.evaluation.Parameters;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.*;
+import it.uniba.di.lacam.ml.kbhandler.*;
 import it.uniba.di.lacam.ml.samplers.BalancedDataset;
 import it.uniba.di.lacam.ml.utils.Triple;
 

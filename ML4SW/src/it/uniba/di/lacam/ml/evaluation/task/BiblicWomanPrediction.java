@@ -8,7 +8,7 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 
 import it.uniba.di.lacam.ml.evaluation.task.generators.AIFBConceptGenerator;
 import it.uniba.di.lacam.ml.evaluation.task.generators.CarcinogesesisGenerator;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
 /**
  * Class Membership prediciton on NTN ontology

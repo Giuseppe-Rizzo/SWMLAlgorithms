@@ -7,7 +7,7 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 
 import it.uniba.di.lacam.ml.evaluation.task.generators.CarcinogesesisGenerator;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
 /**
  * class membership prediciton on  mutagenesis ontology

@@ -18,11 +18,11 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import it.uniba.di.lacam.ml.classifiers.evidentialclassifiers.dst.MassFunction;
 import it.uniba.di.lacam.ml.classifiers.evidentialclassifiers.dst.RuleType;
 import it.uniba.di.lacam.ml.classifiers.evidentialclassifiers.dst.TotalUncertainty;
-import it.uniba.di.lacam.ml.classifiers.refinementOperator.RefinementOperator;
+import it.uniba.di.lacam.ml.classifiers.refops.RefinementOperator;
 import it.uniba.di.lacam.ml.classifiers.trees.models.AbstractTree;
 import it.uniba.di.lacam.ml.classifiers.trees.models.DLTree;
 import it.uniba.di.lacam.ml.evaluation.Parameters;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
 import it.uniba.di.lacam.ml.utils.Npla;
 

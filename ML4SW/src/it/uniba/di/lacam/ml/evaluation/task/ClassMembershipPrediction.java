@@ -18,7 +18,7 @@ import it.uniba.di.lacam.ml.evaluation.designOfExperiments.AlgorithmName;
 import it.uniba.di.lacam.ml.evaluation.metrics.GlobalPerformanceMetricsComputation;
 import it.uniba.di.lacam.ml.evaluation.metrics.ModelComplexityEvaluation;
 import it.uniba.di.lacam.ml.evaluation.task.generators.ConceptGenerator;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
 import it.uniba.di.lacam.ml.utils.Generator;
 

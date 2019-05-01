@@ -1,4 +1,4 @@
-package it.uniba.di.lacam.ml.knowledgeBasesHandler;
+package it.uniba.di.lacam.ml.kbhandler;
 
 import java.io.File;
 import java.net.URI;

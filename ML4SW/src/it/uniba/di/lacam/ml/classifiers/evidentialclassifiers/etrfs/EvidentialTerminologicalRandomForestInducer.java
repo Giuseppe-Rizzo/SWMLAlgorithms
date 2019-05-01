@@ -11,7 +11,7 @@ import it.uniba.di.lacam.ml.classifiers.SupervisedLearnable;
 import it.uniba.di.lacam.ml.classifiers.ensemble.Ensemble;
 import it.uniba.di.lacam.ml.classifiers.evidentialclassifiers.trees.DSTDLTree;
 import it.uniba.di.lacam.ml.evaluation.Parameters;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 
 /**
  * Classifier wrapper for TRFs Predictive model

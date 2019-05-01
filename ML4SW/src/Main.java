@@ -13,7 +13,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import it.uniba.di.lacam.ml.evaluation.Evaluation;
 import it.uniba.di.lacam.ml.evaluation.Parameters;
 import it.uniba.di.lacam.ml.evaluation.task.*;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 
 
 

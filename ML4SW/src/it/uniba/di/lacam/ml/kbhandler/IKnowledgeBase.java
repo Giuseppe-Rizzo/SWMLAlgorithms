@@ -1,4 +1,4 @@
-package it.uniba.di.lacam.ml.knowledgeBasesHandler;
+package it.uniba.di.lacam.ml.kbhandler;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;

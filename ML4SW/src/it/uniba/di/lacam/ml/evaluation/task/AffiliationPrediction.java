@@ -3,7 +3,7 @@ package it.uniba.di.lacam.ml.evaluation.task;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import it.uniba.di.lacam.ml.evaluation.task.generators.AIFBConceptGenerator;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
 /**
  * Class-membership prediction on AIFB ontology

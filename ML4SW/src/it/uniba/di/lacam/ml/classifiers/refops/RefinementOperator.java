@@ -1,4 +1,4 @@
-package it.uniba.di.lacam.ml.classifiers.refinementOperator;
+package it.uniba.di.lacam.ml.classifiers.refops;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import it.uniba.di.lacam.ml.evaluation.Parameters;
-import it.uniba.di.lacam.ml.knowledgeBasesHandler.KnowledgeBase;
+import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 
 /**
  * A refinement operator implementing  a kind of random walk on the concept space
