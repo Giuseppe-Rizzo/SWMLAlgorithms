@@ -8,7 +8,13 @@ import it.uniba.di.lacam.ml.evaluation.Evaluation;
 import it.uniba.di.lacam.ml.evaluation.Parameters;
 import it.uniba.di.lacam.ml.evaluation.designOfExperiments.AlgorithmName;
 import it.uniba.di.lacam.ml.utils.MathUtils;
-
+/**
+ * A class for computing the performance of a classifier and printed on the standard output. 
+ * The followine metrics are  supported: match, commission, omission, induction rates and precision/recall/F-measure for ternary classification
+ * Standard indices (recall/precision/ f-measure) considers a binary case
+ * @author Giuseppe
+ *
+ */
 public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 	private PrintStream stream;
 	@SuppressWarnings("unused")
@@ -57,7 +63,21 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 		} // append
 	}
 
-	public void computeMetricsperIndividualperClass( int label, int rclass, int[][] classification, int c, int te, int[] foundNum,int[] trueNum, int[] hitNum, int[] matchingNum, int[] commissionNum, int[] omissionNum, int[] inducedNum ){
+	/**
+	 * compare the prediction w.r.t. the ground truth for the c-th concept
+	 * @param label, the current label
+	 * @param rclass, the ground truth
+	 * @param c, the c-th concept
+	 * @param te, the te-th test individual
+	 * @param foundNum, the vector with true positive and false positive cases 
+	 * @param trueNum, the vector with all the true positive cases
+	 * @param hitNum, the vector with the true positive cases discovered by the algorithms
+	 * @param matchingNum, correctly classified individuals under OWA
+	 * @param commissionNum, misclassified individuals under OWA
+	 * @param omissionNum, positive/neg ex.s with predicted uncertain membership
+	 * @param inducedNum, cases of pos/neg membership predicted for uncertain membeship ex.s
+	 */
+	public void computeMetricsperIndividualperClass( int label, int rclass, int c, int te, int[] foundNum,int[] trueNum, int[] hitNum, int[] matchingNum, int[] commissionNum, int[] omissionNum, int[] inducedNum ){
 
 
 			if (label == 1){
@@ -95,17 +115,37 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 //	} // for t - inPartition loop
 
 	}
-	
+	/**
+	 * Check if a test individual has been correcly classified w.r.t. all the target concepts
+	 * @param labels, the predictions
+	 * @param classification, the ground truth
+	 * @param nOfConcepts, the number of target concepts
+	 * @param te, the te-th test individual
+	 * @param foundNum, the vector with true positive and false positive cases 
+	 * @param trueNum, the vector with all the true positive cases
+	 * @param hitNum, the vector with the true positive cases discovered by the algorithms
+	 * @param matchingNum, correctly classified individuals under OWA
+	 * @param commissionNum, misclassified individuals under OWA
+	 * @param omissionNum, positive/neg ex.s with predicted uncertain membership
+	 * @param inducedNum, cases of pos/neg membership predicted for uncertain membeship ex.s
+	 */
 	public void computeMetricsperIndividual( int[] labels, int[][] classification, int nOfConcepts, int te,int[] foundNum,int[] trueNum, int[] hitNum, int[] matchingNum, int[] commissionNum, int[] omissionNum, int[] inducedNum){
 	
 		for (int c=0; c < nOfConcepts; c++) {
 			int rclass= classification[c][te];
-			computeMetricsperIndividualperClass(labels[c], rclass, classification, c, te, foundNum, trueNum, hitNum, matchingNum, commissionNum, omissionNum, inducedNum);
+			computeMetricsperIndividualperClass(labels[c], rclass, c, te, foundNum, trueNum, hitNum, matchingNum, commissionNum, omissionNum, inducedNum);
 			
 		}
 		
 	}
-	
+	/**
+	 * Classifies all the test individuasl for the current folds w.r.t. all the test examples
+	 * @param fold, the current fold
+	 * @param labels, the matrix |testExs| x |nOfconcepts| containing the prediction
+	 * @param classification, the ground truth
+	 * @param nOfConcepts, the number of target 
+	 * @param testExs, the array with the test ex.s 
+	 */
 	public void computeMetricsPerFold(int fold, int labels[][], int[][] classification, int nOfConcepts, Integer[] testExs){
 		
 		int[] foundNum= new int[nOfConcepts];
@@ -145,6 +185,10 @@ public class GlobalPerformanceMetricsComputation extends AbstractMetrics{
 	
 		
 	}
+	/**
+	 * Average the performance over the number of target concepts
+	 * @param nOfConcepts
+	 */
 	public void  computeOverAllResults(int nOfConcepts) {
 		
 		double[] matchingStdDev = new double[nOfConcepts]; // per OWLClass per fold

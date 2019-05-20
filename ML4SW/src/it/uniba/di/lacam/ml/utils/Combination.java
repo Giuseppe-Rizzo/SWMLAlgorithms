@@ -44,8 +44,8 @@ public class Combination extends Object
     
     
     /**
-     * Generate the power set of a collection of objects
-     * @param elements
+     * Generate the combination of a collection of objects
+     * @param elements,  the set
      * @param n
      * @return
      */

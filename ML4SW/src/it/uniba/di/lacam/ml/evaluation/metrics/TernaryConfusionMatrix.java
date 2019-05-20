@@ -21,6 +21,12 @@ import it.uniba.di.lacam.ml.evaluation.Parameters;
 import it.uniba.di.lacam.ml.evaluation.designOfExperiments.AlgorithmName;
 import it.uniba.di.lacam.ml.utils.MathUtils;
 
+/**
+ * Compute a ternary confusion matrix 
+ * (not integrated yet in the experimental design)
+ * @author Giuseppe
+ *
+ */
 public class TernaryConfusionMatrix extends AbstractMetrics{
 
  private static Logger logger= LoggerFactory.getLogger(TernaryConfusionMatrix.class);

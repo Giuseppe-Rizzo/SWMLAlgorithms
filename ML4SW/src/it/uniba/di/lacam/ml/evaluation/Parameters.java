@@ -12,7 +12,11 @@ import it.uniba.di.lacam.ml.classifiers.evidentialclassifiers.dst.TotalUncertain
 import it.uniba.di.lacam.ml.evaluation.designOfExperiments.AlgorithmName;
 import it.uniba.di.lacam.ml.evaluation.designOfExperiments.ExperimentalDesign;
 import it.uniba.di.lacam.ml.evaluation.task.Tasks;
-
+/**
+ * The class for loading the experimental settings from a properties file
+ * @author Giuseppe
+ *
+ */
 public class Parameters {
 
 	/* Experimental Design parameters */
