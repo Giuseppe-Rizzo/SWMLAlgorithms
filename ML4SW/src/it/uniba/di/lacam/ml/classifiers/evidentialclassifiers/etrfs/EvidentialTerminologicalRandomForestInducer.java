@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import it.uniba.di.lacam.ml.classifiers.SupervisedLearnable;
 import it.uniba.di.lacam.ml.classifiers.ensemble.Ensemble;
@@ -40,7 +41,7 @@ public class EvidentialTerminologicalRandomForestInducer implements SupervisedLe
 	public void training(int[][] results, Integer[] trainingExs, OWLClassExpression[] testConcepts, OWLClassExpression[] negTestConcepts){
 
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
-		Reasoner reasoner = kb.getReasoner();
+		OWLReasoner reasoner = kb.getReasoner();
 		OWLIndividual[] allExamples= kb.getIndividuals();
 		//		ArrayList<Triple<Integer, Integer, Integer>> testSetComposition= new ArrayList<Triple<Integer, Integer, Integer>>();
 		ETRFClassifier cl= new ETRFClassifier(kb);

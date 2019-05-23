@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -25,11 +26,11 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.HermiT.ReasonerFactory;
 
-import com.clarkparsia.owlapiv3.OWL;
-import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 //import com.hp.hpl.jena.reasoner.Reasoner;
 
 import it.uniba.di.lacam.ml.classifiers.knn.FeaturesDrivenDistance;
@@ -43,7 +44,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 	//private String urlOwlFile = "file:///C:/Users/Giuseppe/Desktop//mod-biopax-example-ecocyc-glycolysis.owl";
 	private String urlOwlFile = "file:///C:/Users/Giusepp/Desktop/Ontologie/GeoSkills.owl";
 	private  OWLOntology ontology;
-	protected  Reasoner reasoner;
+	protected  OWLReasoner reasoner;
 	private  OWLOntologyManager manager;
 	private  OWLClass[] allConcepts;
 	private  OWLObjectProperty[] allRoles;
@@ -73,6 +74,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 	/* (non-Javadoc)
 	 * @see it.uniba.di.lacam.fanizzi.IKnowledgeBase#initKB()
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public   OWLOntology initKB() {
 
@@ -97,12 +99,12 @@ public class KnowledgeBase implements IKnowledgeBase {
 			e.printStackTrace();
 		}
 
-
-		reasoner = new   Reasoner(ontology);//PelletReasoner(ontology, BufferingMode.NON_BUFFERING);
+        
+		reasoner = new ReasonerFactory().createReasoner(ontology); //new  Reasoner(ontology);//PelletReasoner(ontology, BufferingMode.NON_BUFFERING);
 
 //		reasoner.getKB().realize();
 		System.out.println("\nClasses\n-------");
-		Set<OWLClass> classList = ontology.getClassesInSignature();
+		Set<OWLClass> classList = ontology.classesInSignature().collect(Collectors.toSet());
 		allConcepts = new OWLClass[classList.size()];
 		int c=0;
 		for(OWLClass cls : classList) {
@@ -401,7 +403,7 @@ public class KnowledgeBase implements IKnowledgeBase {
 
 	}
 
-	public Reasoner getReasoner(){
+	public OWLReasoner getReasoner(){
 		return reasoner;
 	}
 

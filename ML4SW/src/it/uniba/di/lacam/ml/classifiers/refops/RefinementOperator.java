@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -13,6 +15,7 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import it.uniba.di.lacam.ml.evaluation.Parameters;
 import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
@@ -74,7 +77,10 @@ public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentCon
 					ArrayList<OWLNamedIndividual> inds= new ArrayList<OWLNamedIndividual>(individualsInSignature);
 					Set<OWLLiteral> dataPropertyValues = new HashSet<OWLLiteral>();
 					for (OWLNamedIndividual i: inds){
-					dataPropertyValues.addAll( i.getDataPropertyValues(owlDataProperty, kb.getOntology()));	
+					Stream<OWLLiteral> dataPropertyValues2 = EntitySearcher.getDataPropertyValues(i,owlDataProperty, kb.getOntology());
+					dataPropertyValues2.collect(Collectors.toSet()).forEach((c)->dataPropertyValues.add((OWLLiteral)c));
+					
+						
 					}
 					ArrayList<OWLLiteral> values= new ArrayList<OWLLiteral>(dataPropertyValues);
 					if (!values.isEmpty())
@@ -83,16 +89,20 @@ public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentCon
 						newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase); //in case there are no dataproperties
 				}
 				else if ((generator.nextDouble() < 0.9)){
-					 OWLObjectProperty owlDataProperty = allRoles[generator.nextInt(allProperties.length)];
-					Set<OWLNamedIndividual> individualsInSignature = owlDataProperty.getIndividualsInSignature();
+					 OWLObjectProperty owlObjProperty = allRoles[generator.nextInt(allProperties.length)];
+					Set<OWLNamedIndividual> individualsInSignature = owlObjProperty.getIndividualsInSignature();
 					ArrayList<OWLIndividual> inds= new ArrayList<OWLIndividual>(individualsInSignature);
 					Set<OWLIndividual> objValues = new HashSet<OWLIndividual>();
 					for (OWLIndividual i: inds){
-					objValues.addAll( i.getObjectPropertyValues(owlDataProperty, kb.getOntology()));	
+						if (i.isNamed()){
+						Stream<OWLIndividual> objPropertyValues2 = EntitySearcher.getObjectPropertyValues(i,owlObjProperty, kb.getOntology());
+						objPropertyValues2.collect(Collectors.toSet()).forEach((c)->objValues.add((OWLIndividual)c));
+						}
+							
 					}
 					ArrayList<OWLIndividual> values= new ArrayList<OWLIndividual>(objValues);
 					if (!values.isEmpty())
-					newConcept = kb.getDataFactory().getOWLObjectHasValue(owlDataProperty, values.get(generator.nextInt(values.size())));
+					newConcept = kb.getDataFactory().getOWLObjectHasValue(owlObjProperty, values.get(generator.nextInt(values.size())));
 					else	
 						newConcept = kb.getDataFactory().getOWLObjectComplementOf(newConceptBase); //in case there are no dataproperties
 				}
@@ -111,6 +121,7 @@ public OWLClassExpression getSubsumedRandomConcept(OWLClassExpression currentCon
 
 
 /**
+ * Generate a concept at random
  * @param prob
  * @return
  */

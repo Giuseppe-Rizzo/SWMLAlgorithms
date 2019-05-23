@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
-
-import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import it.uniba.di.lacam.ml.classifiers.SupervisedLearnable;
 import it.uniba.di.lacam.ml.classifiers.ensemble.Ensemble;
@@ -41,7 +40,7 @@ public class TerminologicalRandomForestsInducer implements SupervisedLearnable {
 	public void training(int results[][], Integer[] trainingExs, OWLClassExpression[] testConcepts, OWLClassExpression[] negTestConcepts){
       //  RefinementOperator op= new RefinementOperator(kb);
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
-		Reasoner reasoner = kb.getReasoner();
+		OWLReasoner reasoner = kb.getReasoner();
 		OWLIndividual[] allExamples= kb.getIndividuals();
 		//		ArrayList<Triple<Integer, Integer, Integer>> testSetComposition= new ArrayList<Triple<Integer, Integer, Integer>>();
 		TRFClassifier cl= new TRFClassifier(kb);

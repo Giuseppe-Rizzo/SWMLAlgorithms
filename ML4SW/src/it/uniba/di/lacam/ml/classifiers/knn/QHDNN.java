@@ -51,9 +51,12 @@ public class QHDNN implements SupervisedLearnable {
 				
 //				double addendum = 1/Math.pow(FeaturesDrivenDistance.simpleDistance(indTestEx,neighboorEx[e]),2);
 				double addendum = 1;// (1+Float.MIN_VALUE)/(Float.MIN_VALUE+FeaturesDrivenDistance.simpleDistance(indTestEx,neighboorEx[ne]));
-				if (kb.getReasoner().hasType((OWLNamedIndividual)(kb.getIndividuals()[neighboorEx[ne]]),testConcepts[c], false)) 
+				OWLNamedIndividual owlNamedIndividual = (OWLNamedIndividual)(kb.getIndividuals()[neighboorEx[ne]]);
+				OWLClassExpression owlClassExpression = testConcepts[c];
+				OWLClassExpression negOwlClassExpression= kb.getDataFactory().getOWLObjectComplementOf(owlClassExpression);
+				if (kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(owlClassExpression,owlNamedIndividual)))
 					classWeight += addendum;
-			  else if (kb.getReasoner().hasType((OWLNamedIndividual)(kb.getIndividuals()[neighboorEx[ne]]),kb.getDataFactory().getOWLObjectComplementOf(testConcepts[c]), false)) 
+			  else if (kb.getReasoner().isEntailed(kb.getDataFactory().getOWLClassAssertionAxiom(negOwlClassExpression,owlNamedIndividual))) 
 					negatedClassWeight += addendum;
 				else 
 					unknownClassWeight += addendum;				

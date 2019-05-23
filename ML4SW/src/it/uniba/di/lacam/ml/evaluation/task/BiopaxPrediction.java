@@ -3,6 +3,7 @@ package it.uniba.di.lacam.ml.evaluation.task;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -14,6 +15,8 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
@@ -38,9 +41,9 @@ public class BiopaxPrediction extends ClassMembershipPrediction{
 		OWLClass domain=kb.getClasses()[2];  // 		
 		OWLClass range= kb.getClasses()[56];   // 
 		OWLDataProperty prop= kb.getDataProperties()[5];  
-		Set<OWLIndividual> inds=domain.getIndividuals(kb.getOntology());
+		Set<OWLIndividual> inds=EntitySearcher.getIndividuals(domain, kb.getOntology()).collect(Collectors.toSet());
 		Set<OWLLiteral> fillers= new HashSet<OWLLiteral>();
-		 Reasoner reasoner2 = kb.getReasoner();
+		 OWLReasoner reasoner2 = kb.getReasoner();
 		examples= new OWLIndividual[inds.size()];
 		for (OWLIndividual ind:inds){
 			if (ind instanceof OWLNamedIndividual)

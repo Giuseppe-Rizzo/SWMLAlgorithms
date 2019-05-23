@@ -22,11 +22,11 @@ public enum RuleType {
 		
 	}
 	
-	public RuleType  getRule(String name){
+	public static RuleType  getRule(String name){
 		
-		if (name.compareTo("dempster")==0)
+		if (name.compareToIgnoreCase("dempster")==0)
 			return Dempster;
-		else if (name.compareTo("dubois")==0)
+		else if (name.compareToIgnoreCase("dubois")==0)
 			return RuleType.DuboisPrade;
 		else 
 			return Mixing;

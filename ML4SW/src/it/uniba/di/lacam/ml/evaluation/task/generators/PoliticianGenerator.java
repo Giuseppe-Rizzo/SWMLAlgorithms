@@ -2,11 +2,13 @@ package it.uniba.di.lacam.ml.evaluation.task.generators;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
@@ -33,7 +35,7 @@ public class PoliticianGenerator extends ConceptGenerator {
 //		OWLObjectProperty prop= kb.getRoles()[95];
 //		// considerare la propriet� no. 95
 //
-		Set<OWLClassExpression> subClasses = owlClass.getSubClasses(kb.getOntology());
+		Set<OWLClassExpression> subClasses = EntitySearcher.getSubClasses(owlClass,kb.getOntology()).collect(Collectors.toSet());
 		
 		ArrayList<OWLClassExpression> sub= new ArrayList<OWLClassExpression>(subClasses);
 		

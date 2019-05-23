@@ -42,7 +42,7 @@ public class Parameters {
 			PURITY_THRESHOLD = Double.parseDouble( props.getProperty("PURITY_THRESHOLD"));
 			pruning = PruningType.valueOf(props.getProperty("pruning")); //PruningType.NOPRUNING;
 			ETDTheuristic=TotalUncertainty.valueOf(props.getProperty("ETDTHeuristic"));
-			rule= RuleType.valueOf(props.getProperty("rule"));
+			rule= RuleType.getRule(props.getProperty("rule"));
 			/* Tipo di classificazione */
 			missingValueTreatmentForTDT = Boolean.parseBoolean(props.getProperty("missingValueTreatmentForTDT"));//true;
 			BINARYCLASSIFICATION = Boolean.parseBoolean(props.getProperty("BINARYCLASSIFICATION"));//false;

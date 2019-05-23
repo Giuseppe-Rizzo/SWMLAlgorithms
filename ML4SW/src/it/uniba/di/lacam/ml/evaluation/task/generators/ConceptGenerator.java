@@ -6,6 +6,7 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 
@@ -13,7 +14,7 @@ import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 
 public class ConceptGenerator {
 	protected KnowledgeBase kb;
-	protected Reasoner reasoner;
+	protected OWLReasoner reasoner;
 	protected  OWLDataFactory dataFactory;
 	protected  OWLIndividual[] allExamples;
 	

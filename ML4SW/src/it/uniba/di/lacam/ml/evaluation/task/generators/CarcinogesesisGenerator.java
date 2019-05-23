@@ -2,11 +2,13 @@ package it.uniba.di.lacam.ml.evaluation.task.generators;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import it.uniba.di.lacam.ml.kbhandler.KnowledgeBase;
 import it.uniba.di.lacam.ml.utils.Couple;
@@ -33,7 +35,7 @@ public class CarcinogesesisGenerator extends ConceptGenerator {
 //		}
 		
 	   OWLDataProperty query= dataProperties[14]; // ismutagenic
-	   Set<OWLClassExpression> classesInSignature = query.getDomains(kb.getOntology());
+	   Set<OWLClassExpression> classesInSignature = EntitySearcher.getDomains(query,kb.getOntology()).collect(Collectors.toSet());
 	   HashSet<OWLIndividual> examples= new HashSet<OWLIndividual>();
 	   System.out.println("classes in signature"+ classesInSignature);
 	   for (OWLClassExpression c : classesInSignature) {

@@ -7,12 +7,13 @@ import java.util.List;
 
 import java.util.Stack;
 
+import org.semanticweb.owlapi.dlsyntax.renderer.DLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.io.OWLObjectRenderer;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 
-import uk.ac.manchester.cs.owlapi.dlsyntax.DLSyntaxObjectRenderer;
+
 import it.uniba.di.lacam.ml.classifiers.refops.RefinementOperator;
 import it.uniba.di.lacam.ml.classifiers.trees.models.AbstractTree;
 import it.uniba.di.lacam.ml.classifiers.trees.models.DLTree;

@@ -14,6 +14,7 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import it.uniba.di.lacam.ml.classifiers.SupervisedLearnable;
 import it.uniba.di.lacam.ml.classifiers.refops.RefinementOperator;
@@ -58,7 +59,7 @@ public class TerminologicalDecisionTreeInducer implements SupervisedLearnable {
 	@Override
 	public void training(int[][] results,Integer[] trainingExs, OWLClassExpression[] testConcepts, OWLClassExpression[] negTestConcepts){
         RefinementOperator op=new RefinementOperator(kb);
-		Reasoner reasoner = kb.getReasoner();
+		OWLReasoner reasoner = kb.getReasoner();
 		OWLIndividual[] allExamples= kb.getIndividuals();
 		//		DLTree2[] forests = new DLTree2[testConcepts.length];
 		HashSet<Integer> trainingExsSet= new HashSet<Integer>(Arrays.asList(trainingExs));
