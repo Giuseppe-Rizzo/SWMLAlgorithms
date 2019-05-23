@@ -30,7 +30,7 @@ static KnowledgeBase kb;
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		Parameters.loadParameters(); //loading from property file
+		Parameters.loadParameters(args[0]); //loading from property file
 kb = new KnowledgeBase(Parameters.urlOwlFile);
 //		GeoSkillsGenerator gs= new GeoSkillsGenerator(kb);
 //		gs.generateQueryConcept();

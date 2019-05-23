@@ -23,10 +23,10 @@ public class Parameters {
 //	AlgorithmName algorithm = AlgorithmName.DSTTerminologicalRandomForests;
 	private static Properties props;
 	private static InputStream input;
-	public static void loadParameters(){
+	public static void loadParameters(String arg){
 		props= new Properties();
 		try {
-			input= new FileInputStream(new File("experiments.properties"));
+			input= new FileInputStream(new File(arg));
 			props.load(input);
 			/*parameters*/
 			algorithm =  AlgorithmName.getClassifier(props.getProperty("algorithm"));
